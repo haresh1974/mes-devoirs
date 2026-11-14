@@ -243,3 +243,32 @@ td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 .hn{width:48px;font-size:12px;color:var(--mute);text-align:right}
 .notice{display:flex;gap:10px;align-items:flex-start;background:#fff8e1;border:1.5px solid #f5d36e;border-radius:14px;padding:12px 14px;margin:0 0 14px}
 @media print{.pq h2{margin:0}.pq .q{padding:6px 0;border-bottom:1px solid #ccc;font-size:16px}.pq .pb{page-break-before:always}}
+
+/* ---- student polish ---- */
+body{background:linear-gradient(180deg,#eaf6ff 0,#f6f9ff 260px)}
+.landing h1{background:linear-gradient(90deg,#1c6fe0,#8a4fe8);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:38px}
+.stop{background:linear-gradient(90deg,#1c6fe0,#7a4fe0);color:#fff;border-radius:0 0 22px 22px;padding:12px 16px}
+.stop .icon-btn{background:rgba(255,255,255,.2);color:#fff;border-color:transparent}
+.stop .coins{color:#fff}
+.node{box-shadow:0 6px 0 rgba(0,0,0,.14);transition:transform .15s}
+.node:active{transform:translateY(3px)}
+.bubble{position:absolute;margin:-8px 0 0 70px;background:#fff;border:2px solid #cfe3fb;border-radius:16px;padding:6px 10px;font-size:20px;cursor:pointer;box-shadow:0 3px 0 #cfe3fb}
+.icon-btn.sq{border-radius:12px;background:#fff;border:2px solid var(--line)}
+.pcard{background:#fff;border-radius:22px;padding:18px;box-shadow:0 8px 24px rgba(40,70,140,.12)}
+.opt2.aopt{display:flex;justify-content:center}
+.wave{display:inline-flex;gap:3px;align-items:center;height:36px}
+.wave i{display:block;width:4px;border-radius:3px;background:#1aa7ec}
+.tile .wave i,.opt2.sel .wave i{background:#1c6fe0}
+.stages{display:flex;gap:8px;margin-top:12px}
+.stages>i{flex:1;height:10px;border-radius:99px;background:#e5e9f5;overflow:hidden;display:block}
+.stages b{display:block;height:100%;background:#21c07a;border-radius:99px;transition:width .3s}
+.finish{text-align:center;padding:36px 12px}
+.finish .conf{font-size:76px}
+.finish .kick{font-weight:900;letter-spacing:2px;color:#1c6fe0;font-size:22px;margin:6px 0 14px}
+.bigcoin{font-size:64px;font-weight:900;color:#e39b0b}
+.coinic{margin-right:8px}
+.stat3b{display:flex;gap:10px;margin:22px 0}
+.stat3b>div{flex:1;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 4px}
+.stat3b b{display:block;font-size:20px}
+.stat3b span{font-size:11px;font-weight:800;color:var(--mute,#7a869a);letter-spacing:1px}
+.bigblue{width:100%;font:inherit;font-weight:900;font-size:19px;color:#fff;background:#1aa7ec;border:0;border-radius:16px;padding:16px;box-shadow:0 5px 0 #0f7fb8;cursor:pointer}

@@ -195,7 +195,7 @@ ACT.logout = async () => { try { await api('/logout', 'POST', {}); } catch (e) {
 
 /* landing & sign-in */
 function studentLoginPage(prefill) {
-  $('#app').innerHTML = `<div class="landing"><div style="font-size:54px">🥖</div><h1>Mon Devoir</h1><div class="authbox">
+  $('#app').innerHTML = `<div class="landing"><div style="font-size:54px">🇫🇷</div><h1>French with Haresh</h1><div class="authbox">
     <h2>Student sign in</h2><p class="mute" style="margin-top:0">Ask your teacher for the class code and your PIN.</p>
     <label class="f">Class code</label><input id="code" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="e.g. ABCDEF" value="${esc(prefill || '')}" style="text-transform:uppercase;letter-spacing:4px;font-weight:800">
     <label class="f">Your PIN</label><input id="pin" type="text" inputmode="numeric" maxlength="8" autocomplete="off" class="pin" placeholder="• • • •">

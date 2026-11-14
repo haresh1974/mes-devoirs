@@ -1,4 +1,4 @@
-# Mon Devoir
+# French with Haresh
 
 A French (or Spanish) vocabulary homework website.
 

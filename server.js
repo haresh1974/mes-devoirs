@@ -381,7 +381,10 @@ function buildHomework(body, cls) {
     const fr = clean(it && it.fr, 140), en = clean(it && it.en, 140);
     if (!fr || !en || seen.has(fr.toLowerCase())) return;
     seen.add(fr.toLowerCase());
-    items.push({ fr, en, s: SH.isSentence(fr) ? 1 : 0 });
+    const row = { fr, en, s: it.s != null ? (it.s ? 1 : 0) : (SH.isSentence(fr) ? 1 : 0) };
+    const k = clean(it.k, 60); if (k) row.k = k;
+    const d = (Array.isArray(it.d) ? it.d : []).map((x) => clean(x, 40)).filter(Boolean).slice(0, 3); if (d.length) row.d = d;
+    items.push(row);
   });
   const verbs = [];
   (Array.isArray(body.verbs) ? body.verbs : []).slice(0, 40).forEach((v) => {
@@ -399,12 +402,14 @@ function buildHomework(body, cls) {
   });
   const st = SH.contentStats(items, verbs, grammar);
   if (!items.length && !verbs.length && !grammar.length) return { error: 'Add some vocabulary, verbs or grammar questions.' };
-  let ex = (Array.isArray(body.exercises) ? body.exercises : []).filter((e) => SH.EXERCISES[e]);
+  const mixed = !!body.mixed && items.length >= 4;
+  let ex = (Array.isArray(body.exercises) ? body.exercises : []).filter((e) => SH.EXERCISES[e] && !SH.isLesson(e));
   ex = SH.CATALOG.map((c) => c.id).filter((e) => ex.includes(e) && SH.supports(e, st)); // canonical order, only those the content supports
+  if (mixed) ex = Array.from({ length: SH.lessonCount(items) }, (_, i) => 'L' + (i + 1));
   if (!ex.length) return { error: 'Pick at least one exercise that your content supports.' };
   let due = body.due_at ? parseInt(body.due_at, 10) : null;
   if (!due || isNaN(due)) due = null;
-  return { title, topic, folder, tier, items, extra: { verbs, grammar }, ex, due, free: body.free_order === false ? 0 : 1 };
+  return { title, topic, folder, tier, items, extra: { verbs, grammar, mixed }, ex, due, free: body.free_order === false ? 0 : 1 };
 }
 app.post('/api/classes/:id/homework', teacherOnly(async (req, res) => {
   const c = await ownClass(req, req.params.id);
@@ -592,6 +597,28 @@ app.get('/api/tts', wrap(async (req, res) => {
   res.set({ 'Content-Type': 'audio/mpeg', 'Cache-Control': 'private, max-age=86400' });
   res.send(Buffer.from(row.mp3, 'base64'));
 }));
+// Teacher: pre-generate the voice for every word and sentence so lessons play instantly.
+app.post('/api/library/warm', wrap(async (req, res) => {
+  const t = await auth(req, 'teacher');
+  if (!t) return res.status(401).json({ error: 'Please sign in.' });
+  if (!ttsOn()) return res.status(404).json({ error: 'Cloud voice is not set up.' });
+  const rows = await db.all('SELECT h.items FROM homework h JOIN classes c ON c.id = h.class_id WHERE c.teacher_id = ?', [t.id]);
+  const texts = new Set();
+  rows.forEach((r) => JSON.parse(r.items).forEach((i) => texts.add(clean(i.fr, 200))));
+  let done = 0, skipped = 0;
+  for (const text of texts) {
+    const key = crypto.createHash('sha1').update(['fr-FR', TTS_VOICES['fr-FR'], 'n', text].join('|')).digest('hex');
+    if (await db.get('SELECT key FROM audio WHERE key = ?', [key])) { skipped++; continue; }
+    if (done >= 150) break;
+    const r = await fetch(TTS_URL + '?key=' + encodeURIComponent(TTS_KEY), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: { text }, voice: { languageCode: 'fr-FR', name: TTS_VOICES['fr-FR'] }, audioConfig: { audioEncoding: 'MP3', speakingRate: 0.92 } }) });
+    if (!r.ok) break;
+    const j = await r.json();
+    try { await db.run('INSERT INTO audio (key,mp3,created) VALUES (?,?,?)', [key, j.audioContent, now()]); } catch (e) {}
+    done++;
+  }
+  res.json({ generated: done, already: skipped, remaining: Math.max(0, texts.size - done - skipped) });
+}));
 
 /* ---------- static ---------- */
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
@@ -600,5 +627,5 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 
 open().then((d) => {
   db = d;
-  app.listen(PORT, () => console.log(`Mon Devoir running on port ${PORT} (${db.kind})`));
+  app.listen(PORT, () => console.log(`French with Haresh running on port ${PORT} (${db.kind})`));
 }).catch((e) => { console.error('Could not start:', e); process.exit(1); });

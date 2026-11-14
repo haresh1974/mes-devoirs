@@ -8,7 +8,7 @@ function shell(active, content) {
   const cls = T.classes.map((c) => `<button class="nav ${active === c.id ? 'on' : ''}" data-act="openClass" data-id="${esc(c.id)}"><span>${(LANG[c.language] || LANG.French).flag}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span></button>`).join('');
   $('#app').innerHTML = `<button class="menubtn" data-act="menu">☰</button><div class="shell">
     <aside class="side" id="side">
-      <div class="logo">🥖 Mon Devoir <small>teachers</small></div>
+      <div class="logo">🇫🇷 French with Haresh <small>teachers</small></div>
       <button class="nav ${active === 'home' ? 'on' : ''}" data-act="tHome">🏠 Home</button>
       <button class="nav ${active === 'lib' ? 'on' : ''}" data-act="tLib">📚 Library</button>
       <button class="nav ${active === 'tl' ? 'on' : ''}" data-act="tTl">🗓 Timeline</button>
@@ -185,7 +185,7 @@ function pinFoot() {
 ACT.showPins = () => { PINLIST = CLS.students; modal('<h2>Student PINs</h2>' + (PINLIST.length ? pinTable(PINLIST) : '<p class="mute">No students yet.</p>') + pinFoot()); };
 ACT.copyPins = () => copyText('Student\tPIN\n' + PINLIST.map((s) => s.name + '\t' + s.pin).join('\n'));
 ACT.paperCards = () => {
-  printHTML('<div class="pcards">' + PINLIST.map((s) => `<div class="pcardp"><b>Mon Devoir</b><br>${esc(s.name)}<br>Website: ${esc(location.origin)}<br>Class code: <b>${esc(CLS.cls.code)}</b><br>PIN:<div class="big">${esc(s.pin)}</div></div>`).join('') + '</div>');
+  printHTML('<div class="pcards">' + PINLIST.map((s) => `<div class="pcardp"><b>French with Haresh</b><br>${esc(s.name)}<br>Website: ${esc(location.origin)}<br>Class code: <b>${esc(CLS.cls.code)}</b><br>PIN:<div class="big">${esc(s.pin)}</div></div>`).join('') + '</div>');
 };
 
 /* add students */
@@ -290,6 +290,7 @@ function hwForm(init, backHash, submitLabel) {
     <div class="card"><h3>3. Grammar questions <span class="mute small" style="font-weight:600">(optional)</span></h3><p class="mute small" style="margin:4px 0 8px">One per line: <b>sentence with ___ | correct answer | wrong options (comma separated) | hint</b>. Wrong options and hint are optional. With wrong options children can choose, without them they type.</p>
       <textarea id="hGram" style="min-height:100px" placeholder="${esc(GRAM_EX)}">${esc(init.gram)}</textarea><div class="row" style="margin-top:8px"><button class="btn ghost sm" data-act="addEx" data-k="gram">Add examples</button></div></div>
     <div class="pbox" id="hPrev"></div>
+    <div class="card" style="margin-top:16px"><label class="row" style="font-weight:800"><input id="hMixed" type="checkbox" style="width:18px;height:18px" ${init.mixed ? 'checked' : ''}> Mixed lessons (recommended): each step mixes words, sounds and sentences, like a real lesson. Needs at least 4 items.</label></div>
     <div class="card" style="margin-top:16px"><div class="spread"><div><h3>4. Exercises for this homework</h3><p class="mute small" style="margin:4px 0 0">Tick what children can use. Each becomes a step on their path. Greyed ones need more content.</p></div><div class="row"><button class="btn ghost sm" data-act="exRec">Recommended</button><button class="btn ghost sm" data-act="exAll">Select all</button><button class="btn ghost sm" data-act="exNone">Clear</button></div></div><div id="hEx"></div>
       <label class="row" style="margin-top:14px;font-weight:800"><input id="hFree" type="checkbox" style="width:18px;height:18px" ${init.free_order ? 'checked' : ''}> Children choose the order (untick to unlock steps one by one)</label></div>
     <div class="err" id="hErr"></div><div class="row"><button class="btn" data-act="hwSave">${esc(submitLabel)}</button><button class="btn ghost" data-act="hwBack">Cancel</button></div>`;
@@ -350,8 +351,8 @@ ACT.hwBack = () => go(HF.back);
 ACT.hwSave = async () => {
   const C = formContent();
   const ex = [...document.querySelectorAll('#hEx input:checked')].map((i) => i.value);
-  const body = { title: $('#hTitle').value, topic: $('#hTopic').value, tier: $('#hTier').value, folder: $('#hFolder').value, free_order: $('#hFree').checked, exercises: ex,
-    items: C.items.map((i) => ({ fr: i.fr, en: i.en })), verbs: C.verbs, grammar: C.grammar };
+  const body = { title: $('#hTitle').value, topic: $('#hTopic').value, tier: $('#hTier').value, folder: $('#hFolder').value, free_order: $('#hFree').checked, exercises: ex, mixed: $('#hMixed').checked,
+    items: C.items.map((i) => Object.assign({ fr: i.fr, en: i.en }, (HF.meta || {})[i.fr] || {})), verbs: C.verbs, grammar: C.grammar };
   try {
     if (HF.id) { await api('/homework/' + HF.id, 'PUT', body); go('#/t/hw/' + HF.id); }
     else { const r = await api('/classes/' + HF.cid + '/homework', 'POST', body); go('#/t/library'); }
@@ -362,7 +363,7 @@ ROUTES.push([/^\/t\/class\/(\w+)\/new$/, async (cid) => {
   CLS = await api('/classes/' + cid + '/overview');
   shell(cid, '');
   try { window.LIBF = (await api('/library')).homework.map((h) => h.folder); } catch (e) {}
-  hwForm({ cid, title: '', topic: '', tier: CLS.cls.tiers[0], folder: '', text: '', verbs: '', gram: '', free_order: 0, ex: null }, '#/t/class/' + cid, 'Create homework');
+  hwForm({ cid, title: '', topic: '', tier: CLS.cls.tiers[0], folder: '', text: '', verbs: '', gram: '', free_order: 0, ex: null, mixed: true }, '#/t/class/' + cid, 'Create homework');
 }]);
 ROUTES.push([/^\/t\/hw\/(\w+)\/edit$/, async (id) => {
   await loadClasses();
@@ -374,7 +375,8 @@ ROUTES.push([/^\/t\/hw\/(\w+)\/edit$/, async (id) => {
   hwForm({ id, title: d.hw.title, topic: d.hw.topic, tier: d.hw.tier, folder: d.hw.folder || '', text: d.hw.items.map((i) => i.fr + ' = ' + i.en).join('\n'),
     verbs: (x.verbs || []).map((v) => [v.inf, v.en, v.tense, v.forms.join(', ')].join(' | ')).join('\n'),
     gram: (x.grammar || []).map((g) => [g.s, g.a, (g.o || []).join(', '), g.h || ''].join(' | ').replace(/( \| )+$/, '')).join('\n'),
-    free_order: d.hw.free_order, ex: d.hw.exercises }, '#/t/hw/' + id, 'Save changes');
+    free_order: d.hw.free_order, ex: d.hw.exercises, mixed: !!x.mixed,
+    meta: Object.fromEntries(d.hw.items.map((i) => [i.fr, { s: i.s, k: i.k, d: i.d }])) }, '#/t/hw/' + id, 'Save changes');
 }]);
 
 /* ---- homework detail ---- */
