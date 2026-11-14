@@ -272,3 +272,11 @@ body{background:linear-gradient(180deg,#eaf6ff 0,#f6f9ff 260px)}
 .stat3b b{display:block;font-size:20px}
 .stat3b span{font-size:11px;font-weight:800;color:var(--mute,#7a869a);letter-spacing:1px}
 .bigblue{width:100%;font:inherit;font-weight:900;font-size:19px;color:#fff;background:#1aa7ec;border:0;border-radius:16px;padding:16px;box-shadow:0 5px 0 #0f7fb8;cursor:pointer}
+
+.abtn{display:flex;align-items:center;justify-content:center;gap:10px;font-size:19px;background:linear-gradient(180deg,#2bb6f5,#1a8fe0);box-shadow:0 5px 0 #1270b5}
+.abtn .spk{flex:none}
+.abtn.slow{background:#fff;color:#1a8fe0}
+.spk .w1,.spk .w2{opacity:.55}
+.abtn.on .w1{animation:wv 0.9s infinite}.abtn.on .w2{animation:wv 0.9s .25s infinite}
+@keyframes wv{0%,100%{opacity:.25}50%{opacity:1}}
+.stop .icon-btn .spk{width:22px;height:22px;display:block}

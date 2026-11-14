@@ -9,7 +9,7 @@ function startHeartbeat() {
   }, 15000);
 }
 function sTop(coins, back) {
-  return `<div class="stop">${back ? '<button class="icon-btn" data-act="sHome" title="Home">←</button>' : '<div style="font-weight:800;font-size:20px">🇫🇷 French with Haresh</div>'}<div class="row">${coins == null ? '' : '<span class="coins">' + coins + '</span>'}<button class="icon-btn" title="Voice" data-act="sVoice">🔊</button><button class="icon-btn" title="Sign out" data-act="logout">↪</button></div></div>`;
+  return `<div class="stop">${back ? '<button class="icon-btn" data-act="sHome" title="Home">←</button>' : '<div style="font-weight:800;font-size:20px">🇫🇷 French with Haresh</div>'}<div class="row">${coins == null ? '' : '<span class="coins">' + coins + '</span>'}<button class="icon-btn" title="Voice" data-act="sVoice">${ICON_SPK}</button><button class="icon-btn" title="Sign out" data-act="logout">↪</button></div></div>`;
 }
 ACT.sHome = () => { ST.hw = null; go('#/s'); };
 ACT.sVoice = () => voiceModal(ST.lang);
@@ -66,7 +66,7 @@ ACT.sBubble = () => {
   const ss = (ST.hwData.items || []).filter((i) => i.s);
   const it = (ss.length ? ss : ST.hwData.items || [])[Math.floor(Math.random() * Math.max(1, (ss.length ? ss : ST.hwData.items || []).length))];
   if (!it) return;
-  modal(`<div style="text-align:center"><div style="font-size:42px">💬</div><h2>Phrase du jour</h2><div style="font-size:22px;font-weight:800;margin:10px 0">${esc(it.fr)}</div><div class="mute">${esc(it.en)}</div><div class="audio" style="margin-top:16px"><button class="abtn" data-act="gSay" data-t="${esc(it.fr)}">🔊 Listen</button><button class="abtn slow" data-act="gSay" data-t="${esc(it.fr)}" data-slow="1">🐢</button></div></div><div class="foot"><button class="btn" data-act="close">Merci!</button></div>`);
+  modal(`<div style="text-align:center"><div style="font-size:42px">💬</div><h2>Phrase du jour</h2><div style="font-size:22px;font-weight:800;margin:10px 0">${esc(it.fr)}</div><div class="mute">${esc(it.en)}</div><div class="audio" style="margin-top:16px"><button class="abtn" data-act="gSay" data-t="${esc(it.fr)}">${ICON_SPK}<span>Listen</span></button><button class="abtn slow" data-act="gSay" data-t="${esc(it.fr)}" data-slow="1">${ICON_SLOW}</button></div></div><div class="foot"><button class="btn" data-act="close">Merci!</button></div>`);
   setTimeout(() => speakText(it.fr, ST.lang), 300);
 };
 ACT.sTab = (t) => { ST.tab = t.dataset.k; route(); };
@@ -301,7 +301,7 @@ function canCheck() {
   return false;
 }
 const wave = (i) => Array.from({ length: 13 }, (_, k) => '<i style="height:' + (8 + ((k * 7 + i * 5) % 6) * 5) + 'px"></i>').join('');
-const audioRow = (txt) => canSpeak() ? `<div class="audio"><button class="abtn" data-act="gSay" data-t="${esc(txt)}">🔊 Listen</button><button class="abtn slow" data-act="gSay" data-t="${esc(txt)}" data-slow="1" title="Slowly">🐢</button></div>` : '';
+const audioRow = (txt) => canSpeak() ? `<div class="audio"><button class="abtn" data-act="gSay" data-t="${esc(txt)}">${ICON_SPK}<span>Listen</span></button><button class="abtn slow" data-act="gSay" data-t="${esc(txt)}" data-slow="1" title="Slowly">${ICON_SLOW}</button></div>` : '';
 function drawPlay() {
   const q = curQ(), s = G.st, ask = G.phase === 'ask';
   const pct = Math.round(G.answered / (G.planned + 0.0001) * 100);
@@ -357,7 +357,7 @@ function drawPlay() {
   }
 }
 ACT.gQuit = () => go('#/s/hw/' + G.id);
-ACT.gSay = (t) => say(t.dataset.t, !!t.dataset.slow);
+ACT.gSay = (t) => { t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1800); say(t.dataset.t, !!t.dataset.slow); };
 ACT.gPick = (t) => { const q = curQ(); G.st.sel = +t.dataset.i; drawPlay(); if (q.speakOpts) say(q.opts[G.st.sel]); };
 ACT.gTap = (t) => { G.st.chosen.push(+t.dataset.i); drawPlay(); };
 ACT.gUntap = (t) => { G.st.chosen.splice(+t.dataset.k, 1); drawPlay(); };

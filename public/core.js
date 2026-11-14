@@ -84,6 +84,8 @@ const LANG = { French: { flag: '🇫🇷', tts: 'fr-FR' }, Spanish: { flag: '�
 const VOICE = { cloud: false, cache: new Map(), cur: null, el: null, unlocked: false };
 try { VOICE.pref = JSON.parse(localStorage.getItem('md_voice') || '{}'); } catch (e) { VOICE.pref = {}; }
 const hasTTS = 'speechSynthesis' in window;
+const ICON_SPK = '<svg class="spk" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/><path class="w1" d="M15.5 9a4 4 0 0 1 0 6"/><path class="w2" d="M18.3 6.5a8 8 0 0 1 0 11"/></svg>';
+const ICON_SLOW = '<svg class="spk" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5v5h3L10 18V6L6 9.5H3z" fill="currentColor"/><path d="M13 12h8M18 9l3 3-3 3"/></svg>';
 function langPrefix(l) { return l.slice(0, 2).toLowerCase(); }
 function voiceScore(v) {
   const n = v.name; let s = 0;
@@ -126,7 +128,7 @@ async function speakText(text, lang, slow) {
       const url = await cloudUrl(text, lang, slow);
       if (!VOICE.el) VOICE.el = new Audio();
       VOICE.el.src = url; await VOICE.el.play(); return true;
-    } catch (e) { /* fall back to the device voice */ }
+    } catch (e) { VOICE.cloud = false; /* fall back to the device voice */ }
   }
   if (!hasTTS) return false;
   try {

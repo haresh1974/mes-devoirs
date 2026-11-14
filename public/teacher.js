@@ -216,8 +216,11 @@ ACT.asGo = async () => {
   AS.text = $('#asText').value;
   const names = AS.text.split(/\r?\n/).map((l) => l.split('\t')[0].trim()).filter(Boolean);
   if (!names.length) { AS.err = 'Add at least one name.'; return renderAS(); }
-  try { const r = await api('/classes/' + CLS.cls.id + '/students', 'POST', { names }); AS.list = r.students; PINLIST = r.students; AS.step = 1; renderAS(); }
-  catch (e) { AS.err = e.message; renderAS(); }
+  if (AS.busy) return;
+  AS.busy = true; AS.err = '';
+  const btn = document.querySelector('[data-act=asGo]'); if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }
+  try { const r = await api('/classes/' + CLS.cls.id + '/students', 'POST', { names }); AS.list = r.students; PINLIST = r.students; AS.step = 1; AS.busy = false; renderAS(); }
+  catch (e) { AS.busy = false; AS.err = e.message; renderAS(); }
 };
 
 /* ---- homework form (create / edit) ---- */

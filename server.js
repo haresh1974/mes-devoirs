@@ -337,12 +337,10 @@ app.post('/api/classes/:id/students', teacherOnly(async (req, res) => {
   if (!names.length) return res.status(400).json({ error: 'Add at least one name.' });
   const existing = await db.all('SELECT pin FROM students WHERE class_id = ?', [c.id]);
   const taken = new Set(existing.map((s) => s.pin));
-  const out = [];
-  for (const name of names) {
-    const pin = newPin(taken), id = uid();
-    await db.run('INSERT INTO students (id,class_id,name,pin,created,last_active) VALUES (?,?,?,?,?,?)', [id, c.id, name, pin, now(), null]);
-    out.push({ id, name, pin });
-  }
+  const out = names.map((name) => ({ id: uid(), name, pin: newPin(taken) }));
+  const t = now();
+  await db.run('INSERT INTO students (id,class_id,name,pin,created,last_active) VALUES ' + out.map(() => '(?,?,?,?,?,?)').join(','),
+    out.flatMap((o) => [o.id, c.id, o.name, o.pin, t, null]));
   res.json({ students: out });
 }));
 
@@ -572,7 +570,31 @@ app.post('/api/student/ping', studentOnly(async (req, res) => {
 const TTS_KEY = process.env.GOOGLE_TTS_API_KEY || '';
 const TTS_URL = process.env.TTS_API_URL || 'https://texttospeech.googleapis.com/v1/text:synthesize';
 const TTS_VOICES = { 'fr-FR': process.env.TTS_VOICE_FR || 'fr-FR-Neural2-A', 'es-ES': process.env.TTS_VOICE_ES || 'es-ES-Neural2-A' };
-function ttsOn() { return !!TTS_KEY; }
+let EDGE = null; try { EDGE = require('msedge-tts'); } catch (e) { /* optional */ }
+const EDGE_VOICES = { 'fr-FR': 'fr-FR-DeniseNeural', 'es-ES': 'es-ES-ElviraNeural' };
+let edgeFails = 0, edgeOffUntil = 0;
+function ttsOn() { return !!TTS_KEY || (!!EDGE && Date.now() > edgeOffUntil); }
+const xmlEsc = (t) => t.replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
+async function edgeSynth(text, lang, slow) {
+  const tts = new EDGE.MsEdgeTTS();
+  await tts.setMetadata(EDGE_VOICES[lang], EDGE.OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+  const { audioStream } = tts.toStream(xmlEsc(text), { rate: slow ? '-35%' : '-8%' });
+  const chunks = [];
+  await new Promise((ok, bad) => { const to = setTimeout(() => bad(new Error('timeout')), 15000); audioStream.on('data', (d) => chunks.push(d)); audioStream.on('close', () => { clearTimeout(to); ok(); }); audioStream.on('error', bad); });
+  const buf = Buffer.concat(chunks); if (buf.length < 500) throw new Error('empty');
+  return buf.toString('base64');
+}
+async function googleSynth(text, lang, slow) {
+  const r = await fetch(TTS_URL + '?key=' + encodeURIComponent(TTS_KEY), { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ input: { text }, voice: { languageCode: lang, name: TTS_VOICES[lang] }, audioConfig: { audioEncoding: 'MP3', speakingRate: slow ? 0.7 : 0.92 } }) });
+  if (!r.ok) throw new Error('google ' + r.status);
+  const j = await r.json(); if (!j.audioContent) throw new Error('empty'); return j.audioContent;
+}
+async function synth(text, lang, slow) {
+  if (TTS_KEY) return googleSynth(text, lang, slow);
+  try { const a = await edgeSynth(text, lang, slow); edgeFails = 0; return a; }
+  catch (e) { if (++edgeFails >= 3) { edgeOffUntil = Date.now() + 600000; edgeFails = 0; } console.error('Edge TTS failed:', e.message); throw e; }
+}
 app.get('/api/tts', wrap(async (req, res) => {
   const u = (await auth(req, 'student')) || (await auth(req, 'teacher'));
   if (!u) return res.status(401).json({ error: 'Please sign in.' });
@@ -581,18 +603,13 @@ app.get('/api/tts', wrap(async (req, res) => {
   const text = clean(req.query.text, 200), slow = req.query.slow === '1';
   if (!text) return res.status(400).json({ error: 'No text.' });
   if (limited('tts:' + u.id, 600, 3600000)) return res.status(429).json({ error: 'Too many audio requests.' });
-  const key = crypto.createHash('sha1').update([lang, TTS_VOICES[lang], slow ? 's' : 'n', text].join('|')).digest('hex');
+  const engine = TTS_KEY ? TTS_VOICES[lang] : EDGE_VOICES[lang];
+  const key = crypto.createHash('sha1').update([lang, engine, slow ? 's' : 'n', text].join('|')).digest('hex');
   let row = await db.get('SELECT mp3 FROM audio WHERE key = ?', [key]);
   if (!row) {
-    const r = await fetch(TTS_URL + '?key=' + encodeURIComponent(TTS_KEY), {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input: { text }, voice: { languageCode: lang, name: TTS_VOICES[lang] }, audioConfig: { audioEncoding: 'MP3', speakingRate: slow ? 0.7 : 0.92 } })
-    });
-    if (!r.ok) { console.error('TTS error', r.status); return res.status(502).json({ error: 'Voice service error.' }); }
-    const j = await r.json();
-    if (!j.audioContent) return res.status(502).json({ error: 'Voice service error.' });
-    try { await db.run('INSERT INTO audio (key,mp3,created) VALUES (?,?,?)', [key, j.audioContent, now()]); } catch (e) { /* another request cached it first */ }
-    row = { mp3: j.audioContent };
+    let mp3; try { mp3 = await synth(text, lang, slow); } catch (e) { return res.status(502).json({ error: 'Voice service error.' }); }
+    try { await db.run('INSERT INTO audio (key,mp3,created) VALUES (?,?,?)', [key, mp3, now()]); } catch (e) { /* cached by another request */ }
+    row = { mp3 };
   }
   res.set({ 'Content-Type': 'audio/mpeg', 'Cache-Control': 'private, max-age=86400' });
   res.send(Buffer.from(row.mp3, 'base64'));
@@ -607,14 +624,11 @@ app.post('/api/library/warm', wrap(async (req, res) => {
   rows.forEach((r) => JSON.parse(r.items).forEach((i) => texts.add(clean(i.fr, 200))));
   let done = 0, skipped = 0;
   for (const text of texts) {
-    const key = crypto.createHash('sha1').update(['fr-FR', TTS_VOICES['fr-FR'], 'n', text].join('|')).digest('hex');
+    const key = crypto.createHash('sha1').update(['fr-FR', TTS_KEY ? TTS_VOICES['fr-FR'] : EDGE_VOICES['fr-FR'], 'n', text].join('|')).digest('hex');
     if (await db.get('SELECT key FROM audio WHERE key = ?', [key])) { skipped++; continue; }
     if (done >= 150) break;
-    const r = await fetch(TTS_URL + '?key=' + encodeURIComponent(TTS_KEY), { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input: { text }, voice: { languageCode: 'fr-FR', name: TTS_VOICES['fr-FR'] }, audioConfig: { audioEncoding: 'MP3', speakingRate: 0.92 } }) });
-    if (!r.ok) break;
-    const j = await r.json();
-    try { await db.run('INSERT INTO audio (key,mp3,created) VALUES (?,?,?)', [key, j.audioContent, now()]); } catch (e) {}
+    let mp3; try { mp3 = await synth(text, 'fr-FR', false); } catch (e) { break; }
+    try { await db.run('INSERT INTO audio (key,mp3,created) VALUES (?,?,?)', [key, mp3, now()]); } catch (e) {}
     done++;
   }
   res.json({ generated: done, already: skipped, remaining: Math.max(0, texts.size - done - skipped) });
