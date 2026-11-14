@@ -478,7 +478,7 @@ async function openAssign(ids) {
     <label class="row"><input type="radio" name="asW" value="students"> Choose students</label>
     <div id="asX"></div>
     <div class="row" style="align-items:flex-start;margin-top:6px"><div style="flex:1;min-width:170px"><label class="f">Starts</label><input id="asS" type="datetime-local" value="${loc(ASG.start)}"></div><div style="flex:1;min-width:170px"><label class="f">Due</label><input id="asD" type="datetime-local" value="${loc(ASG.due)}"></div></div>
-    <div class="err" id="asE"></div><div class="foot"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="asGo">Assign</button></div>`, true);
+    <div class="err" id="asE"></div><div class="foot"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="assignGo">Assign</button></div>`, true);
   $('#asC').addEventListener('change', drawAsX);
   document.querySelectorAll('input[name=asW]').forEach((r) => r.addEventListener('change', drawAsX));
   drawAsX();
@@ -495,7 +495,7 @@ async function drawAsX() {
   const prev = LIB.homework.filter((h) => h.assignments.some((a) => a.class_id === cid));
   box.innerHTML = prev.length ? `<label class="f">Previous homework</label><select id="asP">${prev.map((h) => `<option value="${esc(h.id)}">${esc(h.title)}</option>`).join('')}</select>` : '<div class="mute small" style="margin:8px 0">Nothing has been assigned to this class yet, so there is no previous homework to compare.</div>';
 }
-ACT.asGo = async () => {
+ACT.assignGo = async () => {
   const w = document.querySelector('input[name=asW]:checked').value;
   const body = { class_id: $('#asC').value, homework_ids: ASG.ids, audience: w, start_at: new Date($('#asS').value).getTime(), due_at: $('#asD').value ? new Date($('#asD').value).getTime() : null };
   if (w === 'students') body.student_ids = [...document.querySelectorAll('.asSt:checked')].map((c) => c.value);
