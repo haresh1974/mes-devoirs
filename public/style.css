@@ -238,3 +238,6 @@ td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 .tlbar{position:absolute;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 9px;font-size:12.5px;font-weight:800;cursor:pointer;overflow:hidden;white-space:nowrap;color:#16213e}
 .tlbar span{overflow:hidden;text-overflow:ellipsis}
 .tlnow{position:absolute;top:0;bottom:0;width:2px;background:var(--blue);opacity:.5;pointer-events:none;z-index:2}
+
+.hbar{flex:1;height:10px;border-radius:6px;background:#edf0f9;overflow:hidden}.hbar i{display:block;height:100%;background:#4a56d9;border-radius:6px}
+.hn{width:48px;font-size:12px;color:var(--mute);text-align:right}

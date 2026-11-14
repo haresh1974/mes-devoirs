@@ -39,6 +39,21 @@ ROUTES.push([/^\/t$/, async () => {
     ['Get students onto the website', 'Share the link, class code and PINs.', shared, '<label class="row small" style="font-weight:800;gap:6px"><input type="checkbox" id="sharedChk" ' + (shared ? 'checked' : '') + '> Done</label>']
   ];
   const n = steps.filter((s) => s[2]).length;
+  const feat = ov.find((o) => o.homework.length);
+  if (feat && n === 4 || feat && T.homeFeat !== false) {
+    const hs = feat.homework.slice().sort((x, y) => (y.start_at <= Date.now()) - (x.start_at <= Date.now()) || y.start_at - x.start_at);
+    const pick = (T.homeHw && hs.find((h) => h.id === T.homeHw)) || hs[0];
+    const d = await api('/homework/' + pick.id), c = feat.cls;
+    const bar = `<div class="spread"><div class="row"><span style="font-size:34px">${(LANG[c.language] || LANG.French).flag}</span><h1>${esc(c.name)}</h1><span class="mute">${feat.students.length} students</span></div>
+      <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode2" data-c="${esc(c.code)}" title="Copy">⧉</button></div><button class="btn ghost" data-act="openClass" data-id="${esc(c.id)}">All homework &amp; students</button></div></div>
+      <div class="row" style="margin:16px 0 4px"><span class="mute small" style="font-weight:800">HOMEWORK</span><select id="homeHw" style="max-width:360px">${hs.map((h) => `<option value="${esc(h.id)}" ${h.id === pick.id ? 'selected' : ''}>${esc(h.title)}</option>`).join('')}</select>${n < 4 ? '<button class="btn ghost sm" data-act="hideSetup">Setup checklist</button>' : ''}</div>`;
+    shell('home', bar + '<div class="card" style="margin-top:10px">' + hwHtml(d, false) + '</div>');
+    $('#homeHw').addEventListener('change', (e) => { T.homeHw = e.target.value; route(); });
+    ACT.copyCode2 = (t) => copyText(t.dataset.c);
+    ACT.hideSetup = () => { T.homeFeat = false; route(); };
+    return;
+  }
+  T.homeFeat = true;
   shell('home', `<h1>Welcome back</h1><p class="sub">Pick a class in the sidebar to see how your students are doing.</p>
     <div class="card" style="padding:0"><div style="padding:18px 20px"><div class="spread"><div><h3>${n === 4 ? "You're all set!" : 'Get set up'}</h3><div class="mute small">${n === 4 ? 'Every step done. Your classes are live.' : 'Four quick steps.'}</div></div><b>${n} / 4</b></div>
       <div class="bars">${[0, 1, 2, 3].map((i) => '<i class="' + (i < n ? 'on' : '') + '"></i>').join('')}</div></div>
@@ -363,16 +378,14 @@ ROUTES.push([/^\/t\/hw\/(\w+)\/edit$/, async (id) => {
 }]);
 
 /* ---- homework detail ---- */
-ROUTES.push([/^\/t\/hw\/(\w+)$/, async (id) => {
-  await loadClasses();
-  const d = await api('/homework/' + id);
+function hwHtml(d, standalone) {
   const { hw, students, days } = d;
   let inner = '';
   if (T.htab === 'timings') {
     const cs = Math.max(1, d.classSize);
-    inner = `<div class="card"><div class="spread"><div><h3>Pupils logged on each day</h3><div class="mute small">Each notch is one pupil. Filled notches pack to the left.</div></div>
-      <div class="row" style="gap:26px"><div style="text-align:right"><div class="bigstat">${d.loggedAny}/${d.classSize}</div><div class="mute small">logged on at all</div></div></div></div>
-      <div class="daychart" style="margin-top:14px">${days.map((x) => `<div class="r"><div class="d">${esc(new Date(x.day + 'T00:00:00Z').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }))}</div><div class="notches">${Array.from({ length: cs }, (_, i) => '<i class="' + (i < x.n ? 'on' : '') + '"></i>').join('')}</div></div>`).join('')}</div></div>
+    inner = `<div class="card"><div class="spread"><div><h3>Pupils logged on each day</h3><div class="mute small">Bar length shows how much of the class logged on each day.</div></div>
+      <div class="row" style="gap:26px"><div style="text-align:right"><div class="bigstat">${d.loggedAny}/${d.classSize}</div><div class="mute small">logged on at all</div></div><div style="text-align:right"><div class="bigstat">${(days.reduce((t, x) => t + x.n, 0) / cs).toFixed(1)} of ${days.length}</div><div class="mute small">average days per pupil</div></div></div></div>
+      <div class="daychart" style="margin-top:14px">${days.map((x) => `<div class="r"><div class="d">${esc(new Date(x.day + 'T00:00:00Z').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }))}</div><div class="hbar"><i style="width:${Math.round(x.n / cs * 100)}%"></i></div><div class="hn">${x.n}/${d.classSize}</div></div>`).join('')}</div></div>
       <div class="kan">${[['new', 'Not started', 'c0'], ['progress', 'In progress', 'c1'], ['complete', 'Complete', 'c2']].map(([k, lbl, cl]) => {
         const g = students.filter((s) => s.status === k);
         return `<div class="col ${cl}"><h4>${lbl}<span class="chip">${g.length}</span></h4>${g.length ? g.map((s) => `<div class="scard"><div><b>${esc(s.name)}</b><div class="mute small">${esc(s.cls || '')}${s.cls ? ' · ' : ''}${s.coins} coins · ${fmtDur(s.secs)}${s.status === 'complete' ? (s.onTime ? ' · ✅ on time' : ' · ⏰ late') : ''}</div></div><div class="ring" style="--p:${Math.round(s.done / Math.max(1, hw.exercises.length) * 100)}%"><span>${s.done}</span></div></div>`).join('') : '<div class="mute small" style="text-align:center;padding:14px">No pupils here</div>'}</div>`;
@@ -384,13 +397,19 @@ ROUTES.push([/^\/t\/hw\/(\w+)$/, async (id) => {
     const ranked = students.slice().sort((a, b) => b.coins - a.coins || a.name.localeCompare(b.name));
     inner = ranked.map((s, i) => `<div class="lb"><div class="rk">${['🥇', '🥈', '🥉'][i] || i + 1}</div><div class="nm">${esc(s.name)}</div><div>${s.coins} 🪙</div></div>`).join('') || '<div class="card mute">No students yet.</div>';
   }
-  shell(d.cls.id, `<p><button class="linkbtn" data-act="backClass" data-id="${esc(d.cls.id)}">← ${esc(d.cls.name)}</button></p>
+  const html = `${standalone ? `<p><button class="linkbtn" data-act="backClass" data-id="${esc(d.cls.id)}">← ${esc(d.cls.name)}</button></p>` : ''}
     <div class="spread"><div><div class="row"><h1>${esc(hw.title)}</h1><span class="chip">${esc(hw.tier)}</span></div><div class="mute">${esc(hw.topic || '')}</div><div class="mute small">${hw.folder ? '📁 ' + esc(hw.folder) + ' · ' : ''}${hw.items.length} items · ${hw.exercises.length} activities</div></div>
     <div class="row"><button class="btn ghost sm" data-act="editHw" data-id="${esc(hw.id)}">✏ Edit</button><button class="btn ghost sm" data-act="delHw" data-id="${esc(hw.id)}">🗑 Delete</button></div></div>
     <div class="card" style="margin-top:14px"><div class="spread"><h3>Assignments</h3><button class="btn sm" data-act="assignOne" data-id="${esc(hw.id)}">＋ Assign</button></div>${(d.assignments || []).length ? (d.assignments).map((a) => `<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><div><b>${esc(a.class_name)}</b> <span class="chip">${esc(audLabel(a.audience))}</span> <span class="mute small">${a.size} students · ${esc(fmtDate(a.start_at))} → ${esc(fmtDate(a.due_at))}</span></div><div class="row"><button class="btn ghost sm" data-act="editAsg" data-id="${esc(a.id)}" data-s="${a.start_at}" data-d="${a.due_at || ''}">Dates</button><button class="btn ghost sm" data-act="rmAsg" data-id="${esc(a.id)}">Remove</button></div></div>`).join('') : '<p class="mute" style="margin:8px 0 0">Not assigned to anyone yet.</p>'}</div>
-    <div class="tabs" style="margin-top:16px">${[['timings', 'Timings'], ['results', 'Results'], ['board', 'Leaderboard']].map(([k, l]) => `<button class="${T.htab === k ? 'on' : ''}" data-act="htab" data-k="${k}">${l}</button>`).join('')}</div>${inner}`);
+    <div class="tabs" style="margin-top:16px">${[['timings', 'Timings'], ['results', 'Results'], ['board', 'Leaderboard']].map(([k, l]) => `<button class="${T.htab === k ? 'on' : ''}" data-act="htab" data-k="${k}">${l}</button>`).join('')}</div>${inner}`;
   ACT.delHw = () => modal(`<h2>Delete this homework?</h2><p><b>${esc(hw.title)}</b> will be deleted from your library and from every class it is assigned to, with all results.</p><div class="foot"><button class="btn ghost" data-act="close">Keep it</button><button class="btn red" data-act="delHw2">Delete</button></div>`);
   ACT.delHw2 = async () => { await api('/homework/' + hw.id, 'DELETE'); closeModal(); go('#/t/library'); };
+  return html;
+}
+ROUTES.push([/^\/t\/hw\/(\w+)$/, async (id) => {
+  await loadClasses();
+  const d = await api('/homework/' + id);
+  shell(d.cls.id, hwHtml(d, true));
 }]);
 ACT.backClass = (t) => go('#/t/class/' + t.dataset.id);
 ACT.editHw = (t) => go('#/t/hw/' + t.dataset.id + '/edit');
