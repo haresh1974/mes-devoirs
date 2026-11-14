@@ -218,3 +218,23 @@ td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 .flip{min-height:200px;border-radius:22px;border:3px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:34px;font-weight:800;text-align:center;padding:20px;cursor:pointer}
 .flip.back{background:var(--ink);color:#fff;border-color:var(--ink)}
 .hint{background:#fff8e1;border-radius:12px;padding:8px 12px;font-size:15px;margin:0 0 12px}
+
+.folder{background:#fff;border:1.5px solid var(--line);border-radius:16px;margin-bottom:12px;padding:4px 14px}
+.folder summary{cursor:pointer;font-weight:800;padding:12px 0;list-style:none}
+.librow{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.librow input[type=checkbox]{width:20px;height:20px;flex:none}
+.tlleg{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:700;margin-bottom:12px}
+.tlleg i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:5px;vertical-align:-2px}
+.tlleg i.sch,.tlbar.sch{background:#eaf1ff;border:2px dashed #6d9bf5}
+.tlwrap{padding:0;overflow:hidden}
+.tlscroll{overflow-x:auto;position:relative}
+.tlhead,.tlrow{display:flex;border-bottom:1px solid var(--line)}
+.tlname{flex:0 0 150px;position:sticky;left:0;background:#fff;z-index:3;padding:10px 12px;font-weight:800;border-right:1px solid var(--line)}
+.tltrack{position:relative;flex:none}
+.tlday{position:absolute;top:18px;height:32px;text-align:center;font-size:11px;color:var(--mute);border-left:1px solid var(--line)}
+.tlday b{display:block;font-size:13px;color:var(--ink)}.tlday.we{background:#f6f7fc}
+.tlday.today b{background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;line-height:22px;margin:0 auto}
+.tlwk{position:absolute;top:0;font-size:11px;font-weight:800;color:var(--mute);padding-left:4px}
+.tlbar{position:absolute;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 9px;font-size:12.5px;font-weight:800;cursor:pointer;overflow:hidden;white-space:nowrap;color:#16213e}
+.tlbar span{overflow:hidden;text-overflow:ellipsis}
+.tlnow{position:absolute;top:0;bottom:0;width:2px;background:var(--blue);opacity:.5;pointer-events:none;z-index:2}

@@ -24,9 +24,15 @@ const SCHEMA = [
     score INTEGER NOT NULL, total INTEGER NOT NULL, secs INTEGER NOT NULL, coins INTEGER NOT NULL, ts BIGINT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS activity (
     id TEXT PRIMARY KEY, student_id TEXT NOT NULL, homework_id TEXT, day TEXT NOT NULL, secs INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS assignments (
+    id TEXT PRIMARY KEY, homework_id TEXT NOT NULL, class_id TEXT NOT NULL, start_at BIGINT NOT NULL,
+    due_at BIGINT, audience TEXT NOT NULL, student_ids TEXT, created BIGINT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)`,
   `CREATE TABLE IF NOT EXISTS audio (
     key TEXT PRIMARY KEY, mp3 TEXT NOT NULL, created BIGINT NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS i_students_class ON students(class_id)`,
+  `CREATE INDEX IF NOT EXISTS i_assign_class ON assignments(class_id)`,
+  `CREATE INDEX IF NOT EXISTS i_assign_hw ON assignments(homework_id)`,
   `CREATE INDEX IF NOT EXISTS i_attempts_hw ON attempts(homework_id)`,
   `CREATE INDEX IF NOT EXISTS i_activity_student ON activity(student_id)`
 ];
@@ -48,7 +54,7 @@ async function open() {
       run: async (sql, p = []) => { await pool.query(conv(sql), p); }
     };
     for (const s of SCHEMA) await db.run(s);
-    try { await db.run('ALTER TABLE homework ADD COLUMN extra TEXT'); } catch (e) { /* already there */ }
+    await upgrade(db);
     return db;
   }
   const Database = require('better-sqlite3');
@@ -63,8 +69,25 @@ async function open() {
     run: async (sql, p = []) => { sq.prepare(sql).run(...p); }
   };
   for (const s of SCHEMA) await db.run(s);
-  try { await db.run('ALTER TABLE homework ADD COLUMN extra TEXT'); } catch (e) { /* already there */ }
+  await upgrade(db);
   return db;
+}
+
+/* Small upgrades for databases created by earlier versions. Safe to run on every start. */
+async function upgrade(db) {
+  for (const col of ['extra TEXT', 'folder TEXT']) {
+    try { await db.run('ALTER TABLE homework ADD COLUMN ' + col); } catch (e) { /* already there */ }
+  }
+  // Homework that was already given to a class (it has a due date) becomes an assignment to the whole class, once.
+  const done = await db.get("SELECT v FROM meta WHERE k = 'assign_migrated'");
+  if (!done) {
+    const old = await db.all('SELECT id, class_id, due_at, created FROM homework WHERE due_at IS NOT NULL');
+    for (const h of old) {
+      await db.run('INSERT INTO assignments (id,homework_id,class_id,start_at,due_at,audience,student_ids,created) VALUES (?,?,?,?,?,?,?,?)',
+        [require('crypto').randomBytes(9).toString('hex'), h.id, h.class_id, h.created, h.due_at, 'all', null, Date.now()]);
+    }
+    await db.run("INSERT INTO meta (k,v) VALUES ('assign_migrated','1')");
+  }
 }
 
 module.exports = { open };
