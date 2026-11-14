@@ -45,7 +45,7 @@ ROUTES.push([/^\/t$/, async () => {
     const pick = (T.homeHw && hs.find((h) => h.id === T.homeHw)) || hs[0];
     const d = await api('/homework/' + pick.id), c = feat.cls;
     const bar = `<div class="spread"><div class="row"><span style="font-size:34px">${(LANG[c.language] || LANG.French).flag}</span><h1>${esc(c.name)}</h1><span class="mute">${feat.students.length} students</span></div>
-      <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode2" data-c="${esc(c.code)}" title="Copy">⧉</button></div><button class="btn ghost" data-act="openClass" data-id="${esc(c.id)}">All homework &amp; students</button></div></div>
+      <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode2" data-c="${esc(c.code)}" title="Copy">⧉</button></div><button class="btn ghost" data-act="notify" data-id="${esc(c.id)}">🔔 Send notification</button><button class="btn ghost" data-act="openClass" data-id="${esc(c.id)}">All homework &amp; students</button></div></div>
       <div class="row" style="margin:16px 0 4px"><span class="mute small" style="font-weight:800">HOMEWORK</span><select id="homeHw" style="max-width:360px">${hs.map((h) => `<option value="${esc(h.id)}" ${h.id === pick.id ? 'selected' : ''}>${esc(h.title)}</option>`).join('')}</select>${n < 4 ? '<button class="btn ghost sm" data-act="hideSetup">Setup checklist</button>' : ''}</div>`;
     shell('home', bar + '<div class="card" style="margin-top:10px">' + hwHtml(d, false) + '</div>');
     $('#homeHw').addEventListener('change', (e) => { T.homeHw = e.target.value; route(); });
@@ -148,7 +148,7 @@ ROUTES.push([/^\/t\/class\/(\w+)$/, async (id) => {
         : '<div class="card mute">No students yet. Add your class list to get a PIN for each child.</div>');
   }
   shell(c.id, `<div class="spread"><div class="row"><span style="font-size:34px">${flag}</span><h1>${esc(c.name)}</h1><span class="mute">${o.students.length} students</span></div>
-    <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode" title="Copy">⧉</button></div><button class="btn ghost" data-act="classSettings">⚙ Class settings</button></div></div>
+    <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode" title="Copy">⧉</button></div><button class="btn ghost" data-act="notify" data-id="${esc(c.id)}">🔔 Send notification</button><button class="btn ghost" data-act="classSettings">⚙ Class settings</button></div></div>
     <div class="tabs" style="margin-top:18px"><button class="${T.tab === 'hw' ? 'on' : ''}" data-act="tabHw">📝 Homework ${o.homework.length}</button><button class="${T.tab === 'st' ? 'on' : ''}" data-act="tabSt">👥 Students ${o.students.length}</button></div>${inner}`);
 }]);
 ACT.tabHw = () => { T.tab = 'hw'; route(); };
@@ -399,7 +399,7 @@ function hwHtml(d, standalone) {
   }
   const html = `${standalone ? `<p><button class="linkbtn" data-act="backClass" data-id="${esc(d.cls.id)}">← ${esc(d.cls.name)}</button></p>` : ''}
     <div class="spread"><div><div class="row"><h1>${esc(hw.title)}</h1><span class="chip">${esc(hw.tier)}</span></div><div class="mute">${esc(hw.topic || '')}</div><div class="mute small">${hw.folder ? '📁 ' + esc(hw.folder) + ' · ' : ''}${hw.items.length} items · ${hw.exercises.length} activities</div></div>
-    <div class="row"><button class="btn ghost sm" data-act="editHw" data-id="${esc(hw.id)}">✏ Edit</button><button class="btn ghost sm" data-act="delHw" data-id="${esc(hw.id)}">🗑 Delete</button></div></div>
+    <div class="row"><button class="btn ghost sm" data-act="paperQ" data-id="${esc(hw.id)}">🖨 Paper quizzes</button><button class="btn ghost sm" data-act="editHw" data-id="${esc(hw.id)}">✏ Edit</button><button class="btn ghost sm" data-act="delHw" data-id="${esc(hw.id)}">🗑 Delete</button></div></div>
     <div class="card" style="margin-top:14px"><div class="spread"><h3>Assignments</h3><button class="btn sm" data-act="assignOne" data-id="${esc(hw.id)}">＋ Assign</button></div>${(d.assignments || []).length ? (d.assignments).map((a) => `<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><div><b>${esc(a.class_name)}</b> <span class="chip">${esc(audLabel(a.audience))}</span> <span class="mute small">${a.size} students · ${esc(fmtDate(a.start_at))} → ${esc(fmtDate(a.due_at))}</span></div><div class="row"><button class="btn ghost sm" data-act="editAsg" data-id="${esc(a.id)}" data-s="${a.start_at}" data-d="${a.due_at || ''}">Dates</button><button class="btn ghost sm" data-act="rmAsg" data-id="${esc(a.id)}">Remove</button></div></div>`).join('') : '<p class="mute" style="margin:8px 0 0">Not assigned to anyone yet.</p>'}</div>
     <div class="tabs" style="margin-top:16px">${[['timings', 'Timings'], ['results', 'Results'], ['board', 'Leaderboard']].map(([k, l]) => `<button class="${T.htab === k ? 'on' : ''}" data-act="htab" data-k="${k}">${l}</button>`).join('')}</div>${inner}`;
   ACT.delHw = () => modal(`<h2>Delete this homework?</h2><p><b>${esc(hw.title)}</b> will be deleted from your library and from every class it is assigned to, with all results.</p><div class="foot"><button class="btn ghost" data-act="close">Keep it</button><button class="btn red" data-act="delHw2">Delete</button></div>`);
@@ -556,3 +556,28 @@ ACT.tlPrev = () => { TL.off--; drawTL(); };
 ACT.tlNext = () => { TL.off++; drawTL(); };
 ACT.tlToday = () => { TL.off = 0; drawTL(); };
 ACT.tlZ = (t) => { TL.zoom = Math.min(120, Math.max(28, TL.zoom + (+t.dataset.d) * 14)); drawTL(); };
+
+/* notifications + paper quizzes */
+ACT.notify = (t) => modal(`<h2>🔔 Send notification</h2><p class="mute small" style="margin:0 0 8px">Every student in this class sees your message at the top of their home screen for two weeks.</p><textarea id="nMsg" maxlength="300" style="min-height:90px" placeholder="e.g. Bonne semaine ! Please finish the Family vocab by Friday."></textarea><div class="err" id="nErr"></div><div class="foot"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="notify2" data-id="${esc(t.dataset.id)}">Send</button></div>`);
+ACT.notify2 = async (t) => {
+  try { await api('/classes/' + t.dataset.id + '/notify', 'POST', { message: $('#nMsg').value }); closeModal(); toast('Notification sent'); }
+  catch (e) { $('#nErr').textContent = e.message; }
+};
+ACT.paperQ = async (t) => {
+  const d = await api('/homework/' + t.dataset.id);
+  PQ = d.hw;
+  modal(`<h2>🖨 Paper quiz</h2><p class="mute small" style="margin:0 0 8px">${esc(PQ.title)} · ${PQ.items.length} items</p>
+    <label class="f">Type</label><select id="pqT"><option value="fr">Translate French → English</option><option value="en">Translate English → French</option><option value="mix">Mixed</option></select>
+    <label class="f">Number of questions</label><input id="pqN" type="text" value="${Math.min(20, PQ.items.length)}">
+    <label class="row" style="margin-top:12px"><input type="checkbox" id="pqK" checked> Include answer key on a separate page</label>
+    <div class="foot"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="pqGo">Print</button></div>`);
+};
+let PQ = null;
+ACT.pqGo = () => {
+  const n = Math.max(1, Math.min(PQ.items.length, parseInt($('#pqN').value, 10) || 10)), ty = $('#pqT').value, key = $('#pqK').checked;
+  const its = PQ.items.slice().sort(() => Math.random() - 0.5).slice(0, n).map((i, k) => ({ ...i, dir: ty === 'mix' ? (k % 2 ? 'en' : 'fr') : ty }));
+  const q = its.map((i, k) => `<div class="q">${k + 1}. <b>${esc(i.dir === 'fr' ? i.fr : i.en)}</b> &nbsp; ________________________________</div>`).join('');
+  const a = its.map((i, k) => `<div class="q">${k + 1}. ${esc(i.dir === 'fr' ? i.fr : i.en)} → <b>${esc(i.dir === 'fr' ? i.en : i.fr)}</b></div>`).join('');
+  closeModal();
+  printHTML(`<div class="pq" style="font-family:sans-serif;padding:24px"><h2>${esc(PQ.title)}</h2><p>Name: ______________________ &nbsp; Date: ____________ &nbsp; Score: ____ / ${n}</p>${q}${key ? '<div class="pb"><h2>Answer key</h2>' + a + '</div>' : ''}</div>`);
+};

@@ -322,6 +322,14 @@ function newPin(taken) {
   for (let i = 0; i < 200; i++) { const p = String(crypto.randomInt(1000, 10000)); if (!taken.has(p)) { taken.add(p); return p; } }
   throw new Error('no pin');
 }
+app.post('/api/classes/:id/notify', teacherOnly(async (req, res) => {
+  const c = await ownClass(req, req.params.id);
+  if (!c) return res.status(404).json({ error: 'Not found.' });
+  const m = clean(req.body.message, 300);
+  if (!m) return res.status(400).json({ error: 'Type a message first.' });
+  await db.run('INSERT INTO notices (id, class_id, message, created) VALUES (?,?,?,?)', [uid(), c.id, m, Date.now()]);
+  res.json({ ok: true });
+}));
 app.post('/api/classes/:id/students', teacherOnly(async (req, res) => {
   const c = await ownClass(req, req.params.id);
   if (!c) return res.status(404).json({ error: 'Not found.' });
@@ -509,7 +517,8 @@ app.get('/api/student/home', studentOnly(async (req, res) => {
       .sort((x, y) => y.coins - x.coins || x.name.localeCompare(y.name));
     out.push({ id: h.id, title: h.title, topic: h.topic, tier: h.tier, due_at: dueOf(mine.filter((a) => a.homework_id === id)), done: st.done.length, total: st.total, status: st.status, rank: b.findIndex((x) => x.id === s.id) + 1, of: b.length });
   }
-  res.json({ student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, tts: ttsOn() });
+  const notices = await db.all('SELECT id, message, created FROM notices WHERE class_id = ? AND created > ? ORDER BY created DESC LIMIT 3', [c.id, Date.now() - 14 * 86400000]);
+  res.json({ student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn() });
 }));
 app.get('/api/student/homework/:id', studentOnly(async (req, res) => {
   const hw = await studentHw(req, req.params.id);

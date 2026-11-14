@@ -28,6 +28,8 @@ const SCHEMA = [
     id TEXT PRIMARY KEY, homework_id TEXT NOT NULL, class_id TEXT NOT NULL, start_at BIGINT NOT NULL,
     due_at BIGINT, audience TEXT NOT NULL, student_ids TEXT, created BIGINT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)`,
+  `CREATE TABLE IF NOT EXISTS notices (id TEXT PRIMARY KEY, class_id TEXT, message TEXT, created BIGINT)`,
+  `CREATE INDEX IF NOT EXISTS i_notice_class ON notices(class_id)`,
   `CREATE TABLE IF NOT EXISTS audio (
     key TEXT PRIMARY KEY, mp3 TEXT NOT NULL, created BIGINT NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS i_students_class ON students(class_id)`,

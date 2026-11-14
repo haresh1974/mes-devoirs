@@ -25,10 +25,13 @@ ROUTES.push([/^\/s$/, async () => {
     return `<button class="hcard" data-act="sOpen" data-id="${esc(h.id)}"><div class="spread"><h3>${esc(h.title)}</h3>${h.status === 'complete' ? '<span class="badge g">✓ Done</span>' : ''}</div>
       <div class="mute">${esc(h.topic || '')}</div><div class="spread small" style="margin-top:8px;font-weight:800"><span>${esc(dueLeft(h.due_at))}</span><span>#${h.rank} of ${h.of}</span></div><div class="pbar"><i style="width:${pct}%"></i></div></button>`;
   }).join('');
+  let seen = []; try { seen = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {}
+  const notes = (d.notices || []).filter((n) => !seen.includes(n.id)).map((n) => `<div class="notice"><span>🔔</span><div style="flex:1"><b>Message from your teacher</b><div>${esc(n.message)}</div></div><button class="icon-btn" data-act="seeNote" data-id="${esc(n.id)}" style="width:30px;height:30px">✕</button></div>`).join('');
   $('#app').innerHTML = `<div class="sbody">${sTop(d.student.coins, false)}
-    <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><p class="mute" style="margin:0 0 20px">${esc(d.cls.name)}</p>
+    <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><p class="mute" style="margin:0 0 20px">${esc(d.cls.name)}</p>${notes}
     ${list || '<div class="card mute" style="text-align:center">No homework yet. Check back soon!</div>'}</div>`;
 }]);
+ACT.seeNote = (t) => { let a = []; try { a = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {} a.push(t.dataset.id); try { localStorage.setItem('md_seen', JSON.stringify(a.slice(-50))); } catch (e) {} route(); };
 ACT.sOpen = (t) => go('#/s/hw/' + t.dataset.id);
 
 /* ---- path ---- */
