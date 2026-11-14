@@ -180,10 +180,8 @@ async function classData(c) {
   const students = await db.all('SELECT * FROM students WHERE class_id = ? ORDER BY name', [c.id]);
   const hws = await db.all('SELECT * FROM homework WHERE class_id = ? ORDER BY created DESC', [c.id]);
   const hwIds = hws.map((h) => h.id);
-  const atts = [];
-  for (const h of hws) atts.push(...await db.all('SELECT * FROM attempts WHERE homework_id = ?', [h.id]));
-  const acts = [];
-  for (const s of students) acts.push(...await db.all('SELECT * FROM activity WHERE student_id = ?', [s.id]));
+  const atts = await db.all('SELECT * FROM attempts WHERE homework_id IN (SELECT id FROM homework WHERE class_id = ?)', [c.id]);
+  const acts = await db.all('SELECT * FROM activity WHERE student_id IN (SELECT id FROM students WHERE class_id = ?)', [c.id]);
   return { students, hws, atts, acts, hwIds };
 }
 function hwStatus(h, studentId, atts) {
@@ -375,13 +373,18 @@ app.get('/api/student/home', studentOnly(async (req, res) => {
   const s = req.student;
   const c = await db.get('SELECT * FROM classes WHERE id = ?', [s.class_id]);
   const hws = await db.all('SELECT * FROM homework WHERE class_id = ? ORDER BY created DESC', [c.id]);
+  const classmates = await db.all('SELECT id,name FROM students WHERE class_id = ?', [c.id]);
+  const allAtts = await db.all('SELECT * FROM attempts WHERE homework_id IN (SELECT id FROM homework WHERE class_id = ?)', [c.id]);
+  const byHw = {};
+  allAtts.forEach((a) => { (byHw[a.homework_id] = byHw[a.homework_id] || []).push(a); });
   const out = [];
   let coins = 0;
   for (const h of hws) {
-    const atts = await db.all('SELECT * FROM attempts WHERE homework_id = ?', [h.id]);
+    const atts = byHw[h.id] || [];
     const st = hwStatus(h, s.id, atts);
     coins += st.coins;
-    const b = await board(h);
+    const b = classmates.map((m) => ({ id: m.id, name: m.name, coins: atts.filter((a) => a.student_id === m.id).reduce((n, a) => n + a.coins, 0) }))
+      .sort((x, y) => y.coins - x.coins || x.name.localeCompare(y.name));
     out.push({ id: h.id, title: h.title, topic: h.topic, tier: h.tier, due_at: h.due_at, done: st.done.length, total: st.total, status: st.status, rank: b.findIndex((x) => x.id === s.id) + 1, of: b.length });
   }
   res.json({ student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, tts: ttsOn() });
