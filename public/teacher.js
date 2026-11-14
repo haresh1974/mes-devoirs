@@ -343,7 +343,7 @@ ROUTES.push([/^\/t\/class\/(\w+)\/new$/, async (cid) => {
   CLS = await api('/classes/' + cid + '/overview');
   shell(cid, '');
   const d = new Date(Date.now() + 7 * 86400000); d.setHours(9, 0, 0, 0);
-  hwForm({ cid, title: '', topic: '', tier: CLS.cls.tiers[0], due_at: d.getTime(), text: '', verbs: '', gram: '', free_order: 1, ex: null }, '#/t/class/' + cid, 'Create homework');
+  hwForm({ cid, title: '', topic: '', tier: CLS.cls.tiers[0], due_at: d.getTime(), text: '', verbs: '', gram: '', free_order: 0, ex: null }, '#/t/class/' + cid, 'Create homework');
 }]);
 ROUTES.push([/^\/t\/hw\/(\w+)\/edit$/, async (id) => {
   await loadClasses();

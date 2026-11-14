@@ -45,7 +45,7 @@ ROUTES.push([/^\/s\/hw\/(\w+)$/, async (id) => {
       const dn = done[k], prevDone = hw.exercises.slice(0, i).every((p) => done[p]);
       const locked = !hw.free_order && !prevDone;
       const isNext = !dn && !nextSet && !locked; if (isNext) nextSet = true;
-      const off = [0, -46, 0, 46][i % 4];
+      const off = [0, -37, -71, -37, 0, 37, 71, 37][i % 8];
       const E = EXERCISES[k];
       return `<button class="node ${locked ? 'lock' : ''} ${isNext ? 'next' : ''}" style="transform:translateX(${off}px)" data-act="sPlay" data-k="${k}" ${locked ? 'data-locked="1"' : ''}><div class="b">${locked ? '🔒' : dn ? '✓' : isNext ? '▶' : E.ic}</div><b class="l">${esc(E.name)}</b><small>${dn ? Math.round(dn.score / dn.total * 100) + '% · tap to replay' : locked ? 'Finish the one before' : esc(E.desc)}</small></button>`;
     }).join('') + '</div>' + (hw.exercises.every((k) => done[k]) ? '<div class="card" style="text-align:center"><div style="font-size:40px">🎉</div><b>Homework complete!</b><div class="mute small">Replay any activity to beat your score.</div></div>' : '');

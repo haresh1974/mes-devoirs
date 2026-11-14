@@ -194,33 +194,25 @@ ACT.close = () => closeModal();
 ACT.logout = async () => { try { await api('/logout', 'POST', {}); } catch (e) {} go('#/'); };
 
 /* landing & sign-in */
+function studentLoginPage(prefill) {
+  $('#app').innerHTML = `<div class="landing"><div style="font-size:54px">🥖</div><h1>Mon Devoir</h1><div class="authbox">
+    <h2>Student sign in</h2><p class="mute" style="margin-top:0">Ask your teacher for the class code and your PIN.</p>
+    <label class="f">Class code</label><input id="code" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="e.g. ABCDEF" value="${esc(prefill || '')}" style="text-transform:uppercase;letter-spacing:4px;font-weight:800">
+    <label class="f">Your PIN</label><input id="pin" type="text" inputmode="numeric" maxlength="8" autocomplete="off" class="pin" placeholder="• • • •">
+    <div class="err" id="err"></div>
+    <button class="btn green" style="width:100%;margin-top:6px;padding:14px" data-act="doStudentLogin">Let's go</button></div></div>`;
+  $('#pin').addEventListener('keydown', (e) => { if (e.key === 'Enter') ACT.doStudentLogin(); });
+  (prefill ? $('#pin') : $('#code')).focus();
+}
+/* The public address only shows student sign-in. Teachers use #/teacher-login directly. */
 ROUTES.push([/^\/$/, async () => {
   const me = await api('/me');
   if (me.role === 'teacher') return go('#/t');
   if (me.role === 'student') return go('#/s');
-  $('#app').innerHTML = `<div class="landing">
-    <div style="font-size:54px">🥖</div>
-    <h1>Mon Devoir</h1>
-    <p class="tag">Vocabulary homework where you choose how to learn.</p>
-    <div class="pick">
-      <button class="opt" data-act="toStudent"><span class="e">🎒</span><b>I'm a student</b><span class="mute">Class code and PIN</span></button>
-      <button class="opt" data-act="toTeacher"><span class="e">🧑‍🏫</span><b>I'm a teacher</b><span class="mute">Sign in or create an account</span></button>
-    </div></div>`;
+  studentLoginPage();
 }]);
-ACT.toStudent = () => go('#/student-login');
-ACT.toTeacher = () => go('#/teacher-login');
-
-ROUTES.push([/^\/student-login$/, async () => {
-  $('#app').innerHTML = `<div class="landing"><div class="authbox">
-    <h2>Student sign in</h2><p class="mute" style="margin-top:0">Ask your teacher for the class code and your PIN.</p>
-    <label class="f">Class code</label><input id="code" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="e.g. ABCDEF" style="text-transform:uppercase;letter-spacing:4px;font-weight:800">
-    <label class="f">Your PIN</label><input id="pin" type="text" inputmode="numeric" maxlength="8" autocomplete="off" class="pin" placeholder="• • • •">
-    <div class="err" id="err"></div>
-    <button class="btn green" style="width:100%;margin-top:6px;padding:14px" data-act="doStudentLogin">Let's go</button>
-    <p style="text-align:center;margin:14px 0 0"><button class="linkbtn" data-act="home">← Back</button></p></div></div>`;
-  $('#pin').addEventListener('keydown', (e) => { if (e.key === 'Enter') ACT.doStudentLogin(); });
-  $('#code').focus();
-}]);
+ROUTES.push([/^\/join\/(\w+)$/, async (code) => { const me = await api('/me'); if (me.role === 'student') return go('#/s'); studentLoginPage(code.toUpperCase()); }]);
+ROUTES.push([/^\/student-login$/, async () => studentLoginPage()]);
 ACT.doStudentLogin = async () => {
   try { await api('/student/login', 'POST', { code: $('#code').value, pin: $('#pin').value }); go('#/s'); }
   catch (e) { $('#err').textContent = e.message; }
