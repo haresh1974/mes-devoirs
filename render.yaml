@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: mon-devoir
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: TZ_OFFSET_MIN
+        value: "330"
