@@ -159,7 +159,7 @@ const GAMES = [
   { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['audmean', 60]] },
   { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] }
 ];
-const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['advanced', 'Advanced'], ['aqa', 'AQA GCSE'], ['igcse', 'IGCSE - CIE'], ['pearson', 'Pearson GCSE']];
+const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['tri1', 'Trilogy 1'], ['tri2', 'Trilogy 2'], ['tri3', 'Trilogy 3'], ['advanced', 'Advanced'], ['aqa', 'AQA GCSE'], ['igcse', 'IGCSE - CIE'], ['pearson', 'Pearson GCSE']];
 const TENSE_ORDER = ['Present Indicative', 'Immediate future', 'Imperfect Indicative', 'Perfect Indicative', 'Future Indicative', 'Present Subjunctive', 'Present Conditional', 'Past Conditional'];
 const KIND_NAME = { vocab: 'Vocab', sent: 'Sentences', verb: 'Verbs', gram: 'Grammar' };
 let PH = null, PH_AGAIN = '';
@@ -175,7 +175,7 @@ function hubLessons() { const g = gameOf(PH.game); return PH.all.filter((l) => l
 function hubCats() { const g = gameOf(PH.game), m = {}; PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)).forEach((l) => { const c = l.topic || 'Other'; m[c] = (m[c] || 0) + 1; }); return Object.entries(m).sort((a, b) => { const ia = TENSE_ORDER.indexOf(a[0]), ib = TENSE_ORDER.indexOf(b[0]); return ia >= 0 || ib >= 0 ? (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) : a[0].localeCompare(b[0]); }); }
 const CAT_IC = [['animal', '🐾'], ['birthday', '🎂'], ['body', '🧍'], ['colour', '🎨'], ['countr', '🌏'], ['daily', '⏰'], ['routine', '⏰'], ['describ', '🙂'], ['drink', '🥤'], ['like', '👍'], ['family', '👪'], ['food', '🍽️'], ['free time', '🎮'], ['health', '🩺'], ['house chore', '🧹'], ['house', '🏠'], ['home', '🏠'], ['job', '💼'], ['work', '💼'], ['national', '🏳️'], ['number', '🔢'], ['school', '🎒'], ['study', '📚'], ['education', '📚'], ['weather', '⛅'], ['time', '🕒'], ['area', '🏙️'], ['town', '🏙️'], ['verb', '🔤'], ['tense', '🔤'], ['grammar', '📐'], ['negative', '🚫'], ['connect', '🔗'], ['question', '❓'], ['clothes', '👕'], ['festival', '🎉'], ['environment', '🌿'], ['media', '📺'], ['technology', '💻'], ['relation', '🤝'], ['holiday', '🏖️'], ['travel', '✈️'], ['introduc', '👋'], ['possess', '🔖'], ['agreement', '🧩'], ['indicat', '📍'], ['opinion', '💬'], ['social', '🌐'], ['culture', '🎭'], ['cinema', '🎬'], ['music', '🎵'], ['sport', '⚽'], ['theme 1', '🪪'], ['theme 2', '🌍'], ['theme 3', '🎓'], ['identity', '🪪'], ['global', '🌍'], ['personal', '🌟'], ['healthy', '🍎'], ['adjective', '🎨'], ['article', '📰'], ['pronoun', '👤'], ['preposition', '📍'], ['comparison', '⚖️'], ['noun', '🏷️'], ['determiner', '🔖'], ['present', '▶️'], ['future', '⏭️'], ['past', '⏮️'], ['perfect', '⏮️'], ['imperfect', '⏪'], ['conditional', '🤔'], ['subjunctive', '💭'], ['immediate', '⏩'], ['shop', '🛍️'], ['money', '💶']];
 const catIcon = (n) => { const t = String(n).toLowerCase(); const h = CAT_IC.find(([k]) => t.includes(k)); return h ? h[1] : '📘'; };
-const LV_COL = ['#16a34a', '#0ea5e9', '#6366f1', '#a855f7', '#e11d48', '#f97316', '#0f766e', '#475569', '#b45309'];
+const LV_COL = ['#16a34a', '#0ea5e9', '#6366f1', '#a855f7', '#e11d48', '#f97316', '#0f766e', '#475569', '#b45309', '#be185d', '#0369a1', '#4d7c0f'];
 function phCss() {
   if (document.getElementById('phcss')) return;
   const st = document.createElement('style'); st.id = 'phcss';
@@ -228,7 +228,7 @@ function drawHub() {
     title = gm.name;
     body = mk(gm.name) + `<div class="ph-sec">Select your difficulty level</div>` + '<div class="ph-lvls">' + LEVELS.map(([id, nm], k) => {
       const n = P.all.filter((l) => l.level === id && gm.src.includes(l.kind)).length;
-      const dots = Array.from({ length: 9 }, (_, d) => `<i style="${d <= k ? 'background:' + LV_COL[k] : ''}"></i>`).join('');
+      const dots = Array.from({ length: 12 }, (_, d) => `<i style="${d <= k ? 'background:' + LV_COL[k] : ''}"></i>`).join('');
       return `<button class="ph-lvl" data-act="phLevel" data-id="${id}" ${n ? '' : 'disabled'}><div class="n" style="background:${LV_COL[k]}">${k + 1}</div><div style="flex:1"><h3>${nm}</h3><div class="d">${dots}</div></div><span class="badge ${n ? 'g' : ''}">${n ? n + ' lessons' : 'Soon'}</span></button>`;
     }).join('') + '</div>';
   } else if (P.step === 'cat') {

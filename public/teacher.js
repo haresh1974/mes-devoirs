@@ -607,7 +607,7 @@ ACT.pqGo = () => {
 /* ---- practice results (teacher) ---- */
 let PR = null;
 const GAME_LBL = { vocab: 'Vocab', sent: 'Sentence', verb: 'Verb', gram: 'Grammar', listen: 'Listening', dict: 'Dictation', work: 'Workout', box: 'Boxing', abox: 'Audio boxing', climb: 'Climbing' };
-const LEVEL_LBL = { primary: 'Primary', beginner: 'Beginner', preint: 'Pre-int.', inter: 'Intermediate', higher: 'Higher', advanced: 'Advanced', aqa: 'AQA GCSE', igcse: 'IGCSE', pearson: 'Pearson GCSE' };
+const LEVEL_LBL = { primary: 'Primary', beginner: 'Beginner', preint: 'Pre-int.', inter: 'Intermediate', higher: 'Higher', tri1: 'Trilogy 1', tri2: 'Trilogy 2', tri3: 'Trilogy 3', advanced: 'Advanced', aqa: 'AQA GCSE', igcse: 'IGCSE', pearson: 'Pearson GCSE' };
 ROUTES.push([/^\/t\/practice$/, async () => {
   await loadClasses();
   const d = await api('/teacher/practice');
