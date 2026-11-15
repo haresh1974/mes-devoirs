@@ -160,7 +160,8 @@ const GAMES = [
   { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['listen', 60]] },
   { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] }
 ];
-const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['advanced', 'Advanced'], ['igcse', 'IGCSE (CIE)']];
+const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['advanced', 'Advanced'], ['aqa', 'AQA GCSE'], ['igcse', 'IGCSE - CIE'], ['pearson', 'Pearson GCSE']];
+const TENSE_ORDER = ['Present Indicative', 'Immediate future', 'Imperfect Indicative', 'Perfect Indicative', 'Future Indicative', 'Present Subjunctive', 'Present Conditional', 'Past Conditional'];
 const KIND_NAME = { vocab: 'Vocab', sent: 'Sentences', verb: 'Verbs', gram: 'Grammar' };
 let PH = null, PH_AGAIN = '';
 ROUTES.push([/^\/s\/practice$/, async () => {
@@ -172,7 +173,7 @@ ROUTES.push([/^\/s\/practice$/, async () => {
 }]);
 const gameOf = (id) => GAMES.find((g) => g.id === id);
 function hubLessons() { const g = gameOf(PH.game); return PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind) && (!PH.cat || l.topic === PH.cat)); }
-function hubCats() { const g = gameOf(PH.game), m = {}; PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)).forEach((l) => { const c = l.topic || 'Other'; m[c] = (m[c] || 0) + 1; }); return Object.entries(m).sort((a, b) => a[0].localeCompare(b[0])); }
+function hubCats() { const g = gameOf(PH.game), m = {}; PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)).forEach((l) => { const c = l.topic || 'Other'; m[c] = (m[c] || 0) + 1; }); return Object.entries(m).sort((a, b) => { const ia = TENSE_ORDER.indexOf(a[0]), ib = TENSE_ORDER.indexOf(b[0]); return ia >= 0 || ib >= 0 ? (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) : a[0].localeCompare(b[0]); }); }
 function drawHub() {
   const P = PH; let body = '', title = 'Practice games', back = '#/s';
   if (P.step === 'game') {
@@ -192,7 +193,7 @@ function drawHub() {
     const q = P.q.toLowerCase(), list = hubLessons().filter((l) => !q || (l.title + ' ' + l.topic).toLowerCase().includes(q));
     body = `<input id="phQ" type="text" placeholder="Search by lesson title" value="${esc(P.q)}" style="margin-bottom:12px">` + list.map((l) => {
       const on = P.sel.includes(l.id);
-      return `<button class="hcard" data-act="phPick" data-id="${esc(l.id)}" style="${on ? 'border:3px solid #1F4FBF;background:#eef4ff' : ''}"><div class="spread"><h3>${on ? '✅ ' : ''}${esc(l.title)}</h3><span class="chip">${KIND_NAME[l.kind]}</span></div><div class="mute small">${esc(l.topic || '')}</div></button>`;
+      return `<button class="hcard" data-act="phPick" data-id="${esc(l.id)}" style="${on ? 'border:3px solid #1F4FBF;background:#eef4ff' : ''}"><div class="spread"><h3>${on ? '✅ ' : ''}${esc(l.topic && l.title.startsWith(l.topic + ': ') ? l.title.slice(l.topic.length + 2) : l.title)}</h3><span class="chip">${KIND_NAME[l.kind]}</span></div><div class="mute small">${esc(l.topic || '')} · ${l.n} items</div></button>`;
     }).join('') + (list.length ? '' : '<div class="card mute">No lessons match.</div>') +
       `<button class="btn green" style="width:100%;margin-top:14px;padding:14px;position:sticky;bottom:10px" data-act="phGo" ${P.sel.length ? '' : 'disabled'}>${P.sel.length ? 'Start (' + P.sel.length + '/3 selected)' : 'Pick up to 3 lessons'}</button>`;
   }
