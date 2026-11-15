@@ -174,41 +174,87 @@ ROUTES.push([/^\/s\/practice$/, async () => {
 const gameOf = (id) => GAMES.find((g) => g.id === id);
 function hubLessons() { const g = gameOf(PH.game); return PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind) && (g.id === 'verb' ? (!PH.cats || !PH.cats.length || PH.cats.includes(l.topic)) : (!PH.cat || l.topic === PH.cat))); }
 function hubCats() { const g = gameOf(PH.game), m = {}; PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)).forEach((l) => { const c = l.topic || 'Other'; m[c] = (m[c] || 0) + 1; }); return Object.entries(m).sort((a, b) => { const ia = TENSE_ORDER.indexOf(a[0]), ib = TENSE_ORDER.indexOf(b[0]); return ia >= 0 || ib >= 0 ? (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) : a[0].localeCompare(b[0]); }); }
+const CAT_IC = [['animal', '🐾'], ['birthday', '🎂'], ['body', '🧍'], ['colour', '🎨'], ['countr', '🌏'], ['daily', '⏰'], ['routine', '⏰'], ['describ', '🙂'], ['drink', '🥤'], ['like', '👍'], ['family', '👪'], ['food', '🍽️'], ['free time', '🎮'], ['health', '🩺'], ['house chore', '🧹'], ['house', '🏠'], ['home', '🏠'], ['job', '💼'], ['work', '💼'], ['national', '🏳️'], ['number', '🔢'], ['school', '🎒'], ['study', '📚'], ['education', '📚'], ['weather', '⛅'], ['time', '🕒'], ['area', '🏙️'], ['town', '🏙️'], ['verb', '🔤'], ['tense', '🔤'], ['grammar', '📐'], ['negative', '🚫'], ['connect', '🔗'], ['question', '❓'], ['clothes', '👕'], ['festival', '🎉'], ['environment', '🌿'], ['media', '📺'], ['technology', '💻'], ['relation', '🤝'], ['holiday', '🏖️'], ['travel', '✈️'], ['introduc', '👋'], ['possess', '🔖'], ['agreement', '🧩'], ['indicat', '📍'], ['opinion', '💬'], ['social', '🌐'], ['culture', '🎭'], ['cinema', '🎬'], ['music', '🎵'], ['sport', '⚽'], ['theme 1', '🪪'], ['theme 2', '🌍'], ['theme 3', '🎓'], ['identity', '🪪'], ['global', '🌍'], ['personal', '🌟'], ['healthy', '🍎'], ['adjective', '🎨'], ['article', '📰'], ['pronoun', '👤'], ['preposition', '📍'], ['comparison', '⚖️'], ['noun', '🏷️'], ['determiner', '🔖'], ['present', '▶️'], ['future', '⏭️'], ['past', '⏮️'], ['perfect', '⏮️'], ['imperfect', '⏪'], ['conditional', '🤔'], ['subjunctive', '💭'], ['immediate', '⏩'], ['shop', '🛍️'], ['money', '💶']];
+const catIcon = (n) => { const t = String(n).toLowerCase(); const h = CAT_IC.find(([k]) => t.includes(k)); return h ? h[1] : '📘'; };
+const LV_COL = ['#16a34a', '#0ea5e9', '#6366f1', '#a855f7', '#e11d48', '#f97316', '#0f766e', '#475569', '#b45309'];
+function phCss() {
+  if (document.getElementById('phcss')) return;
+  const st = document.createElement('style'); st.id = 'phcss';
+  st.textContent = `.ph-hero{position:relative;overflow:hidden;border-radius:24px;padding:20px 20px 18px;color:#fff;background:linear-gradient(135deg,#1c3faa,#6d3fe0 60%,#c04fe0);margin-bottom:18px;box-shadow:0 10px 24px rgba(60,50,170,.28)}
+.ph-hero:after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12)}
+.ph-hero:before{content:"";position:absolute;right:50px;bottom:-60px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.08)}
+.ph-hero h2{margin:0;font-size:25px;letter-spacing:-.3px}.ph-hero p{margin:4px 0 0;opacity:.92;font-size:14px}
+.ph-stats{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;position:relative;z-index:1}.ph-stats span{background:rgba(255,255,255,.18);border-radius:999px;padding:5px 12px;font-weight:800;font-size:13px}
+.ph-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ph-game{position:relative;border:0;border-radius:22px;padding:16px 14px 15px;color:#fff;text-align:left;cursor:pointer;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.2),0 12px 20px rgba(0,0,0,.08);transition:transform .12s,box-shadow .12s;font:inherit;background-image:linear-gradient(160deg,rgba(255,255,255,.26),rgba(255,255,255,0) 55%,rgba(0,0,0,.2))}
+.ph-game:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.ph-game:after{content:"";position:absolute;right:-26px;bottom:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.14)}
+.ph-game .gi{width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);margin-bottom:10px}
+.ph-game b{display:block;font-size:17px;line-height:1.15}.ph-game small{display:block;margin-top:3px;font-size:12px;opacity:.92;line-height:1.3}
+.ph-new{position:absolute;right:10px;top:10px;background:#fde047;color:#713f12;font-size:10px;font-weight:900;border-radius:999px;padding:2px 8px;letter-spacing:.5px;z-index:1}
+.ph-crumb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 14px;font-size:13px;font-weight:800;color:var(--mute)}
+.ph-crumb span.c{background:#eef2ff;color:#3b4fb8;border-radius:999px;padding:4px 11px}.ph-crumb i{font-style:normal;opacity:.5}
+.ph-lvl{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:20px;padding:13px 16px;margin-bottom:12px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 4px 0 var(--line);transition:transform .1s}
+.ph-lvl:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}.ph-lvl[disabled]{opacity:.45;cursor:default}
+.ph-lvl .n{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:20px;flex:none}
+.ph-lvl h3{margin:0;font-size:18px}.ph-lvl .d{display:flex;gap:4px;margin-top:6px}.ph-lvl .d i{width:18px;height:6px;border-radius:3px;background:#e2e8f0}
+.ph-cats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ph-cat{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px 12px;text-align:left;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 4px 0 var(--line);min-height:104px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s}
+.ph-cat:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}.ph-cat .e{font-size:28px;line-height:1}.ph-cat b{font-size:15px;line-height:1.2;margin-top:8px;display:block}.ph-cat small{color:var(--mute);font-weight:700}
+.ph-cat.on{border-color:#4f46e5;background:#eef2ff;box-shadow:0 4px 0 #c7d2fe}.ph-cat.all{grid-column:1/-1;flex-direction:row;justify-content:flex-start;align-items:center;min-height:0;gap:12px;background:linear-gradient(135deg,#eef2ff,#faf5ff)}
+.ph-les{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:10px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.ph-les.on{border-color:#4f46e5;background:#eef2ff;box-shadow:0 3px 0 #c7d2fe}
+.ph-les .ck{width:28px;height:28px;border-radius:50%;border:2.5px solid #cbd5e1;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px}
+.ph-les.on .ck{background:#4f46e5;border-color:#4f46e5}.ph-les .t{flex:1;min-width:0;font-weight:800;font-size:15px;line-height:1.25}.ph-les .m{font-size:12px;color:var(--mute);font-weight:700;margin-top:3px}
+.ph-bar{position:sticky;bottom:10px;margin-top:14px;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border:2px solid var(--line);border-radius:20px;padding:10px 12px;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+.ph-bar .sel{flex:1;font-weight:800;font-size:14px;color:var(--ink)}.ph-bar .sel small{display:block;color:var(--mute);font-weight:700;font-size:12px}
+.ph-opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:10px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.ph-opt.on{border-color:#4f46e5;background:#eef2ff;box-shadow:0 3px 0 #c7d2fe}.ph-opt .r{width:22px;height:22px;border-radius:50%;border:2.5px solid #cbd5e1;flex:none}.ph-opt.on .r{border:7px solid #4f46e5}
+.ph-sec{font-weight:900;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--mute);margin:16px 2px 8px}
+.ph-pron{padding:11px 18px;border-radius:999px;border:2px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:16px;cursor:pointer}.ph-pron.on{background:#4f46e5;border-color:#4f46e5;color:#fff}`;
+  document.head.appendChild(st);
+}
 function drawHub() {
-  const P = PH; let body = '', title = 'Practice games', back = '#/s';
+  phCss();
+  const P = PH; let body = '', title = 'Practice', crumb = '';
+  const gm = P.game ? gameOf(P.game) : null, lvName = P.level ? (LEVELS.find((x) => x[0] === P.level) || [0, ''])[1] : '';
+  const mk = (...a) => '<div class="ph-crumb">' + a.filter(Boolean).map((x, i) => (i ? '<i>›</i>' : '') + `<span class="c">${esc(x)}</span>`).join('') + '</div>';
   if (P.step === 'game') {
-    body = `<p class="mute" style="margin:0 0 14px">What is the main focus today?</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${GAMES.map((g) => `<button data-act="phGame" data-id="${g.id}" style="border:0;border-radius:18px;padding:16px 12px;color:#fff;text-align:left;background:${g.col};box-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer"><div style="width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center">${gIcon(g.id, 34)}</div><div style="font-weight:800;font-size:16px;margin-top:4px">${g.name}</div><div style="font-size:12px;opacity:.9">${g.d}</div></button>`).join('')}</div>`;
+    const nL = P.all.length;
+    body = `<div class="ph-hero"><h2>Practice games</h2><p>Pick a game, a level and a topic, then play.</p><div class="ph-stats"><span>📚 ${nL} lessons</span><span>🎮 ${GAMES.length} games</span><span>🎓 ${LEVELS.length} levels</span></div></div>` +
+      `<div class="ph-grid">${GAMES.map((g) => `<button class="ph-game" data-act="phGame" data-id="${g.id}" style="background-color:${g.col}">${g.id === 'gram' ? '<span class="ph-new">NEW</span>' : ''}<div class="gi">${gIcon(g.id, 34)}</div><b>${g.name}</b><small>${g.d}</small></button>`).join('')}</div>`;
   } else if (P.step === 'level') {
-    const g = gameOf(P.game); title = g.name;
-    body = `<p class="mute" style="margin:0 0 14px">Select your difficulty level</p>` + LEVELS.map(([id, nm]) => {
-      const n = P.all.filter((l) => l.level === id && g.src.includes(l.kind)).length;
-      return `<button class="hcard" data-act="phLevel" data-id="${id}" ${n ? '' : 'disabled style="opacity:.5"'}><div class="spread"><h3>${nm}</h3><span class="badge ${n ? 'g' : ''}">${n ? n + ' lessons' : 'Coming soon'}</span></div></button>`;
+    title = gm.name;
+    body = mk(gm.name) + `<div class="ph-sec">Select your difficulty level</div>` + LEVELS.map(([id, nm], k) => {
+      const n = P.all.filter((l) => l.level === id && gm.src.includes(l.kind)).length;
+      const dots = Array.from({ length: 9 }, (_, d) => `<i style="${d <= k ? 'background:' + LV_COL[k] : ''}"></i>`).join('');
+      return `<button class="ph-lvl" data-act="phLevel" data-id="${id}" ${n ? '' : 'disabled'}><div class="n" style="background:${LV_COL[k]}">${k + 1}</div><div style="flex:1"><h3>${nm}</h3><div class="d">${dots}</div></div><span class="badge ${n ? 'g' : ''}">${n ? n + ' lessons' : 'Soon'}</span></button>`;
     }).join('');
   } else if (P.step === 'cat') {
-    const g = gameOf(P.game), lv = LEVELS.find((x) => x[0] === P.level)[1]; title = g.name + ' · ' + lv;
-    const cs = hubCats(), tot = cs.reduce((n, c) => n + c[1], 0);
-    if (g.id === 'verb') {
+    title = gm.name; const cs = hubCats(), tot = cs.reduce((n, c) => n + c[1], 0);
+    if (gm.id === 'verb') {
       const on = PH.cats || [];
-      body = `<p class="mute" style="margin:0 0 14px">Select at least one tense</p><button class="hcard" data-act="phTenseAll"><div class="spread"><h3>⭐ Select all</h3><span class="badge g">${tot} lessons</span></div></button>` + cs.map(([c, n]) => `<button class="hcard" data-act="phTense" data-id="${esc(c)}" style="${on.includes(c) ? 'border:3px solid #1F4FBF;background:#eef4ff' : ''}"><div class="spread"><h3>${on.includes(c) ? '✅ ' : ''}${esc(c)}</h3><span class="badge g">${n} lesson${n > 1 ? 's' : ''}</span></div></button>`).join('') +
-        `<button class="btn green" style="width:100%;margin-top:14px;padding:14px;position:sticky;bottom:10px" data-act="phTenseGo" ${on.length ? '' : 'disabled'}>Next</button>`;
-    } else body = `<p class="mute" style="margin:0 0 14px">Choose a category</p><button class="hcard" data-act="phCat" data-id=""><div class="spread"><h3>⭐ All categories</h3><span class="badge g">${tot} lessons</span></div></button>` + cs.map(([c, n]) => `<button class="hcard" data-act="phCat" data-id="${esc(c)}"><div class="spread"><h3>${esc(c)}</h3><span class="badge g">${n} lesson${n > 1 ? 's' : ''}</span></div></button>`).join('');
+      body = mk(gm.name, lvName) + `<div class="ph-sec">Select at least one tense</div><div class="ph-cats"><button class="ph-cat all" data-act="phTenseAll"><span class="e">⭐</span><div><b style="margin:0">Select all tenses</b><small>${tot} lessons</small></div></button>` + cs.map(([c, n]) => `<button class="ph-cat ${on.includes(c) ? 'on' : ''}" data-act="phTense" data-id="${esc(c)}"><span class="e">${on.includes(c) ? '✅' : catIcon(c)}</span><div><b>${esc(c)}</b><small>${n} lesson${n > 1 ? 's' : ''}</small></div></button>`).join('') + `</div>` +
+        `<div class="ph-bar"><div class="sel">${on.length ? on.length + ' tense' + (on.length > 1 ? 's' : '') + ' selected' : 'No tense selected'}</div><button class="btn green" data-act="phTenseGo" ${on.length ? '' : 'disabled'}>Next</button></div>`;
+    } else body = mk(gm.name, lvName) + `<div class="ph-sec">Choose a category</div><div class="ph-cats"><button class="ph-cat all" data-act="phCat" data-id=""><span class="e">⭐</span><div><b style="margin:0">All categories</b><small>${tot} lessons</small></div></button>` + cs.map(([c, n]) => `<button class="ph-cat" data-act="phCat" data-id="${esc(c)}"><span class="e">${catIcon(c)}</span><div><b>${esc(c)}</b><small>${n} lesson${n > 1 ? 's' : ''}</small></div></button>`).join('') + '</div>';
   } else if (P.step === 'opts') {
-    const o = P.opt, b = (on, act, id, txt, sub) => `<button class="hcard" data-act="${act}" data-id="${id}" style="${on ? 'border:3px solid #1F4FBF;background:#eef4ff' : ''}"><h3>${on ? '✅ ' : ''}${txt}</h3><div class="mute small">${sub}</div></button>`;
-    title = 'Verb Trainer · options';
-    body = `<p class="mute" style="margin:0 0 8px"><b>Game mode</b></p>` + b(o.mode === 'practice', 'phOpt', 'mode:practice', 'Practice mode', 'Unlimited time, see the answer after every question') + b(o.mode === 'normal', 'phOpt', 'mode:normal', 'Normal mode', '20 seconds per question') + b(o.mode === 'test', 'phOpt', 'mode:test', 'Test mode', 'No feedback until the end, then review your mistakes') +
-      `<p class="mute" style="margin:14px 0 8px"><b>Question order</b></p>` + b(o.order === 'normal', 'phOpt', 'order:normal', 'Normal order', 'Verb by verb, je to ils') + b(o.order === 'random', 'phOpt', 'order:random', 'Random order', 'Mixed up') +
-      `<p class="mute" style="margin:14px 0 8px"><b>Pronouns</b> (pick at least one)</p><div style="display:flex;flex-wrap:wrap;gap:8px">${['je', 'tu', 'il / elle', 'nous', 'vous', 'ils / elles'].map((n, i) => `<button class="chip" data-act="phPron" data-id="${i}" style="padding:10px 16px;font-size:16px;cursor:pointer;${o.pron.includes(i) ? 'background:#1F4FBF;color:#fff' : ''}">${n}</button>`).join('')}</div>` +
-      `<button class="btn green" style="width:100%;margin-top:18px;padding:14px" data-act="phStart" ${o.pron.length ? '' : 'disabled'}>Start</button>`;
+    const o = P.opt, r = (on, id, txt, sub) => `<button class="ph-opt ${on ? 'on' : ''}" data-act="phOpt" data-id="${id}"><span class="r"></span><div><b>${txt}</b><div class="mute small">${sub}</div></div></button>`;
+    title = 'Verb Trainer'; 
+    body = mk(gm.name, lvName, 'Options') + `<div class="ph-sec">Game mode</div>` + r(o.mode === 'practice', 'mode:practice', 'Practice mode', 'Unlimited time, answer shown after every question') + r(o.mode === 'normal', 'mode:normal', 'Normal mode', '20 seconds per question') + r(o.mode === 'test', 'mode:test', 'Test mode', 'No feedback until the end, then review your mistakes') +
+      `<div class="ph-sec">Question order</div>` + r(o.order === 'normal', 'order:normal', 'Normal order', 'Verb by verb, je to ils') + r(o.order === 'random', 'order:random', 'Random order', 'Mixed up') +
+      `<div class="ph-sec">Pronouns</div><div style="display:flex;flex-wrap:wrap;gap:8px">${['je', 'tu', 'il / elle', 'nous', 'vous', 'ils / elles'].map((n, i) => `<button class="ph-pron ${o.pron.includes(i) ? 'on' : ''}" data-act="phPron" data-id="${i}">${n}</button>`).join('')}</div>` +
+      `<div class="ph-bar"><div class="sel">${o.mode[0].toUpperCase() + o.mode.slice(1)} · ${o.order} · ${o.pron.length} pronoun${o.pron.length > 1 ? 's' : ''}</div><button class="btn green" data-act="phStart" ${o.pron.length ? '' : 'disabled'}>Start</button></div>`;
   } else {
-    const g = gameOf(P.game), lv = LEVELS.find((x) => x[0] === P.level)[1]; title = g.name + ' · ' + lv + (P.cat ? ' · ' + P.cat : (P.cats && P.cats.length && P.cats.length < 8 ? ' · ' + P.cats.join(', ') : ''));
+    title = gm.name;
     const q = P.q.toLowerCase(), list = hubLessons().filter((l) => !q || (l.title + ' ' + l.topic).toLowerCase().includes(q));
-    body = `<input id="phQ" type="text" placeholder="Search by lesson title" value="${esc(P.q)}" style="margin-bottom:12px">` + list.map((l) => {
-      const on = P.sel.includes(l.id);
-      return `<button class="hcard" data-act="phPick" data-id="${esc(l.id)}" style="${on ? 'border:3px solid #1F4FBF;background:#eef4ff' : ''}"><div class="spread"><h3>${on ? '✅ ' : ''}${esc(l.topic && l.title.startsWith(l.topic + ': ') ? l.title.slice(l.topic.length + 2) : l.title)}</h3><span class="chip">${KIND_NAME[l.kind]}</span></div><div class="mute small">${esc(l.topic || '')} · ${l.n} items</div></button>`;
+    const cat = P.cat || (P.cats && P.cats.length && P.cats.length < 8 ? P.cats.join(', ') : '');
+    body = mk(gm.name, lvName, cat) + `<input id="phQ" type="text" placeholder="🔎  Search lessons" value="${esc(P.q)}" style="margin-bottom:14px">` + list.map((l) => {
+      const on = P.sel.includes(l.id), sub = l.topic && l.title.startsWith(l.topic + ': ') ? l.title.slice(l.topic.length + 2) : l.title;
+      return `<button class="ph-les ${on ? 'on' : ''}" data-act="phPick" data-id="${esc(l.id)}"><span class="ck">${on ? '✓' : ''}</span><div class="t">${esc(sub)}<div class="m">${esc(l.topic || '')} · ${l.n} items</div></div><span class="chip">${KIND_NAME[l.kind]}</span></button>`;
     }).join('') + (list.length ? '' : '<div class="card mute">No lessons match.</div>') +
-      `<button class="btn green" style="width:100%;margin-top:14px;padding:14px;position:sticky;bottom:10px" data-act="phGo" ${P.sel.length ? '' : 'disabled'}>${P.sel.length ? 'Start (' + P.sel.length + '/3 selected)' : 'Pick up to 3 lessons'}</button>`;
+      `<div class="ph-bar"><div class="sel">${P.sel.length ? P.sel.length + ' of 3 selected' : 'Pick up to 3 lessons'}<small>${P.sel.length ? 'Tap a lesson again to remove it' : list.length + ' lessons here'}</small></div><button class="btn green" data-act="phGo" ${P.sel.length ? '' : 'disabled'}>${P.game === 'verb' ? 'Next' : 'Start'}</button></div>`;
   }
-  $('#app').innerHTML = `<div class="sbody"><div class="stop"><button class="icon-btn" data-act="phBack" title="Back">←</button><div style="font-weight:800;font-size:18px">${esc(title)}</div><span></span></div>${body}</div>`;
+  $('#app').innerHTML = `<div class="sbody"><div class="stop"><button class="icon-btn" data-act="phBack" title="Back">←</button><div style="font-weight:800;font-size:18px">${esc(title)}</div><span style="width:40px"></span></div>${body}</div>`;
   const qi = $('#phQ'); if (qi) qi.addEventListener('input', (e) => { PH.q = e.target.value; const p = e.target.selectionStart; drawHub(); const i = $('#phQ'); i.focus(); i.setSelectionRange(p, p); });
 }
 ACT.phGame = (t) => { PH.game = t.dataset.id; PH.step = 'level'; PH.sel = []; drawHub(); };
