@@ -573,32 +573,53 @@ function drawWall(q, s, ask) {
   $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="wall"><div class="rope"></div><div class="top">🏁</div><div class="climber" style="bottom:${pos}%">🧗</div><div class="wtop"><span>⛰️ ${G.climb} / ${G.top}</span><span style="font-size:22px">${'❤️'.repeat(3)}</span><span><b id="gClock">${mm}</b></span></div><div class="wq">${esc(q.prompt || q.title)}</div><div class="holds">${holds}</div></div></div>`;
 }
 function drawRing(q, s, ask) {
-  if (!document.getElementById('ringCss')) {
-    const st = document.createElement('style'); st.id = 'ringCss';
-    st.textContent = `.ring{position:relative;width:100%;max-width:900px;box-sizing:border-box;margin:0 auto;border-radius:14px;overflow:hidden;min-height:520px;background:radial-gradient(ellipse at 20% 0,#e0409a 0,transparent 35%),radial-gradient(ellipse at 80% 0,#c030c0 0,transparent 35%),linear-gradient(#2a0f4f,#4a1a7a 60%,#7a2a8a);color:#fff;font-family:Georgia,serif}
-.ring .rtop{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:linear-gradient(#e8c58a,#d9a860);color:#222;font-size:26px;font-weight:800}
-.ring .sign{position:relative;margin:16px auto 0;width:min(70%,440px);background:#fff;color:#222;border:3px solid #b8342c;border-radius:6px;padding:14px 18px;text-align:center;font-size:20px;min-height:64px;display:flex;align-items:center;justify-content:center}
-.ring .sign.hid{background:#fff3;border-color:#fff6;color:#fff;font-size:34px}
-.ring .bags{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:34px 14px 0}
-.ring .bag{position:relative;height:210px;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-.ring .bag:before{content:'';position:absolute;left:50%;top:-34px;width:3px;height:40px;background:#ddd;transform:translateX(-50%)}
-.ring .bag:after{content:'';position:absolute;inset:0 14% 0 14%;border-radius:14px;background:linear-gradient(90deg,#0b6e8a,#1ba3c6 45%,#0b6e8a);box-shadow:0 8px 18px #0006;z-index:0}
-.ring .bag span{position:relative;z-index:1;background:#fff;color:#222;font-size:15px;line-height:1.25;padding:12px 10px;width:104%;box-shadow:0 3px 8px #0005;transition:background .15s,transform .15s}
-.ring .bag:hover span{transform:scale(1.05)}
-.ring .bag.ok span{background:#2ecc71;color:#fff}.ring .bag.bad span{background:#e74c3c;color:#fff}.ring .bag.bad{animation:bagshake .3s}
-@keyframes bagshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.ring .ropes{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,#0006);display:flex;justify-content:center;align-items:flex-end;font-size:56px;gap:60px}
-.ring .shw{font-size:13px;text-align:right;padding:6px 14px;opacity:.9}.ring .shw label{cursor:pointer}`;
+  if (!document.getElementById('bxCss')) {
+    const st = document.createElement('style'); st.id = 'bxCss';
+    st.textContent = `.bx{position:relative;width:100%;max-width:940px;box-sizing:border-box;margin:0 auto;border-radius:14px;overflow:hidden;height:min(78vw,560px);min-height:440px;background:radial-gradient(circle at 18% 28%,#ff4fb4aa 0,transparent 24%),radial-gradient(circle at 82% 28%,#d84cffaa 0,transparent 24%),linear-gradient(#20093f,#43175f 55%,#7a2c86);font-family:Georgia,'Times New Roman',serif;color:#fff;user-select:none}
+.bx *{box-sizing:border-box}
+.bx-hud{position:absolute;left:0;right:0;top:0;height:50px;background:linear-gradient(#e9c88d,#d6a35a);color:#2b1a05;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:26px;font-weight:800;letter-spacing:1px;z-index:5;box-shadow:0 3px 8px #0006}
+.bx-hud .hs{font-size:22px;letter-spacing:2px}
+.bx-lights{position:absolute;top:56px;left:0;right:0;height:100px;pointer-events:none}
+.bx-lights i{position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 0 12px 3px #fff9}
+.bx-sign{position:absolute;top:62px;left:50%;transform:translateX(-50%);width:min(60%,420px);background:#fff;color:#2a2a2a;border:4px solid #b9372f;border-radius:6px;padding:12px 16px;text-align:center;font-size:clamp(15px,2.6vw,21px);line-height:1.25;min-height:62px;display:flex;align-items:center;justify-content:center;z-index:4;box-shadow:0 6px 14px #0007;animation:bxDrop .35s ease-out}
+.bx-sign:before,.bx-sign:after{content:'★ ★ ★';position:absolute;left:0;right:0;text-align:center;color:#b9372f;font-size:12px;letter-spacing:6px}
+.bx-sign:before{top:-18px}.bx-sign:after{bottom:-18px}
+.bx-sign.hid{cursor:pointer;font-size:38px}
+@keyframes bxDrop{from{transform:translate(-50%,-30px);opacity:0}}
+.bx-bags{position:absolute;left:0;right:0;top:150px;bottom:92px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 10px;z-index:3}
+.bx-bag{position:relative;border:0;background:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transform-origin:50% -60px;transition:transform .2s}
+.bx-bag:before{content:'';position:absolute;left:50%;top:-90px;height:90px;width:3px;background:#d8d8e0;transform:translateX(-50%)}
+.bx-bag .bd{position:absolute;left:14%;right:14%;top:0;bottom:6%;border-radius:18px 18px 22px 22px;background:linear-gradient(90deg,#0a5e78,#19a5c9 40%,#0a5e78);box-shadow:inset 0 10px 0 #0b4a60,inset 0 -10px 0 #0b4a60,0 10px 20px #0007}
+.bx-bag .lb{position:relative;z-index:1;background:#fff;color:#222;font-size:clamp(12px,1.8vw,16px);line-height:1.25;padding:12px 8px;width:112%;box-shadow:0 3px 8px #0006;text-align:center;transition:background .12s}
+.bx-bag .lb:before,.bx-bag .lb:after{content:'';position:absolute;top:0;bottom:0;width:14px;background:#b6b6bc}
+.bx-bag .lb:before{left:-14px;clip-path:polygon(100% 0,0 50%,100% 100%)}.bx-bag .lb:after{right:-14px;clip-path:polygon(0 0,100% 50%,0 100%)}
+.bx-bag:not(:disabled):hover{transform:rotate(-2deg) scale(1.03)}
+.bx-bag.hit{animation:bxSwing .9s ease-out}
+@keyframes bxSwing{0%{transform:rotate(0)}18%{transform:rotate(14deg)}45%{transform:rotate(-9deg)}70%{transform:rotate(5deg)}100%{transform:rotate(0)}}
+.bx-bag.ok .lb{background:#2ecc71;color:#fff}.bx-bag.ok .lb:before,.bx-bag.ok .lb:after{background:#1f9d54}
+.bx-bag.bad .lb{background:#e74c3c;color:#fff}.bx-bag.bad .lb:before,.bx-bag.bad .lb:after{background:#b83a2d}
+.bx-ring{position:absolute;left:0;right:0;bottom:0;height:92px;background:linear-gradient(transparent,#240a3dcc 40%,#e8a4a0 41%,#e8a4a0 46%,#2a1240 47%);z-index:2}
+.bx-ring:before{content:'';position:absolute;left:8%;right:8%;top:30px;height:4px;background:#fff;box-shadow:0 14px 0 #fff,0 28px 0 #e0524b}
+.bx-glove{position:absolute;bottom:-26px;font-size:92px;z-index:6;transition:left .18s,bottom .18s,transform .18s;filter:drop-shadow(0 6px 6px #0008)}
+#bxL{left:36%;transform:rotate(-20deg)}#bxR{left:52%;transform:scaleX(-1) rotate(-20deg)}
+.bx-tools{position:absolute;right:12px;top:58px;z-index:7;font-size:13px;display:flex;gap:10px;align-items:center;background:#0006;padding:5px 10px;border-radius:14px}
+.bx-tools label{cursor:pointer}
+@media(max-width:560px){.bx-bag .lb{padding:8px 4px}.bx-bag .bd{left:8%;right:8%}.bx-glove{font-size:70px}}`;
     document.head.appendChild(st);
   }
   const hearts = '❤️'.repeat(Math.max(0, G.lives)) + '🖤'.repeat(Math.max(0, 3 - G.lives));
   const clock = Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000));
   const mm = Math.floor(clock / 60) + ':' + String(clock % 60).padStart(2, '0');
   const hide = G.mode === 'abox' && !G.showS;
-  const sign = hide ? `<div class="sign hid" data-act="gSay" data-t="${esc(q.audio)}" style="cursor:pointer">🔊</div>` : `<div class="sign">${esc(q.prompt || q.audio)}</div>`;
-  const bags = q.opts.map((o, i) => { let c = ''; if (!ask) c = o === q.answer ? ' ok' : (i === s.sel ? ' bad' : ''); return `<button class="bag${c}" data-act="gPick" data-i="${i}" ${ask ? '' : 'disabled'}><span>${esc(o)}</span></button>`; }).join('');
-  const tog = G.mode === 'abox' ? `<div class="shw"><label><input type="checkbox" data-act="gShowS" ${G.showS ? 'checked' : ''}> Show sentence</label> · <button class="abtn" data-act="gSay" data-t="${esc(q.audio)}" style="display:inline-flex">${ICON_SPK}<span>Replay</span></button></div>` : '';
-  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="ring"><div class="rtop"><span>SCORE : ${G.right}</span><span style="font-size:22px">${hearts}</span><span><b id="gClock">${mm}</b></span></div>${tog}${sign}<div class="bags">${bags}</div><div class="ropes"><span>🥊</span><span>🥊</span></div></div></div>`;
+  const sign = hide ? `<div class="bx-sign hid" data-act="gSay" data-t="${esc(q.audio)}">🔊</div>` : `<div class="bx-sign">${esc(q.prompt || q.audio)}</div>`;
+  const bags = q.opts.map((o, i) => { let c = ''; if (!ask) c = o === q.answer ? ' ok' : (i === s.sel ? ' bad' : ''); if (!ask && i === s.sel) c += ' hit'; return `<button class="bx-bag${c}" data-act="gPick" data-i="${i}" ${ask ? '' : 'disabled'}><span class="bd"></span><span class="lb">${esc(o)}</span></button>`; }).join('');
+  const bulbs = Array.from({ length: 12 }, (_, k) => `<i style="top:${(k % 2) * 22 + 6}px;left:${k < 6 ? 8 + Math.floor(k / 2) * 7 : 66 + Math.floor((k - 6) / 2) * 7}%"></i>`).join('');
+  const tools = G.mode === 'abox' ? `<div class="bx-tools"><label><input type="checkbox" data-act="gShowS" ${G.showS ? 'checked' : ''}> Show sentence</label><button class="abtn" data-act="gSay" data-t="${esc(q.audio)}" style="display:inline-flex;padding:4px 8px">${ICON_SPK}<span>Replay</span></button></div>` : '';
+  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="bx"><div class="bx-hud"><span>SCORE : ${G.right}</span><span class="hs">${hearts}</span><span><b id="gClock">${mm}</b></span></div><div class="bx-lights">${bulbs}</div>${tools}${sign}<div class="bx-bags">${bags}</div><div class="bx-ring"></div><div class="bx-glove" id="bxL">🥊</div><div class="bx-glove" id="bxR">🥊</div></div></div>`;
+  if (!ask && s.sel != null) {
+    const bags2 = document.querySelectorAll('.bx-bag'), b = bags2[s.sel], bx = document.querySelector('.bx');
+    if (b && bx) { const r = b.getBoundingClientRect(), R = bx.getBoundingClientRect(), g = document.getElementById(s.sel % 2 ? 'bxR' : 'bxL'); if (g) { g.style.left = (r.left - R.left + r.width / 2 - 46) + 'px'; g.style.bottom = (R.bottom - r.bottom + r.height * 0.35) + 'px'; } }
+  }
 }
 ACT.gShowS = () => { G.showS = !G.showS; drawPlay(); };
 function drawPlay() {
