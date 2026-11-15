@@ -311,7 +311,7 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   if (g.fast) { Object.assign(G, { fast: true, mode: g.fast, lives: 3, climb: 0, top: 10, endAt: Date.now() + (g.fast === 'climb' ? 60000 : 120000), refill: () => build().filter((q) => !q.retry) }); G.planned = 999; }
   let tick = null;
   if (G.vmode === 'normal') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.qEnd - Date.now()) / 1000), el = $('#gQT'); if (el) { el.textContent = Math.max(0, left); el.parentElement.style.color = left <= 5 ? '#DC2626' : ''; } if (left <= 0 && G.phase === 'ask') { const q = curQ(); if (q.t === 'type') G.st.val = G.st.val || '\u2026'; if (q.t === 'pick' && G.st.sel == null) G.st.sel = (q.opts.findIndex((o) => o !== q.answer)); ACT.gCheck(); } }, 400);
-  if (G.mode === 'box' || G.mode === 'abox' || G.mode === 'climb') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent = Math.max(0, left); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
+  if (G.mode === 'box' || G.mode === 'abox' || G.mode === 'climb') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent = (G.mode === 'climb') ? Math.max(0, left) : Math.floor(Math.max(0, left) / 60) + ':' + String(Math.max(0, left) % 60).padStart(2, '0'); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
   cleanup = () => { if (tick) clearInterval(tick); stopSpeech(); G = null; };
   await waitVoices();
   nextQ();
@@ -548,8 +548,39 @@ function canCheck() {
 }
 const wave = (i) => Array.from({ length: 13 }, (_, k) => '<i style="height:' + (8 + ((k * 7 + i * 5) % 6) * 5) + 'px"></i>').join('');
 const audioRow = (txt) => canSpeak() ? `<div class="audio"><button class="abtn" data-act="gSay" data-t="${esc(txt)}">${ICON_SPK}<span>Listen</span></button><button class="abtn slow" data-act="gSay" data-t="${esc(txt)}" data-slow="1" title="Slowly">${ICON_SLOW}</button></div>` : '';
+
+function drawRing(q, s, ask) {
+  if (!document.getElementById('ringCss')) {
+    const st = document.createElement('style'); st.id = 'ringCss';
+    st.textContent = `.ring{position:relative;width:100%;max-width:900px;box-sizing:border-box;margin:0 auto;border-radius:14px;overflow:hidden;min-height:520px;background:radial-gradient(ellipse at 20% 0,#e0409a 0,transparent 35%),radial-gradient(ellipse at 80% 0,#c030c0 0,transparent 35%),linear-gradient(#2a0f4f,#4a1a7a 60%,#7a2a8a);color:#fff;font-family:Georgia,serif}
+.ring .rtop{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:linear-gradient(#e8c58a,#d9a860);color:#222;font-size:26px;font-weight:800}
+.ring .sign{position:relative;margin:16px auto 0;width:min(70%,440px);background:#fff;color:#222;border:3px solid #b8342c;border-radius:6px;padding:14px 18px;text-align:center;font-size:20px;min-height:64px;display:flex;align-items:center;justify-content:center}
+.ring .sign.hid{background:#fff3;border-color:#fff6;color:#fff;font-size:34px}
+.ring .bags{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:34px 14px 0}
+.ring .bag{position:relative;height:210px;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.ring .bag:before{content:'';position:absolute;left:50%;top:-34px;width:3px;height:40px;background:#ddd;transform:translateX(-50%)}
+.ring .bag:after{content:'';position:absolute;inset:0 14% 0 14%;border-radius:14px;background:linear-gradient(90deg,#0b6e8a,#1ba3c6 45%,#0b6e8a);box-shadow:0 8px 18px #0006;z-index:0}
+.ring .bag span{position:relative;z-index:1;background:#fff;color:#222;font-size:15px;line-height:1.25;padding:12px 10px;width:104%;box-shadow:0 3px 8px #0005;transition:background .15s,transform .15s}
+.ring .bag:hover span{transform:scale(1.05)}
+.ring .bag.ok span{background:#2ecc71;color:#fff}.ring .bag.bad span{background:#e74c3c;color:#fff}.ring .bag.bad{animation:bagshake .3s}
+@keyframes bagshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.ring .ropes{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,#0006);display:flex;justify-content:center;align-items:flex-end;font-size:56px;gap:60px}
+.ring .shw{font-size:13px;text-align:right;padding:6px 14px;opacity:.9}.ring .shw label{cursor:pointer}`;
+    document.head.appendChild(st);
+  }
+  const hearts = '❤️'.repeat(Math.max(0, G.lives)) + '🖤'.repeat(Math.max(0, 3 - G.lives));
+  const clock = Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000));
+  const mm = Math.floor(clock / 60) + ':' + String(clock % 60).padStart(2, '0');
+  const hide = G.mode === 'abox' && !G.showS;
+  const sign = hide ? `<div class="sign hid" data-act="gSay" data-t="${esc(q.audio)}" style="cursor:pointer">🔊</div>` : `<div class="sign">${esc(q.prompt || q.audio)}</div>`;
+  const bags = q.opts.map((o, i) => { let c = ''; if (!ask) c = o === q.answer ? ' ok' : (i === s.sel ? ' bad' : ''); return `<button class="bag${c}" data-act="gPick" data-i="${i}" ${ask ? '' : 'disabled'}><span>${esc(o)}</span></button>`; }).join('');
+  const tog = G.mode === 'abox' ? `<div class="shw"><label><input type="checkbox" data-act="gShowS" ${G.showS ? 'checked' : ''}> Show sentence</label> · <button class="abtn" data-act="gSay" data-t="${esc(q.audio)}" style="display:inline-flex">${ICON_SPK}<span>Replay</span></button></div>` : '';
+  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="ring"><div class="rtop"><span>SCORE : ${G.right}</span><span style="font-size:22px">${hearts}</span><span><b id="gClock">${mm}</b></span></div>${tog}${sign}<div class="bags">${bags}</div><div class="ropes"><span>🥊</span><span>🥊</span></div></div></div>`;
+}
+ACT.gShowS = () => { G.showS = !G.showS; drawPlay(); };
 function drawPlay() {
   const q = curQ(), s = G.st, ask = G.phase === 'ask';
+  if ((G.mode === 'box' || G.mode === 'abox') && q.t === 'pick') return drawRing(q, s, ask);
   const pct = Math.round(G.answered / (G.planned + 0.0001) * 100);
   let body = '';
   const sub = (x) => (x ? `<div class="hint">${esc(x)}</div>` : '');
