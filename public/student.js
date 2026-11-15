@@ -168,7 +168,7 @@ ROUTES.push([/^\/s\/practice$/, async () => {
   startHeartbeat(); ST.hw = null;
   const d = await api('/student/practice');
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
-  PH = { all: d.lessons, step: (PH && PH.keep) || 'game', game: PH && PH.game, level: PH && PH.level, sel: [], q: '', cat: PH && PH.cat, cats: (PH && PH.cats) || [], opt: (PH && PH.opt) || { mode: 'practice', order: 'random', pron: [0, 1, 2, 3, 4, 5] } };
+  PH = { all: d.lessons, step: (PH && PH.keep) || 'game', game: PH && PH.game, level: PH && PH.level, wm: PH && PH.wm, wq: '', sel: [], q: '', cat: PH && PH.cat, cats: (PH && PH.cats) || [], opt: (PH && PH.opt) || { mode: 'practice', order: 'random', pron: [0, 1, 2, 3, 4, 5] } };
   drawHub();
 }]);
 const gameOf = (id) => GAMES.find((g) => g.id === id);
@@ -216,6 +216,7 @@ function phCss() {
 }
 function drawHub() {
   phCss();
+  if (PH.game === 'work' && ['wmod', 'wlevel', 'wcat', 'wles'].includes(PH.step)) return drawWork();
   const P = PH; let body = '', title = 'Practice', crumb = '';
   const gm = P.game ? gameOf(P.game) : null, lvName = P.level ? (LEVELS.find((x) => x[0] === P.level) || [0, ''])[1] : '';
   const mk = (...a) => '<div class="ph-crumb">' + a.filter(Boolean).map((x, i) => (i ? '<i>›</i>' : '') + `<span class="c">${esc(x)}</span>`).join('') + '</div>';
@@ -257,7 +258,7 @@ function drawHub() {
   $('#app').innerHTML = `<div class="sbody"><div class="stop"><button class="icon-btn" data-act="phBack" title="Back">←</button><div style="font-weight:800;font-size:18px">${esc(title)}</div><span style="width:40px"></span></div>${body}</div>`;
   const qi = $('#phQ'); if (qi) qi.addEventListener('input', (e) => { PH.q = e.target.value; const p = e.target.selectionStart; drawHub(); const i = $('#phQ'); i.focus(); i.setSelectionRange(p, p); });
 }
-ACT.phGame = (t) => { PH.game = t.dataset.id; PH.step = 'level'; PH.sel = []; drawHub(); };
+ACT.phGame = (t) => { PH.game = t.dataset.id; PH.step = t.dataset.id === 'work' ? 'wmod' : 'level'; PH.sel = []; drawHub(); };
 ACT.phLevel = (t) => { PH.level = t.dataset.id; PH.step = 'cat'; PH.cat = ''; PH.cats = []; PH.sel = []; PH.q = ''; drawHub(); };
 ACT.phTense = (t) => { const c = PH.cats || (PH.cats = []), i = c.indexOf(t.dataset.id); if (i >= 0) c.splice(i, 1); else c.push(t.dataset.id); drawHub(); };
 ACT.phTenseAll = () => { PH.cats = hubCats().map((c) => c[0]); drawHub(); };

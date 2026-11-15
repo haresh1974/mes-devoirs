@@ -31,6 +31,8 @@ function wkCss() {
 .wk-o button.off{opacity:.35;text-decoration:line-through}
 .wk-in{width:100%;box-sizing:border-box;font:inherit;font-weight:700;font-size:17px;border:2px solid var(--line);border-radius:12px;padding:10px 12px}
 .wk-in:disabled{background:#f6f8fc}
+.wk-mic{font:inherit;font-weight:800;font-size:16px;border:2px solid #0891B2;background:#e6f7fb;color:#0b6f87;border-radius:14px;padding:12px 18px;cursor:pointer}.wk-mic.on{background:#fde8e8;border-color:#dc2626;color:#b91c1c}
+.wk-pass{background:#fffbea;border:2px solid #f3e3a1;border-radius:16px;padding:12px 14px;margin-bottom:12px;font-size:16px;line-height:1.55}.wk-pass b{display:block;margin-bottom:4px}
 .wk-fix{margin-top:6px;font-size:14px;font-weight:700;color:#b91c1c}.wk-fix b{color:#15803d}
 .wk-h{flex:none;border:0;background:#fff7e0;border-radius:10px;font-size:17px;padding:6px 8px;cursor:pointer}
 .wk-tiles{display:flex;flex-wrap:wrap;gap:7px;min-height:38px;padding:6px;background:#f2f5fb;border-radius:12px;margin-bottom:8px}
@@ -52,27 +54,28 @@ function wkCss() {
 .wk-res .row{display:flex;justify-content:space-between;padding:9px 4px;border-bottom:1px solid #eef1f8;font-weight:700}`;
   document.head.appendChild(st);
 }
-ROUTES.push([/^\/s\/practice\/workout\/(\w+)\/([\w,-]+)$/, async (level, ids) => {
+ROUTES.push([/^\/s\/practice\/workout\/(\w+)\/([\w,-]+)(?:\/(\w+))?$/, async (level, ids, mod) => {
   startHeartbeat(); ST.hw = null; wkCss();
   const d = await api('/student/practice/lessons?ids=' + encodeURIComponent(ids.split(',')[0]));
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
   const L = d.lessons[0];
   if (!L) return go('#/s/practice');
   await waitVoices();
-  const stages = wkBuild(L);
+  const stages = wkBuild(L, mod || (L.kind === 'read' ? 'read' : 'vocab'));
   if (!stages.length) { toast('Not enough content in this lesson for a workout'); return go('#/s/practice'); }
   const total = stages.reduce((n, s) => n + s.items.length, 0);
-  WK = { L, level, ids: ids.split(',')[0], stages, cur: 0, hints: 0, t0: Date.now(), total, sw: false };
-  PH_AGAIN = '#/s/practice/workout/' + level + '/' + WK.ids;
+  WK = { L, level, mod: mod || 'vocab', ids: ids.split(',')[0], stages, cur: 0, hints: 0, t0: Date.now(), total, sw: false };
+  PH_AGAIN = '#/s/practice/workout/' + level + '/' + WK.ids + '/' + WK.mod;
   if (WKT) clearInterval(WKT);
   WKT = setInterval(() => { const e = document.getElementById('wkClock'); if (e && WK) { const s = Math.round((Date.now() - WK.t0) / 1000); e.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); } }, 1000);
   cleanup = () => { if (WKT) clearInterval(WKT); WKT = null; stopSpeech(); WK = null; };
   wkDraw();
 }]);
 /* ---------- building the stages ---------- */
-function wkBuild(L) {
+function wkBuild(L, mod) {
   const out = [];
-  const items = (L.items || []).filter((i) => i.fr && i.en);
+  const qitems = (L.items || []).filter((i) => i.q);
+  const items = (L.items || []).filter((i) => i.fr && i.en && !i.q);
   const verbs = L.verbs || [];
   const cap = (arr, n) => shuffle(arr).slice(0, n);
   const tk = (s) => toks(s);
@@ -83,9 +86,31 @@ function wkBuild(L) {
   const add = (id, name, instr, t, its, extra) => { if (its && its.length >= (t === 'match' ? 3 : 2)) out.push(Object.assign({ id, name, instr, t, items: its }, extra || {})); };
   if (items.length >= 4 && !verbs.length && !items.some((i) => i.g)) {
     const sents = items.filter((i) => i.s || tk(i.fr).length >= 3), words = items.filter((i) => !(i.s || tk(i.fr).length >= 3));
-    const isSent = sents.length >= Math.max(4, items.length / 2);
+    const isSent = mod === 'read' || sents.length >= Math.max(4, items.length / 2);
     const base = isSent ? sents : items;
     const N = 12;
+    if (mod === 'read') {
+      add('rcomp', 'Comprehension questions', 'Read the text, then choose the correct answer.', 'pick', cap(qitems.filter((q) => q.o), 10).map((q) => ({ q: q.q, ans: q.a, opts: shuffle([q.a].concat(q.o)) })));
+      add('rtf', 'True or false', 'According to the text, is each statement true or false?', 'pick', cap(qitems.filter((q) => !q.o), 10).map((q) => ({ q: q.q, ans: q.a, opts: ['True', 'False'] })));
+    }
+    if (mod === 'listen') {
+      const au = (it) => it.fr;
+      add('l1', 'Listen and choose', 'Listen, then choose what you hear.', 'pick', cap(base, N).map((it) => ({ q: 'Listen 🔊', audio: au(it), ans: it.fr, opts: frOpts(it, items, 3) })));
+      add('l2', 'Listen and choose the meaning', 'Listen, then choose the English meaning.', 'pick', cap(base, N).map((it) => ({ q: 'Listen 🔊', audio: au(it), ans: it.en, opts: enOpts(it, items, 3) })));
+      add('l3', 'Listen and type', 'Listen and type what you hear.', 'type', cap(base, 10).map((it) => ({ q: 'Listen 🔊', audio: au(it), ans: it.fr, ph: pat(it.fr) })));
+      add('l4', 'Listen and order the words', 'Listen, then tap the words in the order you hear them.', 'order', cap(base.filter((it) => tk(it.fr).length >= 3 && tk(it.fr).length <= 12), 8).map((it) => { const t = tk(it.fr); return { q: 'Listen 🔊', audio: au(it), ans: t, bank: shuffle(t.slice()) }; }));
+      add('l5', 'Listen and complete', 'Listen and choose the word missing from the text.', 'pick', cap(base.map((it) => ({ it, k: keyWord(it) })).filter((x) => x.k && tk(x.it.fr).length >= 2), N).map(({ it, k }) => ({ q: k.t.map((w, i) => (i === k.i ? '_____' : w)).join(' '), audio: au(it), ans: k.w, opts: shuffle([k.w].concat(distractors(it.fr, items, 2))) })));
+      add('l6', 'Listen: true or false', 'Listen. Is the English translation correct?', 'pick', cap(base, N).map((it, i) => { const w = shuffle(items.filter((x) => x.en !== it.en))[0]; const t = i % 2 === 0 || !w; return { q: t ? it.en : w.en, audio: au(it), ans: t ? 'True' : 'False', opts: ['True', 'False'], after: it.fr + ' = ' + it.en }; }));
+      add('l7', 'Listen and write the missing word', 'Listen and type the missing word.', 'type', cap(base.map((it) => ({ it, k: keyWord(it) })).filter((x) => x.k && tk(x.it.fr).length >= 2), N).map(({ it, k }) => ({ q: k.t.map((w, i) => (i === k.i ? '_____' : w)).join(' '), sub: it.en, audio: au(it), ans: k.w, ph: pat(k.w), after: it.fr })));
+      add('l8', 'Listen and write what you hear (English)', 'Listen and choose the best English translation.', 'pick', cap(base, 10).map((it) => ({ q: 'Listen 🔊', audio: au(it), ans: it.en, opts: enOpts(it, items, 4) })));
+    } else if (mod === 'speak') {
+      const sp = (id, name, instr, arr, mk) => add(id, name, instr, 'speak', cap(arr, 8).map(mk));
+      sp('s1', 'Listen and repeat', 'Listen to the model, then say it aloud.', base, (it) => ({ q: it.fr, sub: it.en, audio: it.fr, ans: it.fr }));
+      sp('s2', 'Say it in French', 'Say each phrase in French. Tap 💡 if you need to see it.', base, (it) => ({ q: it.en, ans: it.fr, audio: it.fr, noAudioFirst: true }));
+      sp('s3', 'Read aloud', 'Read each sentence aloud as clearly as you can.', base, (it) => ({ q: it.fr, ans: it.fr }));
+      sp('s4', 'Complete and say it', 'Say the whole sentence, filling the gap.', base.map((it) => ({ it, k: keyWord(it) })).filter((x) => x.k && tk(x.it.fr).length >= 2), ({ it, k }) => ({ q: k.t.map((w, i) => (i === k.i ? '_____' : w)).join(' '), sub: it.en, ans: it.fr, audio: it.fr, noAudioFirst: true }));
+      sp('s5', 'Translate aloud', 'Read the English, then say it in French.', base.slice().reverse(), (it) => ({ q: it.en, ans: it.fr, audio: it.fr, noAudioFirst: true }));
+    } else {
     add('mcq', 'Multiple choice quiz', 'Choose the correct English meaning.', 'pick', cap(base, N).map((it) => ({ q: it.fr, ans: it.en, opts: enOpts(it, items, 3), audio: it.fr })));
     add('match', 'Match English and French', 'Tap an English item, then its French match.', 'match', cap(base, 8).map((it) => ({ l: it.en, r: it.fr })));
     add('frmcq', 'Choose the French', 'Choose the correct French.', 'pick', cap(base, N).map((it) => ({ q: it.en, ans: it.fr, opts: frOpts(it, items, 3), audio: it.fr })));
@@ -107,6 +132,7 @@ function wkBuild(L) {
     if (canSpeak()) add('dict', 'Dictation', 'Listen and type what you hear.', 'type', cap(base, 8).map((it) => ({ q: 'Listen 🔊', audio: it.fr, ans: it.fr, ph: pat(it.fr) })));
     if (!isSent) add('frtoen', 'French to English translation', 'Choose the English for each French word.', 'pick', cap(words.length >= 4 ? words : items, N).map((it) => ({ q: it.fr, ans: it.en, opts: enOpts(it, items, 4) })));
     else add('translate', 'Translate into French', 'Type the sentence in French.', 'type', cap(base, 8).map((it) => ({ q: it.en, ans: it.fr, ph: pat(it.fr), say: it.fr })));
+    }
   } else if (verbs.length) {
     const combos = []; verbs.forEach((v) => v.forms.forEach((f, i) => combos.push({ v, i, f })));
     const lab = (c) => pronounFor(c.i, c.f) + ' ____  (' + c.v.inf + ')';
@@ -142,9 +168,10 @@ function wkDraw() {
   if (s.t === 'match') body = wkMatch(s);
   else body = '<div class="wk-card">' + s.items.map((it, i) => wkItem(s, it, i)).join('') + '</div>';
   const mt = s.t === 'match';
+  const pass = W.mod === 'read' ? `<div class="wk-pass"><b>📖 ${esc(W.L.title || '')} <button class="wk-h" data-act="wkSay" data-t="${esc((W.L.items || []).filter((x) => x.fr && !x.q).map((x) => x.fr).join(' '))}">🔊</button></b>${(W.L.items || []).filter((x) => x.fr && !x.q).map((x) => esc(x.fr)).join(' ')}</div>` : '';
   $('#app').innerHTML = `<div class="wk"><div class="wk-top"><button data-act="wkQuit">⬅ Menu</button><button data-act="wkSw">🔀 Switch activity</button><span class="sp"></span><button data-act="wkPrint" title="Print this stage">🖨</button></div>
   <div class="wk-head"><small>Workout · ${esc(W.L.title || '')}</small><h2>${esc(s.name)}</h2><p>${esc(s.instr)}</p></div>
-  <div class="wk-stats"><span>Score: ${s.done ? s.score : 0} / ${ic}</span><span>Overall: ${wkOverall()} / ${W.total}</span><span>💡 Hints: ${W.hints}</span><span>⏱ <b id="wkClock">00:00</b></span></div>
+  ${pass}<div class="wk-stats"><span>Score: ${s.done ? s.score : 0} / ${ic}</span><span>Overall: ${wkOverall()} / ${W.total}</span><span>💡 Hints: ${W.hints}</span><span>⏱ <b id="wkClock">00:00</b></span></div>
   <div class="wk-bar"><i style="width:${pct}%"></i></div>${body}
   <div class="wk-nav"><button data-act="wkPrev" ${W.cur ? '' : 'disabled'}>Back</button>${s.done || mt && s.done ? '<button class="go nx" data-act="wkNext">' + (W.cur === W.stages.length - 1 ? 'Finish' : 'Next ▶') + '</button>' : mt ? '<button class="go nx" data-act="wkNext">Skip ▶</button>' : '<button class="go" data-act="wkCheck">Check</button>'}<span class="cnt">${W.cur + 1}/${W.stages.length}</span></div>
   ${W.sw ? wkSwitch() : ''}</div>`;
@@ -153,11 +180,15 @@ function wkDraw() {
 function wkItem(s, it, i) {
   const st = it.st, done = s.done;
   const cls = done ? (st.res === 1 ? 'ok' : st.res > 0 ? 'half' : 'bad') : '';
-  const aud = it.audio ? `<button class="wk-h" style="background:#e3f4fd" data-act="wkSay" data-t="${esc(it.audio)}" title="Listen">🔊</button>` : '';
+  const aud = it.audio && !(it.noAudioFirst && !done && !st.hint) ? `<button class="wk-h" style="background:#e3f4fd" data-act="wkSay" data-t="${esc(it.audio)}" title="Listen">🔊</button>` : '';
   let ctl = '';
   if (s.t === 'pick') ctl = '<div class="wk-o">' + it.opts.map((o, k) => { let c = ''; if (done) c = o === it.ans ? 'ok' : (st.sel === k ? 'bad' : ''); else if (st.sel === k) c = 'sel'; else if (st.off && st.off.includes(k)) c = 'off'; return `<button class="${c}" data-act="wkPick" data-i="${i}" data-k="${k}" ${done ? 'disabled' : ''}>${esc(o)}</button>`; }).join('') + '</div>';
   if (s.t === 'type') ctl = `<input class="wk-in" data-i="${i}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(st.v || '')}" placeholder="${esc(st.hint ? it.ph || '' : 'Type here')}" ${done ? 'disabled' : ''}>`;
   if (s.t === 'order') { const ch = st.chosen || []; ctl = `<div class="wk-tiles">${ch.map((b, k) => `<button data-act="wkUn" data-i="${i}" data-k="${k}" ${done ? 'disabled' : ''}>${esc(it.bank[b])}</button>`).join('')}</div><div class="wk-bank">${it.bank.map((w, b) => `<button class="${ch.includes(b) ? 'gh' : ''}" data-act="wkTile" data-i="${i}" data-b="${b}" ${done ? 'disabled' : ''}>${esc(w)}</button>`).join('')}</div>`; }
+  if (s.t === 'speak') {
+    const rec = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    ctl = (rec ? `<button class="wk-mic ${st.rec ? 'on' : ''}" data-act="wkRec" data-i="${i}" ${done ? 'disabled' : ''}>${st.rec ? '⏺ Listening…' : '🎤 Tap and speak'}</button>` : `<div class="wk-o"><button class="${st.self === 1 ? 'sel' : ''}" data-act="wkSelf" data-i="${i}" data-v="1" ${done ? 'disabled' : ''}>I said it well</button><button class="${st.self === 0 ? 'sel' : ''}" data-act="wkSelf" data-i="${i}" data-v="0" ${done ? 'disabled' : ''}>I need more practice</button></div>`) + (st.v ? `<div class="wk-s" style="margin-top:8px">I heard: <b>${esc(st.v)}</b></div>` : '') + (st.hint ? `<div class="wk-s">${esc(it.ans)}</div>` : '');
+  }
   let fix = '';
   if (done && st.res < 1) fix = `<div class="wk-fix">${st.res > 0 ? 'Almost, check the accents. ' : ''}Answer: <b>${esc(s.t === 'order' ? it.ans.join(' ') : it.ans)}</b>${it.after && s.t !== 'order' && it.after !== it.ans ? ' · ' + esc(it.after) : ''}</div>`;
   return `<div class="wk-it ${cls}"><div class="wk-n">${i + 1}</div><div class="wk-b"><div class="wk-q">${esc(it.q)}</div>${it.sub ? '<div class="wk-s">' + esc(it.sub) + '</div>' : ''}${ctl}${fix}</div>${aud}${done ? '' : `<button class="wk-h" data-act="wkHint" data-i="${i}" title="Hint (costs half a point)">💡</button>`}</div>`;
@@ -188,6 +219,15 @@ ACT.wkHint = (t) => {
   if (s.t === 'order') { const need = it.ans[(st.chosen || []).length]; const b = it.bank.findIndex((w, k) => w === need && !(st.chosen || []).includes(k)); if (b >= 0) (st.chosen = st.chosen || []).push(b); }
   wkDraw();
 };
+ACT.wkSelf = (t) => { const it = wkStage().items[+t.dataset.i]; it.st.self = +t.dataset.v; wkDraw(); };
+ACT.wkRec = (t) => {
+  const it = wkStage().items[+t.dataset.i], st = it.st, R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (st.rec) return; const r = new R(); r.lang = 'fr-FR'; r.interimResults = false; r.maxAlternatives = 3; st.rec = true; wkDraw();
+  r.onresult = (e) => { st.v = e.results[0][0].transcript; };
+  r.onerror = () => { toast('Could not hear you. Check the microphone permission.'); };
+  r.onend = () => { st.rec = false; if (WK) wkDraw(); };
+  try { r.start(); } catch (e) { st.rec = false; wkDraw(); }
+};
 ACT.wkM = (t) => {
   const s = wkStage(), st = s.ms, side = t.dataset.side, i = +t.dataset.i;
   if (s.done) return;
@@ -206,6 +246,7 @@ ACT.wkCheck = () => {
     if (s.t === 'pick') r = st.sel != null && it.opts[st.sel] === it.ans ? 1 : 0;
     else if (s.t === 'type') { const c = checkTyped(st.v || '', it.ans); r = c === 'ok' ? 1 : c === 'accent' ? 0.5 : 0; }
     else if (s.t === 'order') r = (st.chosen || []).length && normT((st.chosen || []).map((b) => it.bank[b]).join(' ')) === normT(it.ans.join(' ')) ? 1 : 0;
+    if (s.t === 'speak') { if (st.self != null) r = st.self; else { const A = stripAcc(it.ans).split(' ').filter(Boolean), H = stripAcc(st.v || '').split(' '); const hit = A.filter((w) => H.includes(w)).length / Math.max(1, A.length); r = hit >= 0.85 ? 1 : hit >= 0.6 ? 0.5 : 0; } }
     if (r > 0 && st.hint) r = Math.max(0.5, r - 0.5);
     st.res = r; score += r;
   });
@@ -223,3 +264,70 @@ async function wkFinish() {
     <div class="card wk-res" style="text-align:left;margin:14px 0">${W.stages.map((s) => `<div class="row"><span>${esc(s.name)}</span><span>${s.done ? s.score : 0}/${s.items.length}</span></div>`).join('')}</div>
     <button class="bigblue" data-act="phAgain">Do this workout again</button><button class="btn ghost" style="width:100%;margin-top:10px" data-act="phHub">Back to games</button></div></div>`;
 }
+/* ---------- Workouts menu: Module Type > Level > Category > Lesson (as on Language Gym) ---------- */
+const WMODS = [['vocab', 'Vocabulary Modules', ['vocab', 'sent']], ['gram', 'Grammar Modules', ['gram', 'verb']], ['read', 'Reading Modules', ['read']], ['speak', 'Speaking Modules', ['vocab', 'sent']], ['listen', 'Listening Modules', ['vocab', 'sent']]];
+const wmName = (m) => (WMODS.find((x) => x[0] === m) || [0, ''])[1];
+const wmOf = (l) => (l.kind === 'read' ? 'read' : l.kind === 'gram' || l.kind === 'verb' ? 'gram' : 'vocab');
+const wmLessons = (m) => { const d = WMODS.find((x) => x[0] === m); return PH.all.filter((l) => d[2].includes(l.kind) && !l.id.startsWith('ps-')); };
+const wlvName = (id) => (LEVELS.find((x) => x[0] === id) || [0, id])[1];
+function wlgCss() {
+  if (document.getElementById('wlgcss')) return;
+  const st = document.createElement('style'); st.id = 'wlgcss';
+  st.textContent = `.wlg{max-width:760px;margin:0 auto;padding:18px 14px 50px;text-align:center;font-family:"Rockwell","Roboto Slab",Georgia,serif;color:#111}
+.wlg .home{position:absolute;left:12px;top:12px;font:700 13px system-ui,sans-serif;border:2px solid var(--line);background:#fff;border-radius:12px;padding:7px 12px;cursor:pointer}
+.wlg h1{font-size:30px;margin:22px 0 4px}.wlg .sub{font:500 16px "Montserrat",system-ui,sans-serif;margin:3px 0}
+.wlg-box{margin:18px auto 0;border:2px solid #4a8fa3;border-radius:22px;padding:14px;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.18);text-align:left}
+.wlg-list{border:1px solid #c9ced6;border-radius:6px;max-height:380px;overflow:auto;min-height:150px;background:#fff}
+.wlg-o{display:flex;justify-content:space-between;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;font-size:16px;background:#fff;border:0;border-bottom:1px solid #f0f1f4;padding:8px 10px;cursor:pointer;color:#111}
+.wlg-o:hover{background:#eaf4f8}.wlg-o.on{background:#1f5fbf;color:#fff}.wlg-o small{font:600 12px system-ui,sans-serif;opacity:.65;white-space:nowrap}
+.wlg-nav{display:flex;gap:12px;margin-top:14px}
+.wlg-back,.wlg-go{font:700 14px "Rockwell",Georgia,serif;letter-spacing:.03em;text-transform:uppercase;border:0;border-radius:999px;padding:14px 26px;color:#fff;background:#1c3f6e;cursor:pointer;box-shadow:0 5px 12px rgba(0,0,0,.25)}
+.wlg-go{background:#16a34a;margin-left:auto}.wlg-go:disabled{opacity:.4;cursor:default}
+.wlg .or{font:700 15px system-ui,sans-serif;margin:22px 0 6px}
+.wlg .srch{display:flex;gap:10px;max-width:520px;margin:10px auto 0}.wlg .srch input{flex:1;font:16px system-ui,sans-serif;border:1px solid #c9ced6;border-radius:8px;padding:11px}
+.wlg .srch button{font:700 14px "Rockwell",Georgia,serif;border:0;border-radius:999px;padding:0 24px;background:#1c3f6e;color:#fff;cursor:pointer}`;
+  document.head.appendChild(st);
+}
+function drawWork() {
+  wlgCss(); const P = PH, st = P.step; let head = '', box = '', nav = '', extra = '';
+  const rows = (arr) => `<div class="wlg-list">${arr.map(([id, t, n, on]) => `<button class="wlg-o ${on ? 'on' : ''}" data-act="wPick" data-id="${esc(id)}"><span>${esc(t)}</span>${n != null ? '<small>' + n + '</small>' : ''}</button>`).join('') || '<div style="padding:14px;color:#777">Nothing here yet.</div>'}</div>`;
+  const back = '<button class="wlg-back" data-act="wBack">‹ Back</button>';
+  if (st === 'wmod') {
+    head = '<h1>Module Type</h1><div class="sub">Select a module type</div>';
+    box = rows(WMODS.map(([id, n]) => [id, n, wmLessons(id).length + ' lessons']));
+    nav = '';
+    const q = (P.wq || '').trim().toLowerCase();
+    const hits = q.length > 1 ? PH.all.filter((l) => l.kind !== 'sent' || !l.id.startsWith('ps-')).filter((l) => (l.title + ' ' + l.topic).toLowerCase().includes(q)).slice(0, 30) : [];
+    extra = `<div class="or">OR</div><div class="sub">Or you can search by lesson title</div><div class="srch"><input id="wq" type="text" placeholder="e.g. daily routine" value="${esc(P.wq || '')}"><button data-act="wSearch">SEARCH</button></div>` + (P.wq && P.wq.trim().length > 1 ? `<div class="wlg-box"><div class="wlg-list">${hits.map((l) => `<button class="wlg-o" data-act="wHit" data-id="${esc(l.id)}"><span>${esc(l.title)}</span><small>${esc(wmName(wmOf(l)).replace(' Modules', ''))} · ${esc(wlvName(l.level))}</small></button>`).join('') || '<div style="padding:14px;color:#777">No lessons match.</div>'}</div></div>` : '');
+  } else if (st === 'wlevel') {
+    const ls = wmLessons(P.wm);
+    head = `<h1>Level</h1><div class="sub">Select a level</div><div class="sub">Module: ${esc(wmName(P.wm))}</div>`;
+    box = rows(LEVELS.filter(([id]) => ls.some((l) => l.level === id)).map(([id, n]) => [id, n, ls.filter((l) => l.level === id).length + ' lessons']));
+    nav = `<div class="wlg-nav">${back}</div>`;
+  } else if (st === 'wcat') {
+    const ls = wmLessons(P.wm).filter((l) => l.level === P.level), m = {};
+    ls.forEach((l) => { const c = l.topic || 'Other'; m[c] = (m[c] || 0) + 1; });
+    head = `<h1>Category</h1><div class="sub">Select a category</div><div class="sub">Module: ${esc(wmName(P.wm))}</div><div class="sub">Level: ${esc(wlvName(P.level))}</div>`;
+    box = rows(Object.entries(m).sort((a, b) => { const ia = TENSE_ORDER.indexOf(a[0]), ib = TENSE_ORDER.indexOf(b[0]); return ia >= 0 || ib >= 0 ? (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) : a[0].localeCompare(b[0]); }).map(([c, n]) => [c, c, n + ' lessons']));
+    nav = `<div class="wlg-nav">${back}</div>`;
+  } else {
+    const ls = wmLessons(P.wm).filter((l) => l.level === P.level && (l.topic || 'Other') === P.cat);
+    head = `<h1>Lesson</h1><div class="sub">Select a lesson</div><div class="sub">Module: ${esc(wmName(P.wm))}</div><div class="sub">Level: ${esc(wlvName(P.level))}</div><div class="sub">Category: ${esc(P.cat)}</div>`;
+    box = rows(ls.map((l) => [l.id, l.topic && l.title.startsWith(l.topic + ': ') ? l.title.slice(l.topic.length + 2) : l.title, l.n + ' items', P.sel[0] === l.id]));
+    nav = `<div class="wlg-nav">${back}<button class="wlg-go" data-act="wStart" ${P.sel.length ? '' : 'disabled'}>START</button></div>`;
+  }
+  $('#app').innerHTML = `<div class="wlg" style="position:relative"><button class="home" data-act="phHub">← Games</button>${head}<div class="wlg-box">${box}${nav}</div>${extra}</div>`;
+  const qi = $('#wq'); if (qi) { qi.addEventListener('input', (e) => { P.wq = e.target.value; }); qi.addEventListener('keydown', (e) => { if (e.key === 'Enter') ACT.wSearch(); }); }
+}
+ACT.wSearch = () => { const i = $('#wq'); if (i) PH.wq = i.value; drawWork(); const j = $('#wq'); if (j) j.focus(); };
+ACT.wHit = (t) => { const l = PH.all.find((x) => x.id === t.dataset.id); if (l) { PH.keep = 'lessons'; go('#/s/practice/workout/' + l.level + '/' + l.id + '/' + wmOf(l)); } };
+ACT.wPick = (t) => {
+  const id = t.dataset.id, P = PH;
+  if (P.step === 'wmod') { P.wm = id; P.step = 'wlevel'; }
+  else if (P.step === 'wlevel') { P.level = id; P.step = 'wcat'; }
+  else if (P.step === 'wcat') { P.cat = id; P.step = 'wles'; P.sel = []; }
+  else P.sel = [id];
+  drawWork();
+};
+ACT.wBack = () => { const P = PH; P.step = P.step === 'wles' ? 'wcat' : P.step === 'wcat' ? 'wlevel' : 'wmod'; drawWork(); };
+ACT.wStart = () => { if (PH.sel.length) { PH.keep = 'wles'; go('#/s/practice/workout/' + PH.level + '/' + PH.sel[0] + '/' + PH.wm); } };
