@@ -155,7 +155,7 @@ const GAMES = [
   { id: 'gram', name: 'Grammar Trainer', d: 'Fill the gap, master the rules', col: '#0F766E', src: ['gram'], kinds: [['gappick', 8], ['gaptype', 8]] },
   { id: 'listen', ic: '👂', name: 'Listening Trainer', d: 'Train your ear', col: '#0E9F6E', src: ['vocab', 'sent'], kinds: [['listen', 10], ['tap', 8]] },
   { id: 'dict', ic: '✍️', name: 'Dictation Trainer', d: 'Hear it, then type it', col: '#D97706', src: ['vocab', 'sent'], kinds: [['dictation', 12], ['tap', 4]] },
-  { id: 'work', ic: '🏋️', name: 'Workouts', d: 'A mix of everything', col: '#0891B2', src: ['vocab', 'sent', 'verb', 'gram'], kinds: [['gappick', 3], ['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
+  { id: 'work', ic: '🏋️', name: 'Workouts', d: 'One lesson, a dozen activities', col: '#0891B2', src: ['vocab', 'sent', 'verb', 'gram'], kinds: [['gappick', 3], ['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
   { id: 'box', ic: '🥊', name: 'Boxing Game', d: '75 seconds, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'box', kinds: [['translate', 40], ['meaning', 40], ['truefalse', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] },
   { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['listen', 60]] },
   { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] }
@@ -252,7 +252,7 @@ function drawHub() {
       const on = P.sel.includes(l.id), sub = l.topic && l.title.startsWith(l.topic + ': ') ? l.title.slice(l.topic.length + 2) : l.title;
       return `<button class="ph-les ${on ? 'on' : ''}" data-act="phPick" data-id="${esc(l.id)}"><span class="ck">${on ? '✓' : ''}</span><div class="t">${esc(sub)}<div class="m">${esc(l.topic || '')} · ${l.n} items</div></div><span class="chip">${KIND_NAME[l.kind]}</span></button>`;
     }).join('') + (list.length ? '' : '<div class="card mute">No lessons match.</div>') +
-      `<div class="ph-bar"><div class="sel">${P.sel.length ? P.sel.length + ' of 3 selected' : 'Pick up to 3 lessons'}<small>${P.sel.length ? 'Tap a lesson again to remove it' : list.length + ' lessons here'}</small></div><button class="btn green" data-act="phGo" ${P.sel.length ? '' : 'disabled'}>${P.game === 'verb' ? 'Next' : 'Start'}</button></div>`;
+      `<div class="ph-bar"><div class="sel">${P.sel.length ? P.sel.length + (P.game === 'work' ? ' lesson selected' : ' of 3 selected') : (P.game === 'work' ? 'Pick a lesson for your workout' : 'Pick up to 3 lessons')}<small>${P.sel.length ? 'Tap a lesson again to remove it' : list.length + ' lessons here'}</small></div><button class="btn green" data-act="phGo" ${P.sel.length ? '' : 'disabled'}>${P.game === 'verb' ? 'Next' : 'Start'}</button></div>`;
   }
   $('#app').innerHTML = `<div class="sbody"><div class="stop"><button class="icon-btn" data-act="phBack" title="Back">←</button><div style="font-weight:800;font-size:18px">${esc(title)}</div><span style="width:40px"></span></div>${body}</div>`;
   const qi = $('#phQ'); if (qi) qi.addEventListener('input', (e) => { PH.q = e.target.value; const p = e.target.selectionStart; drawHub(); const i = $('#phQ'); i.focus(); i.setSelectionRange(p, p); });
@@ -266,11 +266,11 @@ ACT.phOpt = (t) => { const [k, v] = t.dataset.id.split(':'); PH.opt[k] = v; draw
 ACT.phPron = (t) => { const i = +t.dataset.id, p = PH.opt.pron, j = p.indexOf(i); if (j >= 0) p.splice(j, 1); else p.push(i); p.sort(); drawHub(); };
 ACT.phStart = () => { if (!PH.opt.pron.length) return; try { sessionStorage.setItem('vopt', JSON.stringify(PH.opt)); } catch (e) { /* ignore */ } PH.keep = 'opts'; go('#/s/practice/play/verb/' + PH.level + '/' + PH.sel.join(',')); };
 ACT.phCat = (t) => { PH.cat = t.dataset.id || ''; PH.step = 'lessons'; PH.sel = []; PH.q = ''; drawHub(); };
-ACT.phPick = (t) => { const id = t.dataset.id, i = PH.sel.indexOf(id); if (i >= 0) PH.sel.splice(i, 1); else if (PH.sel.length < 3) PH.sel.push(id); else toast('You can pick up to 3 lessons'); drawHub(); };
+ACT.phPick = (t) => { const id = t.dataset.id, i = PH.sel.indexOf(id); if (i >= 0) PH.sel.splice(i, 1); else if (PH.game === 'work') PH.sel = [id]; else if (PH.sel.length < 3) PH.sel.push(id); else toast('You can pick up to 3 lessons'); drawHub(); };
 ACT.phAgain = () => { const u = PH_AGAIN; if (location.hash === u) route(); else go(u); };
 ACT.phHub = () => { if (PH) { PH.step = 'game'; PH.keep = null; } go('#/s/practice'); };
 ACT.phBack = () => { if (PH.step === 'opts') { PH.step = 'lessons'; drawHub(); } else if (PH.step === 'lessons') { PH.step = 'cat'; drawHub(); } else if (PH.step === 'cat') { PH.step = 'level'; drawHub(); } else if (PH.step === 'level') { PH.step = 'game'; drawHub(); } else go(typeof T !== 'undefined' && T.name ? '#/t' : '#/s'); };
-ACT.phGo = () => { if (PH.sel.length && PH.game === 'verb') { PH.step = 'opts'; drawHub(); } else if (PH.sel.length) { PH.keep = 'lessons'; go('#/s/practice/play/' + PH.game + '/' + PH.level + '/' + PH.sel.join(',')); } };
+ACT.phGo = () => { if (PH.sel.length && PH.game === 'verb') { PH.step = 'opts'; drawHub(); } else if (PH.sel.length && PH.game === 'work') { PH.keep = 'lessons'; go('#/s/practice/workout/' + PH.level + '/' + PH.sel[0]); } else if (PH.sel.length) { PH.keep = 'lessons'; go('#/s/practice/play/' + PH.game + '/' + PH.level + '/' + PH.sel.join(',')); } };
 ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, level, ids) => {
   startHeartbeat(); ST.hw = null;
   const g = gameOf(game); if (!g) return go('#/s/practice');
