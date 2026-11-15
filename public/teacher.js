@@ -12,6 +12,7 @@ function shell(active, content) {
       <button class="nav ${active === 'home' ? 'on' : ''}" data-act="tHome">🏠 Home</button>
       <button class="nav ${active === 'lib' ? 'on' : ''}" data-act="tLib">📚 Library</button>
       <button class="nav" data-act="tPractice">🎮 Practice games</button>
+      <button class="nav ${active === 'pres' ? 'on' : ''}" data-act="tPres">📈 Practice results</button>
       <button class="nav ${active === 'tl' ? 'on' : ''}" data-act="tTl">🗓 Timeline</button>
       <button class="nav ${active === 'help' ? 'on' : ''}" data-act="tHelp">❓ Help</button>
       <div class="sidehead">CLASSES</div>
@@ -23,6 +24,7 @@ ACT.voiceTest = () => voiceModal('fr-FR');
 ACT.menu = () => $('#side').classList.toggle('open');
 ACT.tHome = () => go('#/t');
 ACT.tPractice = () => { if (typeof PH !== 'undefined' && PH) PH.keep = null; go('#/s/practice'); };
+ACT.tPres = () => go('#/t/practice');
 ACT.tLib = () => go('#/t/library');
 ACT.tTl = () => go('#/t/timeline');
 ACT.tHelp = () => go('#/t/help');
@@ -601,3 +603,33 @@ ACT.pqGo = () => {
   closeModal();
   printHTML(`<div class="pq" style="font-family:sans-serif;padding:24px"><h2>${esc(PQ.title)}</h2><p>Name: ______________________ &nbsp; Date: ____________ &nbsp; Score: ____ / ${n}</p>${q}${key ? '<div class="pb"><h2>Answer key</h2>' + a + '</div>' : ''}</div>`);
 };
+
+/* ---- practice results (teacher) ---- */
+let PR = null;
+const GAME_LBL = { vocab: 'Vocab', sent: 'Sentence', verb: 'Verb', gram: 'Grammar', listen: 'Listening', dict: 'Dictation', work: 'Workout', box: 'Boxing', abox: 'Audio boxing', climb: 'Climbing' };
+const LEVEL_LBL = { primary: 'Primary', beginner: 'Beginner', preint: 'Pre-int.', inter: 'Intermediate', higher: 'Higher', advanced: 'Advanced', aqa: 'AQA GCSE', igcse: 'IGCSE', pearson: 'Pearson GCSE' };
+ROUTES.push([/^\/t\/practice$/, async () => {
+  await loadClasses();
+  const d = await api('/teacher/practice');
+  PR = { classes: d.classes, students: d.students, cls: (PR && PR.cls) || '', open: null };
+  shell('pres', '<div id="prBody"></div>');
+  drawPR();
+}]);
+const agoTxt = (ts) => { if (!ts) return 'never'; const m = Math.round((Date.now() - ts) / 60000); return m < 2 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; };
+function drawPR() {
+  const list = PR.students.filter((s) => !PR.cls || s.class_id === PR.cls);
+  const sel = `<select id="prCls" style="max-width:260px"><option value="">All classes</option>${PR.classes.map((c) => `<option value="${esc(c.id)}" ${PR.cls === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>`;
+  const cname = (id) => (PR.classes.find((c) => c.id === id) || {}).name || '';
+  let rows = list.map((s) => `<tr data-act="prOpen" data-id="${esc(s.id)}" style="cursor:pointer"><td><b>${esc(s.name)}</b><div class="mute small">${esc(cname(s.class_id))}</div></td><td>${s.sessions}</td><td>${s.pct == null ? '–' : `<span class="badge ${s.pct >= 80 ? 'g' : ''}">${s.pct}%</span>`}</td><td>${Math.round(s.secs / 60)} min</td><td>${Object.entries(s.games).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([g, n]) => esc(GAME_LBL[g] || g) + ' ×' + n).join(', ') || '–'}</td><td>${agoTxt(s.last)}</td></tr>`).join('');
+  const tot = list.reduce((n, s) => n + s.sessions, 0), active = list.filter((s) => s.sessions).length;
+  let detail = '';
+  if (PR.open) {
+    const s = PR.students.find((x) => x.id === PR.open);
+    if (s) detail = `<div class="card" style="margin-top:16px"><div class="spread"><h3 style="margin:0">${esc(s.name)} · recent practice</h3><button class="btn ghost" data-act="prClose">Close</button></div>` + (s.recent.length ? `<div style="overflow:auto"><table class="tbl" style="width:100%"><tr><th>When</th><th>Game</th><th>Level</th><th>Lessons</th><th>Score</th><th>Time</th></tr>${s.recent.map((r) => { const g = String(r.game).split('·'); const pc = Math.round(r.score / r.total * 100); return `<tr><td>${agoTxt(r.ts)}</td><td>${esc(GAME_LBL[g[0]] || g[0])}${g[1] ? ' <span class="chip">' + esc(g[1]) + '</span>' : ''}</td><td>${esc(LEVEL_LBL[r.level] || r.level)}</td><td class="small">${r.lessons.map(esc).join('<br>')}</td><td><span class="badge ${pc >= 80 ? 'g' : ''}">${r.score}/${r.total} · ${pc}%</span></td><td>${Math.floor(r.secs / 60)}:${String(r.secs % 60).padStart(2, '0')}</td></tr>`; }).join('')}</table></div>` : '<p class="mute">No practice yet.</p>') + '</div>';
+  }
+  $('#prBody').innerHTML = `<div class="spread" style="margin-bottom:14px;flex-wrap:wrap;gap:10px"><div><h1 style="margin:0">Practice results</h1><div class="mute">${tot} practice session${tot === 1 ? '' : 's'} · ${active} of ${list.length} student${list.length === 1 ? '' : 's'} active</div></div>${sel}</div>` +
+    (list.length ? `<div class="card" style="overflow:auto"><table class="tbl" style="width:100%"><tr><th>Student</th><th>Sessions</th><th>Accuracy</th><th>Time</th><th>Favourite games</th><th>Last practice</th></tr>${rows}</table></div>` : '<div class="card mute">No students yet.</div>') + detail;
+  const c = $('#prCls'); if (c) c.addEventListener('change', (e) => { PR.cls = e.target.value; PR.open = null; drawPR(); });
+}
+ACT.prOpen = (t) => { PR.open = t.dataset.id; drawPR(); };
+ACT.prClose = () => { PR.open = null; drawPR(); };

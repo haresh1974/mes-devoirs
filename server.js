@@ -581,6 +581,25 @@ async function seedLessons() {
   for (const id of have) if (!ids.has(id)) await db.run('DELETE FROM lessons WHERE id = ?', [id]);
   if (n) console.log('Practice lessons added:', n);
 }
+app.get('/api/teacher/practice', teacherOnly(async (req, res) => {
+  const classes = await db.all('SELECT id,name FROM classes WHERE teacher_id = ? ORDER BY created', [req.teacher.id]);
+  const cids = classes.map((c) => c.id);
+  if (!cids.length) return res.json({ classes: [], students: [] });
+  const students = await db.all('SELECT id,name,class_id FROM students WHERE class_id IN (' + inList(cids) + ') ORDER BY name', cids);
+  const sids = students.map((x) => x.id);
+  const rows = sids.length ? await db.all('SELECT * FROM practice_results WHERE student_id IN (' + inList(sids) + ') ORDER BY ts DESC', sids) : [];
+  const lids = new Set(); rows.forEach((r) => { try { JSON.parse(r.lesson_ids).forEach((i) => lids.add(i)); } catch (e) { /* ignore */ } });
+  const L = lids.size ? await db.all('SELECT id,title FROM lessons WHERE id IN (' + inList([...lids]) + ')', [...lids]) : [];
+  const titles = {}; L.forEach((l) => { titles[l.id] = l.title; });
+  const out = students.map((st) => {
+    const r = rows.filter((x) => x.student_id === st.id);
+    const score = r.reduce((n, x) => n + x.score, 0), total = r.reduce((n, x) => n + x.total, 0);
+    const games = {}; r.forEach((x) => { const g = String(x.game).split('·')[0]; games[g] = (games[g] || 0) + 1; });
+    return { id: st.id, name: st.name, class_id: st.class_id, sessions: r.length, pct: total ? Math.round(score / total * 100) : null, secs: r.reduce((n, x) => n + x.secs, 0), last: r[0] ? r[0].ts : null, games,
+      recent: r.slice(0, 40).map((x) => { let ids = []; try { ids = JSON.parse(x.lesson_ids); } catch (e) { /* ignore */ } return { game: x.game, level: x.level, lessons: ids.map((i) => titles[i] || i), score: x.score, total: x.total, secs: x.secs, ts: x.ts }; }) };
+  });
+  res.json({ classes, students: out });
+}));
 app.get('/api/student/practice', practiceUser(async (req, res) => {
   const rows = await db.all('SELECT id,kind,level,title,topic,items,verbs FROM lessons ORDER BY sort');
   res.json({ tts: ttsOn(), lessons: rows.map((r) => ({ id: r.id, kind: r.kind, level: r.level, title: r.title, topic: r.topic, n: JSON.parse(r.items).length + JSON.parse(r.verbs).length * 6 })) });
