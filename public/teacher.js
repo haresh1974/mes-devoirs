@@ -426,7 +426,7 @@ ACT.htab = (t) => { T.htab = t.dataset.k; route(); };
 function audLabel(a) { return { all: 'Whole class', students: 'Chosen students', ontime: 'On-time finishers', notontime: 'Late / unfinished' }[a] || 'Whole class'; }
 function loc(ms) { return new Date(ms - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16); }
 let LIB = null, ASG = null;
-ROUTES.push([/^\/t\/library$/, async () => {
+ROUTES.push([/^\/t\/library(?:\?.*)?$/, async () => {
   await loadClasses();
   LIB = await api('/library');
   window.LIBF = LIB.homework.map((h) => h.folder);
