@@ -152,7 +152,6 @@ const GAMES = [
   { id: 'vocab', ic: '📚', name: 'Vocab Trainer', d: 'Learn and test words', col: '#1F4FBF', src: ['vocab'], kinds: [['flash', 6], ['match', 2], ['translate', 6], ['meaning', 5], ['typeit', 6], ['truefalse', 5]] },
   { id: 'sent', ic: '🧱', name: 'Sentence Trainer', d: 'Build and complete sentences', col: '#7B3FE4', src: ['sent'], kinds: [['build', 5], ['cloze', 6], ['spaces', 3], ['odd', 3], ['tap', 4]] },
   { id: 'verb', ic: '🎯', name: 'Verb Trainer', d: 'Conjugate in every tense', col: '#E1342F', src: ['verb'], kinds: [['conjmatch', 3], ['conjpick', 8], ['conjtype', 8]] },
-  { id: 'gram', name: 'Grammar Trainer', d: 'Fill the gap, master the rules', col: '#0F766E', src: ['gram'], kinds: [['gappick', 8], ['gaptype', 8]] },
   { id: 'listen', ic: '👂', name: 'Listening Trainer', d: 'Train your ear', col: '#0E9F6E', src: ['vocab', 'sent'], kinds: [['listen', 10], ['tap', 8]] },
   { id: 'dict', ic: '✍️', name: 'Dictation Trainer', d: 'Hear it, then type it', col: '#D97706', src: ['vocab', 'sent'], kinds: [['dictation', 12], ['tap', 4]] },
   { id: 'work', ic: '🏋️', name: 'Workouts', d: 'One lesson, a dozen activities', col: '#0891B2', src: ['vocab', 'sent', 'verb', 'gram'], kinds: [['gappick', 3], ['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
