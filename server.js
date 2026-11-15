@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const path = require('path');
+const fs = require('fs');
 const { open } = require('./db');
 
 const PORT = process.env.PORT || 3000;
@@ -557,6 +558,39 @@ app.post('/api/student/attempt', studentOnly(async (req, res) => {
   await db.run('UPDATE students SET last_active = ? WHERE id = ?', [now(), req.student.id]);
   res.json({ gained: gain });
 }));
+/* ---------- practice hub (game type > level > up to 3 lessons) ---------- */
+async function seedLessons() {
+  let seed = [];
+  try { seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'seed', 'practice.json'), 'utf8')); } catch (e) { return; }
+  const have = new Set((await db.all('SELECT id FROM lessons')).map((r) => r.id));
+  let n = 0;
+  for (const [i, l] of seed.entries()) {
+    const vals = [l.kind, l.level, l.title, l.topic || '', JSON.stringify(l.items || []), JSON.stringify(l.verbs || []), i];
+    if (have.has(l.id)) await db.run('UPDATE lessons SET kind=?,level=?,title=?,topic=?,items=?,verbs=?,sort=? WHERE id=?', [...vals, l.id]);
+    else { await db.run('INSERT INTO lessons (kind,level,title,topic,items,verbs,sort,id) VALUES (?,?,?,?,?,?,?,?)', [...vals, l.id]); n++; }
+  }
+  if (n) console.log('Practice lessons added:', n);
+}
+app.get('/api/student/practice', studentOnly(async (req, res) => {
+  const rows = await db.all('SELECT id,kind,level,title,topic,items,verbs FROM lessons ORDER BY sort');
+  res.json({ tts: ttsOn(), lessons: rows.map((r) => ({ id: r.id, kind: r.kind, level: r.level, title: r.title, topic: r.topic, n: JSON.parse(r.items).length + JSON.parse(r.verbs).length * 6 })) });
+}));
+app.get('/api/student/practice/lessons', studentOnly(async (req, res) => {
+  const ids = String(req.query.ids || '').split(',').map((x) => x.trim()).filter(Boolean).slice(0, 3);
+  if (!ids.length) return res.json({ tts: ttsOn(), lessons: [] });
+  const rows = await db.all('SELECT * FROM lessons WHERE id IN (' + inList(ids) + ')', ids);
+  res.json({ tts: ttsOn(), lessons: rows.map((r) => ({ id: r.id, kind: r.kind, level: r.level, title: r.title, items: JSON.parse(r.items), verbs: JSON.parse(r.verbs) })) });
+}));
+app.post('/api/student/practice/result', studentOnly(async (req, res) => {
+  const b = req.body || {};
+  const ids = (Array.isArray(b.ids) ? b.ids : []).map(String).slice(0, 3);
+  const total = Math.max(1, Math.min(200, parseInt(b.total, 10) || 1));
+  const score = Math.max(0, Math.min(total, parseInt(b.score, 10) || 0));
+  const secs = Math.max(0, Math.min(7200, parseInt(b.secs, 10) || 0));
+  await db.run('INSERT INTO practice_results (id,student_id,game,level,lesson_ids,score,total,secs,ts) VALUES (?,?,?,?,?,?,?,?,?)', [uid(), req.student.id, clean(b.game, 20), clean(b.level, 20), JSON.stringify(ids), score, total, secs, now()]);
+  await db.run('UPDATE students SET last_active = ? WHERE id = ?', [now(), req.student.id]);
+  res.json({ ok: true });
+}));
 app.post('/api/student/study', studentOnly(async (req, res) => {
   const hw = await studentHw(req, String(req.body.homework_id || ''));
   if (!hw) return res.status(404).json({ error: 'Homework not found.' });
@@ -656,7 +690,8 @@ app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
 app.use(express.static(path.join(__dirname, 'public'), { etag: true, setHeaders: (res, f) => { if (/\.(js|css|html)$/.test(f)) res.set('Cache-Control', 'no-cache'); } }));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
-open().then((d) => {
+open().then(async (d) => {
   db = d;
+  await seedLessons();
   app.listen(PORT, () => console.log(`French with Haresh running on port ${PORT} (${db.kind})`));
 }).catch((e) => { console.error('Could not start:', e); process.exit(1); });

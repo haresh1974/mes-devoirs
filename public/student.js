@@ -29,8 +29,10 @@ ROUTES.push([/^\/s$/, async () => {
   const notes = (d.notices || []).filter((n) => !seen.includes(n.id)).map((n) => `<div class="notice"><span>🔔</span><div style="flex:1"><b>Message from your teacher</b><div>${esc(n.message)}</div></div><button class="icon-btn" data-act="seeNote" data-id="${esc(n.id)}" style="width:30px;height:30px">✕</button></div>`).join('');
   $('#app').innerHTML = `<div class="sbody">${sTop(d.student.coins, false)}
     <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><p class="mute" style="margin:0 0 20px">${esc(d.cls.name)}</p>${notes}
-    ${list || '<div class="card mute" style="text-align:center">No homework yet. Check back soon!</div>'}</div>`;
+    <button class="hcard" data-act="sPractice" style="background:linear-gradient(135deg,#1F4FBF,#6C4BDB);color:#fff"><div class="spread"><h3 style="color:#fff">🎮 Practice games</h3><span class="badge g">NEW</span></div><div style="opacity:.9">Vocab, sentences, verbs, listening, dictation and speed games</div></button>
+        ${list || '<div class="card mute" style="text-align:center">No homework yet. Check back soon!</div>'}</div>`;
 }]);
+ACT.sPractice = () => { if (PH) PH.keep = null; go('#/s/practice'); };
 ACT.seeNote = (t) => { let a = []; try { a = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {} a.push(t.dataset.id); try { localStorage.setItem('md_seen', JSON.stringify(a.slice(-50))); } catch (e) {} route(); };
 ACT.sOpen = (t) => go('#/s/hw/' + t.dataset.id);
 
@@ -131,6 +133,87 @@ ACT.stMode = (t) => { SD.mode = t.dataset.k; drawStudy(); };
 ACT.stSay = (t) => { t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1800); speakText(t.dataset.t, ST.lang, !!t.dataset.slow); };
 ACT.stGo = () => { if (SD && SD.secs >= STUDY_SECS) go('#/s/hw/' + SD.id); };
 
+
+/* ---- practice hub: game type > level > up to 3 lessons ---- */
+const GAMES = [
+  { id: 'vocab', ic: '📚', name: 'Vocab Trainer', d: 'Learn and test words', col: '#1F4FBF', src: ['vocab'], kinds: [['flash', 6], ['match', 2], ['translate', 6], ['meaning', 5], ['typeit', 6], ['truefalse', 5]] },
+  { id: 'sent', ic: '🧱', name: 'Sentence Trainer', d: 'Build and complete sentences', col: '#7B3FE4', src: ['sent'], kinds: [['build', 5], ['cloze', 6], ['spaces', 3], ['odd', 3], ['tap', 4]] },
+  { id: 'verb', ic: '🎯', name: 'Verb Trainer', d: 'Conjugate in every tense', col: '#E1342F', src: ['verb'], kinds: [['conjmatch', 3], ['conjpick', 8], ['conjtype', 8]] },
+  { id: 'listen', ic: '👂', name: 'Listening Trainer', d: 'Train your ear', col: '#0E9F6E', src: ['vocab', 'sent'], kinds: [['listen', 10], ['tap', 8]] },
+  { id: 'dict', ic: '✍️', name: 'Dictation Trainer', d: 'Hear it, then type it', col: '#D97706', src: ['vocab', 'sent'], kinds: [['dictation', 12], ['tap', 4]] },
+  { id: 'work', ic: '🏋️', name: 'Workouts', d: 'A mix of everything', col: '#0891B2', src: ['vocab', 'sent', 'verb'], kinds: [['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
+  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '75 seconds, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb'], fast: 'box', kinds: [['translate', 40], ['meaning', 40], ['truefalse', 40], ['cloze', 20], ['conjpick', 20]] },
+  { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['listen', 60]] },
+  { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20]] }
+];
+const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['advanced', 'Advanced'], ['igcse', 'IGCSE (CIE)']];
+const KIND_NAME = { vocab: 'Vocab', sent: 'Sentences', verb: 'Verbs' };
+let PH = null, PH_AGAIN = '';
+ROUTES.push([/^\/s\/practice$/, async () => {
+  startHeartbeat(); ST.hw = null;
+  const d = await api('/student/practice');
+  VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
+  PH = { all: d.lessons, step: (PH && PH.keep) || 'game', game: PH && PH.game, level: PH && PH.level, sel: [], q: '' };
+  drawHub();
+}]);
+const gameOf = (id) => GAMES.find((g) => g.id === id);
+function hubLessons() { const g = gameOf(PH.game); return PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)); }
+function drawHub() {
+  const P = PH; let body = '', title = 'Practice games', back = '#/s';
+  if (P.step === 'game') {
+    body = `<p class="mute" style="margin:0 0 14px">What is the main focus today?</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${GAMES.map((g) => `<button data-act="phGame" data-id="${g.id}" style="border:0;border-radius:18px;padding:16px 12px;color:#fff;text-align:left;background:${g.col};box-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer"><div style="font-size:30px">${g.ic}</div><div style="font-weight:800;font-size:16px;margin-top:4px">${g.name}</div><div style="font-size:12px;opacity:.9">${g.d}</div></button>`).join('')}</div>`;
+  } else if (P.step === 'level') {
+    const g = gameOf(P.game); title = g.ic + ' ' + g.name;
+    body = `<p class="mute" style="margin:0 0 14px">Select your difficulty level</p>` + LEVELS.map(([id, nm]) => {
+      const n = P.all.filter((l) => l.level === id && g.src.includes(l.kind)).length;
+      return `<button class="hcard" data-act="phLevel" data-id="${id}" ${n ? '' : 'disabled style="opacity:.5"'}><div class="spread"><h3>${nm}</h3><span class="badge ${n ? 'g' : ''}">${n ? n + ' lessons' : 'Coming soon'}</span></div></button>`;
+    }).join('');
+  } else {
+    const g = gameOf(P.game), lv = LEVELS.find((x) => x[0] === P.level)[1]; title = g.ic + ' ' + g.name + ' · ' + lv;
+    const q = P.q.toLowerCase(), list = hubLessons().filter((l) => !q || (l.title + ' ' + l.topic).toLowerCase().includes(q));
+    body = `<input id="phQ" type="text" placeholder="Search by lesson title" value="${esc(P.q)}" style="margin-bottom:12px">` + list.map((l) => {
+      const on = P.sel.includes(l.id);
+      return `<button class="hcard" data-act="phPick" data-id="${esc(l.id)}" style="${on ? 'border:3px solid #1F4FBF;background:#eef4ff' : ''}"><div class="spread"><h3>${on ? '✅ ' : ''}${esc(l.title)}</h3><span class="chip">${KIND_NAME[l.kind]}</span></div><div class="mute small">${esc(l.topic || '')}</div></button>`;
+    }).join('') + (list.length ? '' : '<div class="card mute">No lessons match.</div>') +
+      `<button class="btn green" style="width:100%;margin-top:14px;padding:14px;position:sticky;bottom:10px" data-act="phGo" ${P.sel.length ? '' : 'disabled'}>${P.sel.length ? 'Start (' + P.sel.length + '/3 selected)' : 'Pick up to 3 lessons'}</button>`;
+  }
+  $('#app').innerHTML = `<div class="sbody"><div class="stop"><button class="icon-btn" data-act="phBack" title="Back">←</button><div style="font-weight:800;font-size:18px">${esc(title)}</div><span></span></div>${body}</div>`;
+  const qi = $('#phQ'); if (qi) qi.addEventListener('input', (e) => { PH.q = e.target.value; const p = e.target.selectionStart; drawHub(); const i = $('#phQ'); i.focus(); i.setSelectionRange(p, p); });
+}
+ACT.phGame = (t) => { PH.game = t.dataset.id; PH.step = 'level'; PH.sel = []; drawHub(); };
+ACT.phLevel = (t) => { PH.level = t.dataset.id; PH.step = 'lessons'; PH.sel = []; PH.q = ''; drawHub(); };
+ACT.phPick = (t) => { const id = t.dataset.id, i = PH.sel.indexOf(id); if (i >= 0) PH.sel.splice(i, 1); else if (PH.sel.length < 3) PH.sel.push(id); else toast('You can pick up to 3 lessons'); drawHub(); };
+ACT.phAgain = () => { const u = PH_AGAIN; if (location.hash === u) route(); else go(u); };
+ACT.phHub = () => { if (PH) { PH.step = 'game'; PH.keep = null; } go('#/s/practice'); };
+ACT.phBack = () => { if (PH.step === 'lessons') { PH.step = 'level'; drawHub(); } else if (PH.step === 'level') { PH.step = 'game'; drawHub(); } else go('#/s'); };
+ACT.phGo = () => { if (PH.sel.length) { PH.keep = 'lessons'; go('#/s/practice/play/' + PH.game + '/' + PH.level + '/' + PH.sel.join(',')); } };
+ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, level, ids) => {
+  startHeartbeat(); ST.hw = null;
+  const g = gameOf(game); if (!g) return go('#/s/practice');
+  const d = await api('/student/practice/lessons?ids=' + encodeURIComponent(ids));
+  VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
+  const data = { items: [], verbs: [], grammar: [], N: 1, li: 0 };
+  d.lessons.forEach((l) => { data.items.push(...l.items); data.verbs.push(...l.verbs); });
+  const build = () => {
+    const out = [];
+    g.kinds.forEach(([k, n]) => {
+      let qs = []; try { qs = buildQuestions(k, data); } catch (e) { qs = []; }
+      if (g.fast) qs = qs.filter((q) => q.t === 'pick');
+      out.push(...shuffle(qs).slice(0, n));
+    });
+    return g.fast ? shuffle(out) : out;
+  };
+  let qs = build();
+  if (!g.fast) qs = qs.slice(0, 40);
+  if (!qs.length) { toast('Not enough content in these lessons for this game'); return go('#/s/practice'); }
+  G = { id: 'practice', kind: game, lang: 'fr-FR', queue: qs, idx: 0, planned: qs.length, answered: 0, score: 0, total: qs.reduce((n, q) => n + q.total, 0), t0: Date.now(), coins: 0, phase: 'ask', st: {}, staged: false, stageN: [0, 0, 0], stageA: [0, 0, 0], right: 0, asked: 0, practice: { game, level, ids: ids.split(',') } };
+  if (g.fast) { Object.assign(G, { fast: true, mode: g.fast, lives: 3, climb: 0, top: 10, endAt: Date.now() + 75000, refill: () => build().filter((q) => !q.retry) }); G.planned = 999; }
+  let tick = null;
+  if (G.mode === 'box' || G.mode === 'abox') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent = Math.max(0, left); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
+  cleanup = () => { if (tick) clearInterval(tick); stopSpeech(); G = null; };
+  await waitVoices();
+  nextQ();
+}]);
 /* ---- helpers for questions ---- */
 const canSpeak = () => VOICE.cloud || (hasTTS && voicesFor((G && G.lang) || ST.lang || 'fr-FR').length > 0);
 const waitVoices = () => new Promise((res) => { if (VOICE.cloud || !hasTTS || voicesFor(ST.lang || 'fr-FR').length) return res(); let n = 0; const t = setInterval(() => { if (voicesFor(ST.lang || 'fr-FR').length || ++n > 12) { clearInterval(t); res(); } }, 100); });
@@ -406,7 +489,12 @@ function drawPlay() {
   else if (ask) bottom = `<button class="check-btn" id="chk" data-act="gCheck" ${canCheck() ? '' : 'disabled'}>Check</button>`;
   else bottom = `<div class="fb ${G.ok ? 'ok' : 'bad'}"><b>${G.ok ? ['Excellent!', 'Bravo!', 'Parfait!', 'Super!'][Math.floor(Math.random() * 4)] : (G.almost ? 'Almost!' : 'Not quite')}</b>${G.ok ? '' : '<div>' + esc(G.correct) + '</div>'}<button class="btn" data-act="gNext">Continue</button></div>`;
   const stages = G.staged ? '<div class="stages">' + [0, 1, 2].map((i) => '<i><b style="width:' + Math.min(100, Math.round(G.stageA[i] / Math.max(1, G.stageN[i]) * 100)) + '%"></b></i>').join('') + '</div>' : '';
-  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back to path">🏠</button><div class="track"><i style="width:${pct}%"></i></div><span class="coins">${G.coins + G.score * 10}</span></div><div class="pcard">${body}</div><div class="pbottom">${bottom}${stages}</div></div>`;
+  const modeBar = G.mode === 'box' || G.mode === 'abox'
+    ? `<div class="spread" style="font-weight:800;margin:6px 4px"><span style="font-size:22px">${'❤️'.repeat(Math.max(0, G.lives))}${'🖤'.repeat(Math.max(0, 3 - G.lives))}</span><span>⏱ <b id="gClock">${Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000))}</b>s · ✅ ${G.right}</span></div>`
+    : G.mode === 'climb'
+      ? `<div style="margin:6px 4px;font-weight:800"><div class="spread"><span>⛰️ Reach the summit!</span><span>${G.climb} / ${G.top}</span></div><div style="position:relative;height:14px;background:#dfe6f5;border-radius:8px;margin-top:6px"><i style="display:block;height:100%;width:${Math.round(G.climb / G.top * 100)}%;background:#2ecc71;border-radius:8px;transition:width .4s"></i><span style="position:absolute;top:-12px;left:calc(${Math.round(G.climb / G.top * 100)}% - 12px);font-size:22px;transition:left .4s">🧗</span></div></div>`
+      : '';
+  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back to path">🏠</button><div class="track"><i style="width:${pct}%"></i></div><span class="coins">${G.practice ? '⭐ ' + G.score : G.coins + G.score * 10}</span></div>${modeBar}<div class="pcard">${body}</div><div class="pbottom">${bottom}${stages}</div></div>`;
   const inp = $('#ans');
   if (inp && ask) {
     inp.focus();
@@ -414,9 +502,12 @@ function drawPlay() {
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') ACT.gCheck(); });
   }
 }
-ACT.gQuit = () => go('#/s/hw/' + G.id);
+ACT.gQuit = () => go(G && G.practice ? '#/s/practice' : '#/s/hw/' + G.id);
 ACT.gSay = (t) => { t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1800); say(t.dataset.t, !!t.dataset.slow); };
-ACT.gPick = (t) => { const q = curQ(); G.st.sel = +t.dataset.i; drawPlay(); if (q.speakOpts) say(q.opts[G.st.sel]); };
+ACT.gPick = (t) => {
+  const q = curQ(); G.st.sel = +t.dataset.i; drawPlay(); if (q.speakOpts) say(q.opts[G.st.sel]);
+  if (G.fast && G.phase === 'ask') { ACT.gCheck(); const mine = G.idx; setTimeout(() => { if (G && G.idx === mine && G.phase === 'fb') ACT.gNext(); }, G.ok ? 650 : 1500); }
+};
 ACT.gTap = (t) => { G.st.chosen.push(+t.dataset.i); drawPlay(); };
 ACT.gUntap = (t) => { G.st.chosen.splice(+t.dataset.k, 1); drawPlay(); };
 ACT.gPull = (t) => { G.st.chosen.push(+t.dataset.i); drawPlay(); };
@@ -484,17 +575,39 @@ ACT.gCheck = () => {
   }
   G.ok = ok; G.correct = correct; G.almost = almost; G.phase = 'fb';
   if (ok && !q.retry) G.score += q.total;
-  if (!ok && !q.retry) retryLater(q);
+  if (!ok && !q.retry && !G.fast) retryLater(q);
   if (!q.retry) { G.asked += q.total; if (ok) G.right += q.total; }
+  if (G.mode === 'box' || G.mode === 'abox') { if (!ok) G.lives--; }
+  if (G.mode === 'climb') G.climb = ok ? G.climb + 1 : Math.max(0, G.climb - 1);
   bump(q);
   drawPlay();
   const after = q.afterSay || (q.t === 'tap' && q.enBuild ? q.sentence : null) || (q.t === 'tap' || q.t === 'spaces' || q.t === 'odd' ? q.sentence : null) || (q.t === 'type' ? q.answer : null);
   if (after) say(after);
 };
-ACT.gNext = () => { G.idx++; if (G.idx >= G.queue.length) finishPlay(); else nextQ(); };
+ACT.gNext = () => {
+  if (G.fast) {
+    const over = (G.mode === 'climb' && (G.climb >= G.top || G.asked >= 30)) || ((G.mode === 'box' || G.mode === 'abox') && (G.lives <= 0 || Date.now() >= G.endAt));
+    if (over) return finishPlay();
+    G.idx++;
+    if (G.idx >= G.queue.length) { const more = G.refill(); if (!more.length) return finishPlay(); G.queue.push(...more); }
+    return nextQ();
+  }
+  G.idx++; if (G.idx >= G.queue.length) finishPlay(); else nextQ();
+};
 
 async function finishPlay() {
   const secs = Math.round((Date.now() - G.t0) / 1000), g = G;
+  if (g.practice) {
+    if (g.fast) g.total = Math.max(1, g.asked);
+    const pct = Math.round(g.score / g.total * 100);
+    try { await api('/student/practice/result', 'POST', { game: g.practice.game, level: g.practice.level, ids: g.practice.ids, score: Math.round(g.score), total: g.total, secs }); } catch (e) { if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
+    const summit = g.mode === 'climb' && g.climb >= g.top;
+    $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${summit ? '🏔️' : pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div><div class="kick">${summit ? 'YOU REACHED THE SUMMIT!' : 'SESSION COMPLETE'}</div>
+      <div class="stat3b"><div><b>${Math.round(g.score)}/${g.total}</b><span>CORRECT</span></div><div><b>${pct}%</b><span>ACCURACY</span></div><div><b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b><span>TIME</span></div></div>
+      <button class="bigblue" data-act="phAgain">Play again</button><button class="btn ghost" style="width:100%;margin-top:10px" data-act="phHub">Back to games</button></div></div>`;
+    G.again = '#/s/practice/play/' + g.practice.game + '/' + g.practice.level + '/' + g.practice.ids.join(',');
+    PH_AGAIN = G.again; return;
+  }
   let gained = 0, failed = false;
   try { gained = (await api('/student/attempt', 'POST', { homework_id: g.id, lesson: g.kind, score: Math.round(g.score), total: g.total, secs })).gained; }
   catch (e) { failed = true; if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
