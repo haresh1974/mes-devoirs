@@ -45,6 +45,7 @@ setInterval(() => { const t = now(); for (const [k, v] of hits) if (v.reset < t)
 
 const wrap = (fn) => (req, res) => fn(req, res).catch((e) => { console.error(e); res.status(500).json({ error: 'Something went wrong. Please try again.' }); });
 
+const STUDY_SECS = +process.env.STUDY_SECS || 360;
 let db;
 async function auth(req, kind) {
   const tok = parseCookies(req).sid;
@@ -532,7 +533,9 @@ app.get('/api/student/homework/:id', studentOnly(async (req, res) => {
   const done = {};
   atts.forEach((a) => { if (!done[a.lesson] || a.score / a.total > done[a.lesson].score / done[a.lesson].total) done[a.lesson] = { score: a.score, total: a.total }; });
   const b = await board(hw, req.student);
+  const stRow = await db.get('SELECT secs FROM study WHERE id = ?', [req.student.id + ':' + hw.id]);
   res.json({
+    study: stRow ? stRow.secs : 0, need: STUDY_SECS,
     hw: { id: hw.id, title: hw.title, topic: hw.topic, tier: hw.tier, due_at: hw.due_at, free_order: hw.free_order, exercises: JSON.parse(hw.exercises), items: JSON.parse(hw.items), extra: JSON.parse(hw.extra || '{}'), language: c.language },
     tts: ttsOn(),
     done, me: req.student.id, coins: b.find((x) => x.id === req.student.id).coins,
@@ -553,6 +556,19 @@ app.post('/api/student/attempt', studentOnly(async (req, res) => {
   await db.run('INSERT INTO attempts (id,student_id,homework_id,lesson,score,total,secs,coins,ts) VALUES (?,?,?,?,?,?,?,?,?)', [uid(), req.student.id, hw.id, lesson, score, total, secs, gain, now()]);
   await db.run('UPDATE students SET last_active = ? WHERE id = ?', [now(), req.student.id]);
   res.json({ gained: gain });
+}));
+app.post('/api/student/study', studentOnly(async (req, res) => {
+  const hw = await studentHw(req, String(req.body.homework_id || ''));
+  if (!hw) return res.status(404).json({ error: 'Homework not found.' });
+  const id = req.student.id + ':' + hw.id, t = now();
+  const row = await db.get('SELECT * FROM study WHERE id = ?', [id]);
+  const asked = Math.max(0, Math.min(30, parseInt(req.body.secs, 10) || 0));
+  const gap = row ? Math.ceil((t - row.ts) / 1000) + 2 : 30; // cannot count more time than has really passed
+  const add = Math.min(asked, gap);
+  const secs = Math.min(STUDY_SECS, (row ? row.secs : 0) + add);
+  if (row) await db.run('UPDATE study SET secs = ?, ts = ? WHERE id = ?', [secs, t, id]);
+  else await db.run('INSERT INTO study (id,student_id,homework_id,secs,ts) VALUES (?,?,?,?,?)', [id, req.student.id, hw.id, secs, t]);
+  res.json({ secs, need: STUDY_SECS });
 }));
 app.post('/api/student/ping', studentOnly(async (req, res) => {
   const secs = Math.max(0, Math.min(60, parseInt(req.body.secs, 10) || 0));

@@ -42,10 +42,13 @@ ROUTES.push([/^\/s\/hw\/(\w+)$/, async (id) => {
   hw.mixed = (hw.exercises || []).some((k) => /^L\d+$/.test(k)); ST.hwData = hw;
   VOICE.cloud = !!d.tts; ST.lang = langOf(hw.language);
   const me = board.find((b) => b.me);
+  ST.study = d.study || 0; STUDY_SECS = d.need || STUDY_SECS;
+  const studied = ST.study >= STUDY_SECS;
   let inner = '';
   if (ST.tab === 'path') {
     let nextSet = false;
-    inner = '<div class="path">' + hw.exercises.map((k, i) => {
+    inner = (studied ? `<div class="card" style="display:flex;align-items:center;gap:12px;justify-content:space-between"><div><b>📖 Study cards</b><div class="mute small">Studied ✓ You can revise any time.</div></div><button class="btn ghost sm" data-act="sStudy">Revise</button></div>`
+      : `<div class="card" style="text-align:center;border:2px solid #f5b400;background:#fffbea"><div style="font-size:38px">📖</div><b style="font-size:18px">Study first!</b><div class="mute" style="margin:6px 0 12px">Read the words and listen to them for ${Math.round(STUDY_SECS / 60)} minutes before you start the practice.${ST.study ? ' You have done ' + Math.floor(ST.study / 60) + ' min ' + (ST.study % 60) + ' s so far.' : ''}</div><button class="btn green" data-act="sStudy">Start studying</button></div>`) + '<div class="path">' + hw.exercises.map((k, i) => {
       const dn = done[k], prevDone = hw.exercises.slice(0, i).every((p) => done[p]);
       const locked = !hw.free_order && !prevDone;
       const isNext = !dn && !nextSet && !locked; if (isNext) nextSet = true;
@@ -70,10 +73,63 @@ ACT.sBubble = () => {
   setTimeout(() => speakText(it.fr, ST.lang), 300);
 };
 ACT.sTab = (t) => { ST.tab = t.dataset.k; route(); };
+ACT.sStudy = () => go('#/s/study/' + ST.hw);
 ACT.sPlay = (t) => {
   if (t.dataset.locked) { toast('Finish the activity before this one first'); return; }
+  if ((ST.study || 0) < STUDY_SECS) { toast('Study the words first (' + Math.round(STUDY_SECS / 60) + ' minutes)'); return go('#/s/study/' + ST.hw); }
   go('#/s/play/' + ST.hw + '/' + t.dataset.k);
 };
+
+/* ---- study cards (compulsory before practice) ---- */
+let STUDY_SECS = 360;
+let SD = null;
+const fmtClock = (s) => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+ROUTES.push([/^\/s\/study\/(\w+)$/, async (id) => {
+  startHeartbeat(); ST.hw = id;
+  const d = await api('/student/homework/' + id);
+  VOICE.cloud = !!d.tts; ST.lang = langOf(d.hw.language); STUDY_SECS = d.need || STUDY_SECS;
+  const items = (d.hw.items || []).filter((i) => !i.s).concat((d.hw.items || []).filter((i) => i.s));
+  SD = { id, items, i: 0, flip: false, mode: 'cards', secs: Math.min(STUDY_SECS, d.study || 0), sent: 0, title: d.hw.title };
+  const tick = setInterval(async () => {
+    if (!SD || SD.id !== id) return clearInterval(tick);
+    if (document.visibilityState !== 'visible') return;
+    if (SD.secs < STUDY_SECS) { SD.secs++; SD.sent++; }
+    if (SD.sent >= 10 || (SD.secs >= STUDY_SECS && SD.sent)) { const n = SD.sent; SD.sent = 0; try { const r = await api('/student/study', 'POST', { homework_id: id, secs: n }); if (SD && r.secs < SD.secs - 12) SD.secs = r.secs; } catch (e) {} }
+    drawClock();
+  }, 1000);
+  cleanup = () => { clearInterval(tick); stopSpeech(); const n = SD && SD.sent; if (n) api('/student/study', 'POST', { homework_id: id, secs: n }).catch(() => {}); SD = null; };
+  drawStudy();
+}]);
+function drawClock() {
+  const el = $('#stClock'), b = $('#stGo'); if (!el || !SD) return;
+  const left = STUDY_SECS - SD.secs;
+  el.innerHTML = left > 0 ? `⏳ Study time left <b>${fmtClock(left)}</b>` : '✅ Well done! Practice is unlocked.';
+  $('#stBar').style.width = Math.round(SD.secs / STUDY_SECS * 100) + '%';
+  b.disabled = left > 0; b.textContent = left > 0 ? 'Practice unlocks in ' + fmtClock(left) : "Start practice ▶";
+}
+function drawStudy() {
+  const S = SD, it = S.items[S.i];
+  const body = S.mode === 'cards'
+    ? `<div class="card" style="text-align:center;padding:30px 18px;min-height:230px;cursor:pointer" data-act="stFlip"><div class="mute small">${S.i + 1} / ${S.items.length} · tap the card to ${S.flip ? 'hide' : 'see'} the English</div>
+        <div style="font-size:${it.fr.length > 24 ? 24 : 32}px;font-weight:800;margin:20px 0 10px">${esc(it.fr)}</div>
+        <div style="font-size:22px;min-height:32px;color:#1F4FBF;font-weight:700">${S.flip ? esc(it.en) : '•••'}</div></div>
+      <div class="audio" style="justify-content:center;margin:12px 0"><button class="abtn" data-act="stSay" data-t="${esc(it.fr)}">${ICON_SPK}<span>Listen</span></button><button class="abtn slow" data-act="stSay" data-t="${esc(it.fr)}" data-slow="1">${ICON_SLOW}</button></div>
+      <div class="row" style="justify-content:space-between"><button class="btn ghost" data-act="stPrev">← Back</button><button class="btn ghost" data-act="stShuffle">🔀 Shuffle</button><button class="btn" data-act="stNext">Next →</button></div>`
+    : `<div class="card" style="padding:4px 14px">${S.items.map((x, n) => `<div class="spread" style="padding:9px 0;border-top:${n ? '1px solid var(--line)' : '0'}"><div><b>${esc(x.fr)}</b><div class="mute small">${esc(x.en)}</div></div><button class="abtn" style="flex:none" data-act="stSay" data-t="${esc(x.fr)}">${ICON_SPK}</button></div>`).join('')}</div>`;
+  $('#app').innerHTML = `<div class="sbody">${sTop(null, true)}
+    <div class="hwhead"><h1>📖 Study: ${esc(S.title)}</h1><div id="stClock" style="margin:6px 0"></div><div style="height:10px;background:rgba(255,255,255,.5);border-radius:6px;overflow:hidden"><div id="stBar" style="height:100%;width:0;background:#2ecc71;transition:width .4s"></div></div></div>
+    <div class="stabs"><button class="${S.mode === 'cards' ? 'on' : ''}" data-act="stMode" data-k="cards">Flash cards</button><button class="${S.mode === 'list' ? 'on' : ''}" data-act="stMode" data-k="list">Word list</button></div>
+    ${body}
+    <button class="btn green" id="stGo" style="width:100%;margin-top:16px;padding:14px" data-act="stGo" disabled>Start practice</button></div>`;
+  drawClock();
+}
+ACT.stFlip = () => { SD.flip = !SD.flip; drawStudy(); if (SD.flip) speakText(SD.items[SD.i].fr, ST.lang); };
+ACT.stNext = () => { SD.i = (SD.i + 1) % SD.items.length; SD.flip = false; drawStudy(); speakText(SD.items[SD.i].fr, ST.lang); };
+ACT.stPrev = () => { SD.i = (SD.i - 1 + SD.items.length) % SD.items.length; SD.flip = false; drawStudy(); speakText(SD.items[SD.i].fr, ST.lang); };
+ACT.stShuffle = () => { SD.items = shuffle(SD.items); SD.i = 0; SD.flip = false; drawStudy(); };
+ACT.stMode = (t) => { SD.mode = t.dataset.k; drawStudy(); };
+ACT.stSay = (t) => { t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1800); speakText(t.dataset.t, ST.lang, !!t.dataset.slow); };
+ACT.stGo = () => { if (SD && SD.secs >= STUDY_SECS) go('#/s/hw/' + SD.id); };
 
 /* ---- helpers for questions ---- */
 const canSpeak = () => VOICE.cloud || (hasTTS && voicesFor((G && G.lang) || ST.lang || 'fr-FR').length > 0);
@@ -262,6 +318,8 @@ ROUTES.push([/^\/s\/play\/(\w+)\/(\w+)$/, async (id, kind) => {
   startHeartbeat(); ST.hw = id;
   const d = await api('/student/homework/' + id);
   if (!d.hw.exercises.includes(kind)) return go('#/s/hw/' + id);
+  STUDY_SECS = d.need || STUDY_SECS;
+  if ((d.study || 0) < STUDY_SECS) return go('#/s/study/' + id);
   VOICE.cloud = !!d.tts;
   G = { id, kind, lang: langOf(d.hw.language), queue: [], idx: 0, planned: 0, answered: 0, score: 0, total: 0, t0: Date.now(), coins: d.coins, phase: 'ask', st: {} };
   await waitVoices();

@@ -24,6 +24,8 @@ const SCHEMA = [
     score INTEGER NOT NULL, total INTEGER NOT NULL, secs INTEGER NOT NULL, coins INTEGER NOT NULL, ts BIGINT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS activity (
     id TEXT PRIMARY KEY, student_id TEXT NOT NULL, homework_id TEXT, day TEXT NOT NULL, secs INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS study (
+    id TEXT PRIMARY KEY, student_id TEXT NOT NULL, homework_id TEXT NOT NULL, secs INTEGER NOT NULL, ts BIGINT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS assignments (
     id TEXT PRIMARY KEY, homework_id TEXT NOT NULL, class_id TEXT NOT NULL, start_at BIGINT NOT NULL,
     due_at BIGINT, audience TEXT NOT NULL, student_ids TEXT, created BIGINT NOT NULL)`,
