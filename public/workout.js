@@ -41,6 +41,8 @@ function wkCss() {
 .wk-mt{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 0}
 .wk-mt button{font:inherit;font-weight:700;font-size:15px;border:2px solid var(--line);background:#fff;border-radius:12px;padding:11px 10px;cursor:pointer;color:var(--ink);text-align:left}
 .wk-mt button.sel{border-color:#1aa7ec;background:#e3f4fd}.wk-mt button.got{border-color:#16a34a;background:#e4f8ee;opacity:.75;pointer-events:none}.wk-mt button.wrong{border-color:#dc2626;background:#fde8e8}
+.wk-brk{display:flex;flex-wrap:wrap;align-items:center;font:800 20px ui-monospace,Menlo,monospace;margin:6px 0;line-height:2.1}.wk-brk b{display:inline-block;width:12px;height:36px;margin:0 1px;cursor:pointer;border-radius:5px;background:#eef2f9;vertical-align:middle}.wk-brk b:hover{background:#cfe4fb}.wk-brk b.on{width:14px;background:#2563eb}
+.wk-rob{margin:8px 0}.wk-rob>div{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:20px}.wk-rob u{flex:1;height:12px;border-radius:8px;background:#e6ebf5;overflow:hidden;text-decoration:none;display:block}.wk-rob i{display:block;height:100%;background:#16a34a;transition:width .4s}.wk-rob i.r{background:#ea580c;transition:width 1s linear}
 .wk-nav{display:flex;gap:10px;margin-top:14px}
 .wk-nav button{font:inherit;font-weight:900;font-size:16px;border-radius:14px;padding:13px 18px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
 .wk-nav .go{flex:1;background:#16a34a;border-color:#15803d;color:#fff;box-shadow:0 4px 0 #15803d}
@@ -167,22 +169,32 @@ function wkDraw() {
   const pct = Math.round(W.stages.filter((x) => x.done).length / W.stages.length * 100);
   let body = '';
   if (s.t === 'match') body = wkMatch(s);
+  else if (s.seq) { let ci = s.items.findIndex((x) => !x.st.fin); const alldone = ci < 0; if (alldone) ci = s.items.length - 1; if (!alldone) wkBegin(s, ci); body = '<div class="wk-card">' + wkItem(s, s.items[ci], ci) + '</div>'; }
   else body = '<div class="wk-card">' + s.items.map((it, i) => wkItem(s, it, i)).join('') + '</div>';
   const mt = s.t === 'match';
   const pass = W.mod === 'read' ? `<div class="wk-pass"><b>📖 ${esc(W.L.title || '')} <button class="wk-h" data-act="wkSay" data-t="${esc((W.L.items || []).filter((x) => x.fr && !x.q).map((x) => x.fr).join(' '))}">🔊</button></b>${(W.L.items || []).filter((x) => x.fr && !x.q).map((x) => esc(x.fr)).join(' ')}</div>` : '';
-  $('#app').innerHTML = `<div class="wk"><div class="wk-top"><button data-act="wkQuit">⬅ Menu</button><button data-act="wkSw">🔀 Switch activity</button><span class="sp"></span><button data-act="wkPrint" title="Print this stage">🖨</button></div>
-  <div class="wk-head"><small>Workout · ${esc(W.L.title || '')}</small><h2>${esc(s.name)}</h2><p>${esc(s.instr)}</p></div>
+  $('#app').innerHTML = `<div class="wk"><div class="wk-top"><button data-act="wkQuit">${W.board ? '⬅ Activities' : '⬅ Menu'}</button>${W.board ? '' : '<button data-act="wkSw">🔀 Switch activity</button>'}<span class="sp"></span><button data-act="wkPrint" title="Print this stage">🖨</button></div>
+  <div class="wk-head"><small>${esc(W.hdr || 'Workout · ' + (W.L.title || ''))}</small><h2>${esc(s.name)}</h2><p>${esc(s.instr)}</p></div>
   ${pass}<div class="wk-stats"><span>Score: ${s.score} / ${ic}</span><span>Overall: ${wkOverall()} / ${W.total}</span><span>💡 Hints: ${W.hints}</span><span>⏱ <b id="wkClock">00:00</b></span></div>
-  <div class="wk-bar"><i style="width:${pct}%"></i></div>${body}
-  <div class="wk-nav"><button data-act="wkPrev" ${W.cur ? '' : 'disabled'}>Back</button>${s.done ? '<button class="go nx" data-act="wkNext">' + (W.cur === W.stages.length - 1 ? 'Finish' : 'Next ▶') + '</button>' : '<button class="nx2" data-act="wkNext">' + (W.cur === W.stages.length - 1 ? 'Finish' : 'Skip ▶') + '</button>'}<span class="cnt">${W.cur + 1}/${W.stages.length}</span></div>
+  <div class="wk-bar"><i style="width:${pct}%"></i></div>${s.robot ? wkRobot(s) : ''}${body}
+  <div class="wk-nav">${W.board ? '' : `<button data-act="wkPrev" ${W.cur ? '' : 'disabled'}>Back</button>`}${s.done ? '<button class="go nx" data-act="wkNext">' + (W.cur === W.stages.length - 1 ? 'Finish' : 'Next ▶') + '</button>' : '<button class="nx2" data-act="wkNext">' + (W.board ? 'End activity' : W.cur === W.stages.length - 1 ? 'Finish' : 'Skip ▶') + '</button>'}<span class="cnt">${W.board ? s.items.filter((x) => x.st.fin).length + '/' + ic : (W.cur + 1) + '/' + W.stages.length}</span></div>
   ${W.sw ? wkSwitch() : ''}</div>`;
+  if (s.seq) { const f = $$('.wk-in:not(:disabled)')[0]; if (f && !('ontouchstart' in window)) f.focus(); }
   $$('.wk-in').forEach((inp) => { inp.addEventListener('input', () => { const it = s.items[+inp.dataset.i]; it.st.v = inp.value; if (checkTyped(inp.value, it.ans) === 'ok') { wkResolve(+inp.dataset.i); const n = $$('.wk-in:not(:disabled)')[0]; if (n) n.focus(); } }); inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { wkResolve(+inp.dataset.i); const n = $$('.wk-in:not(:disabled)')[0]; if (n) n.focus(); } }); });
 }
 function wkItem(s, it, i) {
   const st = it.st, done = !!st.fin;
   const cls = done ? (st.res === 1 ? 'ok' : st.res > 0 ? 'half' : 'bad') : '';
-  const aud = it.audio && !(it.noAudioFirst && !done && !st.hint) ? `<button class="wk-h" style="background:#e3f4fd" data-act="wkSay" data-t="${esc(it.audio)}" title="Listen">🔊</button>` : '';
+  const aud = it.audio && !(it.noAudioFirst && !done && !st.hint) && !(it.once && st.played && !done) ? `<button class="wk-h" style="background:#e3f4fd" data-act="wkSay" data-i="${i}" data-t="${esc(it.audio)}" title="Listen">🔊</button>` : '';
+  if (it.flash && !done && !st.hid) {
+    const tks = toks(it.show);
+    return `<div class="wk-it"><div class="wk-n">${i + 1}</div><div class="wk-b"><div class="wk-q">${it.flash.mode === 'trap' ? tks.map((w, k) => `<span style="${k < (st.gone || 0) ? 'visibility:hidden' : ''}">${esc(w)}</span>`).join(' ') : esc(it.show)}</div><div class="wk-s">${it.flash.mode === 'trap' ? 'Read it fast. The words are about to fall through the trapdoor!' : 'Memorise it. It will disappear in a few seconds.'}</div></div></div>`;
+  }
   let ctl = '';
+  if (s.t === 'break') {
+    const chars = Array.from(it.str), br = st.br || [];
+    ctl = '<div class="wk-brk">' + chars.map((c, k) => `<span>${esc(c)}</span>${k < chars.length - 1 ? `<b class="${br.includes(k + 1) ? 'on' : ''}" data-act="wkBr" data-i="${i}" data-p="${k + 1}"></b>` : ''}`).join('') + '</div><div class="wk-s">Tap between the letters to cut the string into words.</div>';
+  }
   if (s.t === 'pick') ctl = '<div class="wk-o">' + it.opts.map((o, k) => { let c = ''; if (done) c = o === it.ans ? 'ok' : (st.sel === k ? 'bad' : ''); else if (st.sel === k) c = 'sel'; else if (st.off && st.off.includes(k)) c = 'off'; return `<button class="${c}" data-act="wkPick" data-i="${i}" data-k="${k}" ${done ? 'disabled' : ''}>${esc(o)}</button>`; }).join('') + '</div>';
   if (s.t === 'type') ctl = `<input class="wk-in" data-i="${i}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(st.v || '')}" placeholder="${esc(st.hint ? it.ph || '' : 'Type here')}" ${done ? 'disabled' : ''}>${done ? '' : `<button class="wk-h" style="margin-top:6px;background:#e4f8ee;font-weight:800;font-size:13px" data-act="wkCheck" data-i="${i}">Enter ↵</button>`}`;
   if (s.t === 'order') { const ch = st.chosen || []; ctl = `<div class="wk-tiles">${ch.map((b, k) => `<button data-act="wkUn" data-i="${i}" data-k="${k}" ${done ? 'disabled' : ''}>${esc(it.bank[b])}</button>`).join('')}</div><div class="wk-bank">${it.bank.map((w, b) => `<button class="${ch.includes(b) ? 'gh' : ''}" data-act="wkTile" data-i="${i}" data-b="${b}" ${done ? 'disabled' : ''}>${esc(w)}</button>`).join('')}</div>`; }
@@ -191,8 +203,8 @@ function wkItem(s, it, i) {
     ctl = (rec ? `<button class="wk-mic ${st.rec ? 'on' : ''}" data-act="wkRec" data-i="${i}" ${done ? 'disabled' : ''}>${st.rec ? '⏺ Listening…' : '🎤 Tap and speak'}</button>` : `<div class="wk-o"><button class="${st.self === 1 ? 'sel' : ''}" data-act="wkSelf" data-i="${i}" data-v="1" ${done ? 'disabled' : ''}>I said it well</button><button class="${st.self === 0 ? 'sel' : ''}" data-act="wkSelf" data-i="${i}" data-v="0" ${done ? 'disabled' : ''}>I need more practice</button></div>`) + (st.v ? `<div class="wk-s" style="margin-top:8px">I heard: <b>${esc(st.v)}</b></div>` : '') + (st.hint ? `<div class="wk-s">${esc(it.ans)}</div>` : '');
   }
   let fix = '';
-  if (done && st.res < 1) fix = `<div class="wk-fix">${st.res > 0 ? 'Almost, check the accents. ' : ''}Answer: <b>${esc(s.t === 'order' ? it.ans.join(' ') : it.ans)}</b>${it.after && s.t !== 'order' && it.after !== it.ans ? ' · ' + esc(it.after) : ''}</div>`;
-  return `<div class="wk-it ${cls}"><div class="wk-n">${i + 1}</div><div class="wk-b"><div class="wk-q">${esc(it.q)}</div>${it.sub ? '<div class="wk-s">' + esc(it.sub) + '</div>' : ''}${ctl}${fix}</div>${aud}${done ? '' : `<button class="wk-h" data-act="wkHint" data-i="${i}" title="Hint (costs half a point)">💡</button>`}</div>`;
+  if (done && st.res < 1) fix = `<div class="wk-fix">${st.res > 0 ? 'Almost, check the accents. ' : ''}Answer: <b>${esc(s.t === 'order' || s.t === 'break' ? it.ans.join(' ') : it.ans)}</b>${it.after && s.t !== 'order' && it.after !== it.ans ? ' · ' + esc(it.after) : ''}</div>`;
+  return `<div class="wk-it ${cls}"><div class="wk-n">${i + 1}</div><div class="wk-b"><div class="wk-q">${esc(it.q)}</div>${it.sub ? '<div class="wk-s">' + esc(it.sub) + '</div>' : ''}${ctl}${fix}</div>${aud}${done || s.t === 'break' ? '' : `<button class="wk-h" data-act="wkHint" data-i="${i}" title="Hint (costs half a point)">💡</button>`}</div>`;
 }
 function wkMatch(s) {
   const st = s.ms || (s.ms = { sel: null, got: {}, miss: {}, bad: null, L: shuffle(s.items.map((_, i) => i)), R: shuffle(s.items.map((_, i) => i)) });
@@ -203,13 +215,28 @@ function wkSwitch() {
   return `<div class="wk-sw" data-act="wkSwClose"><div><h3>Activities available</h3>${WK.stages.map((s, i) => `<button class="${i === WK.cur ? 'cur' : ''}" data-act="wkGo" data-i="${i}"><span>${i + 1}.</span> ${esc(s.name)}<i>${s.score || s.done ? s.score + '/' + s.items.length : ''}</i></button>`).join('')}</div></div>`;
 }
 /* ---------- actions ---------- */
-ACT.wkQuit = () => go('#/s/practice');
+ACT.wkQuit = () => go(WK && WK.board ? WK.board : '#/s/practice');
 ACT.wkSw = () => { WK.sw = true; wkDraw(); };
 ACT.wkSwClose = (t, e) => { if (e && e.target !== t) return; WK.sw = false; wkDraw(); };
 ACT.wkGo = (t) => { WK.cur = +t.dataset.i; WK.sw = false; wkDraw(); window.scrollTo(0, 0); };
 ACT.wkPrev = () => { if (WK.cur) { WK.cur--; wkDraw(); window.scrollTo(0, 0); } };
 ACT.wkPrint = () => window.print();
-ACT.wkSay = (t) => speakText(t.dataset.t, 'fr-FR', false);
+ACT.wkSay = (t) => { const s = wkStage(), it = t.dataset.i != null && s ? s.items[+t.dataset.i] : null; if (it && it.once) { if (it.st.played) return; it.st.played = true; setTimeout(() => { if (WK) wkDraw(); }, 60); } speakText(t.dataset.t, WK && WK.lang || 'fr-FR', false); };
+ACT.wkBr = (t) => { const it = wkStage().items[+t.dataset.i], st = it.st; if (st.fin) return; const p = +t.dataset.p; st.br = st.br || []; const k = st.br.indexOf(p); if (k >= 0) st.br.splice(k, 1); else st.br.push(p); if (st.br.length >= it.ans.length - 1) wkResolve(+t.dataset.i); else wkDraw(); };
+function wkBegin(s, i) {
+  const it = s.items[i], st = it.st; if (st.begun) return; st.begun = true;
+  const alive = () => WK && wkStage() === s && !st.fin;
+  if (it.flash) {
+    if (it.flash.mode === 'trap') { const n = toks(it.show).length; for (let k = 1; k <= n; k++) setTimeout(() => { if (alive()) { st.gone = k; wkDraw(); } }, 2200 + k * 850); setTimeout(() => { if (alive()) { st.hid = true; wkDraw(); } }, 2200 + (n + 1) * 850); }
+    else setTimeout(() => { if (alive()) { st.hid = true; wkDraw(); } }, it.flash.ms);
+  }
+  if (it.audio && it.auto && canSpeak()) { st.played = true; speakText(it.audio, WK.lang || 'fr-FR', false); setTimeout(() => { if (alive()) wkDraw(); }, 60); }
+}
+function wkRobot(s) {
+  const n = s.items.length, me = s.items.filter((x) => x.st.fin).length;
+  return `<div class="wk-rob" id="wkRob"><div><span>🧑</span><u><i id="wkMe" style="width:${Math.round(me / n * 100)}%"></i></u></div><div><span>🤖</span><u><i id="wkBot" class="r" style="width:${wkBotPct(s)}%"></i></u></div></div>`;
+}
+function wkBotPct(s) { const n = s.items.length; return Math.min(100, Math.round((Date.now() - WK.t0) / (s.robot.pace * n) * 100)); }
 ACT.wkPick = (t) => { const it = wkStage().items[+t.dataset.i]; if (it.st.fin) return; it.st.sel = +t.dataset.k; wkResolve(+t.dataset.i); };
 ACT.wkTile = (t) => { const it = wkStage().items[+t.dataset.i]; if (it.st.fin) return; (it.st.chosen = it.st.chosen || []).push(+t.dataset.b); if (it.st.chosen.length >= it.ans.length) wkResolve(+t.dataset.i); else wkDraw(); };
 ACT.wkUn = (t) => { const it = wkStage().items[+t.dataset.i]; if (it.st.fin) return; it.st.chosen.splice(+t.dataset.k, 1); wkDraw(); };
@@ -252,6 +279,7 @@ function wkEval(s, it) {
   if (s.t === 'pick') r = st.sel != null && it.opts[st.sel] === it.ans ? 1 : 0;
   else if (s.t === 'type') { const c = checkTyped(st.v || '', it.ans); r = c === 'ok' ? 1 : c === 'accent' ? 0.5 : 0; }
   else if (s.t === 'order') r = (st.chosen || []).length && normT((st.chosen || []).map((b) => it.bank[b]).join(' ')) === normT(it.ans.join(' ')) ? 1 : 0;
+  else if (s.t === 'break') { const exp = []; let n = 0; it.ans.forEach((w, k) => { n += Array.from(w).length; if (k < it.ans.length - 1) exp.push(n); }); const got = (st.br || []).slice().sort((a, b) => a - b); r = got.length === exp.length && got.every((v, k) => v === exp[k]) ? 1 : 0; }
   else if (s.t === 'speak') { if (st.self != null) r = st.self; else { const A = stripAcc(it.ans).split(' ').filter(Boolean), H = stripAcc(st.v || '').split(' '); const hit = A.filter((w) => H.includes(w)).length / Math.max(1, A.length); r = hit >= 0.85 ? 1 : hit >= 0.6 ? 0.5 : 0; } }
   if (r > 0 && st.hint) r = Math.max(0.5, r - 0.5);
   return r;
@@ -268,12 +296,12 @@ ACT.wkNext = () => { if (WK.cur < WK.stages.length - 1) { WK.cur++; wkDraw(); wi
 async function wkFinish() {
   const W = WK, secs = Math.round((Date.now() - W.t0) / 1000), score = Math.round(wkOverall());
   const pct = Math.round(score / W.total * 100);
-  try { await api('/student/practice/result', 'POST', { game: 'work', level: W.level, ids: [W.ids], score, total: W.total, secs }); } catch (e) { if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
+  try { await api('/student/practice/result', 'POST', { game: W.game || 'work', level: W.level, ids: [W.ids], score, total: W.total, secs }); } catch (e) { if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
   if (WKT) clearInterval(WKT);
-  $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div><div class="kick">WORKOUT COMPLETE</div>
+  $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div><div class="kick">${W.board ? 'ACTIVITY COMPLETE' : 'WORKOUT COMPLETE'}</div>${W.stages[0] && W.stages[0].robot ? `<p style="font-weight:800;font-size:18px">${wkBotPct(W.stages[0]) >= 100 && W.stages[0].items.some((x) => !x.st.fin) ? '' : (W.stages[0].botWon ? '🤖 The robot won this time!' : '🏆 You beat the robot!')}</p>` : ''}
     <div class="stat3b"><div><b>${score}/${W.total}</b><span>POINTS</span></div><div><b>${pct}%</b><span>ACCURACY</span></div><div><b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b><span>TIME</span></div></div>
     <div class="card wk-res" style="text-align:left;margin:14px 0">${W.stages.map((s) => `<div class="row"><span>${esc(s.name)}</span><span>${s.score}/${s.items.length}</span></div>`).join('')}</div>
-    <button class="bigblue" data-act="phAgain">Do this workout again</button><button class="btn ghost" style="width:100%;margin-top:10px" data-act="phHub">Back to games</button></div></div>`;
+    <button class="bigblue" data-act="phAgain">${W.board ? 'Play again' : 'Do this workout again'}</button>${W.board ? '<button class="btn ghost" style="width:100%;margin-top:10px" data-act="wkQuit">Back to activities</button>' : ''}<button class="btn ghost" style="width:100%;margin-top:10px" data-act="phHub">Back to games</button></div></div>`;
 }
 /* ---------- Workouts menu: Module Type > Level > Category > Lesson (as on Language Gym) ---------- */
 const WMODS = [['vocab', 'Vocabulary Modules', ['vocab', 'sent']], ['gram', 'Grammar Modules', ['gram', 'verb']], ['read', 'Reading Modules', ['read']], ['speak', 'Speaking Modules', ['vocab', 'sent']], ['listen', 'Listening Modules', ['vocab', 'sent']]];
