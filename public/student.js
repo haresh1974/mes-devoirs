@@ -196,7 +196,7 @@ function buildLesson(data) {
   const pool = words.length >= 4 ? words : items;
   const aud = canSpeak();
   const win = (arr, n) => { const out = []; if (!arr.length) return out; const st = Math.floor(li * arr.length / N); for (let i = 0; i < Math.min(n, arr.length); i++) out.push(arr[(st + i) % arr.length]); return out; };
-  const W = shuffle(win(pool, 8)), S = shuffle(win(sents, 5));
+  const W = shuffle(win(pool, Math.max(8, Math.ceil(pool.length / N)))), S = shuffle(win(sents, Math.max(5, Math.ceil(sents.length / N))));
   const w = (i) => W[i % W.length], sn = (i) => (S.length ? S[i % S.length] : null);
   const others = (it, arr, n) => shuffle(arr.filter((x) => x !== it && x.en !== it.en && x.fr !== it.fr)).slice(0, n);
   const noPunct = (x) => x.replace(/\s*[.?!]+$/, '');

@@ -543,7 +543,7 @@ app.post('/api/student/attempt', studentOnly(async (req, res) => {
   if (!hw) return res.status(404).json({ error: 'Homework not found.' });
   const lesson = String(req.body.lesson || '');
   if (!JSON.parse(hw.exercises).includes(lesson)) return res.status(400).json({ error: 'Unknown lesson.' });
-  const total = Math.max(1, Math.min(40, parseInt(req.body.total, 10) || 1));
+  const total = Math.max(1, Math.min(80, parseInt(req.body.total, 10) || 1));
   const score = Math.max(0, Math.min(total, parseInt(req.body.score, 10) || 0));
   const secs = Math.max(0, Math.min(3600, parseInt(req.body.secs, 10) || 0));
   const prev = await db.all('SELECT score,total FROM attempts WHERE homework_id = ? AND student_id = ? AND lesson = ?', [hw.id, req.student.id, lesson]);

@@ -47,10 +47,10 @@
     { id: 'gaptype', cat: 'gram', ic: '📝', name: 'Fill the gap (type)', desc: 'Type the missing word.', need: 'g1' }
   ];
   const EXERCISES = {}; CATALOG.forEach((c) => { EXERCISES[c.id] = c; });
-  for (let n = 1; n <= 8; n++) EXERCISES['L' + n] = { id: 'L' + n, cat: 'lesson', ic: '📘', name: 'Lesson ' + n, desc: 'Mixed practice: words, sounds and sentences', lesson: true };
+  for (let n = 1; n <= 10; n++) EXERCISES['L' + n] = { id: 'L' + n, cat: 'lesson', ic: '📘', name: 'Lesson ' + n, desc: 'Mixed practice: words, sounds and sentences', lesson: true };
   const isLesson = (k) => /^L\d+$/.test(k);
   /* a mixed homework gets one lesson per ~8 items (2 to 8 lessons) */
-  const lessonCount = (items) => Math.max(2, Math.min(8, Math.ceil((items || []).length / 8)));
+  const lessonCount = (items) => Math.max(2, Math.min(10, Math.ceil((items || []).length / 10)));
   const NEED_TEXT = { i4: 'at least 4 vocabulary items', i2: 'at least 2 vocabulary items', i1: 'at least 1 vocabulary item', s3: '3 or more sentences', n4: '4 nouns that start with le, la, l\', les, un or une', v1: 'at least 1 verb', g1: 'at least 1 grammar question', go1: 'a grammar question with wrong options' };
 
   function contentStats(items, verbs, grammar) {
