@@ -5,10 +5,10 @@ async function loadClasses() {
   T.classes = d.classes; T.name = d.teacher.name; VOICE.cloud = !!d.tts;
 }
 function shell(active, content) {
-  const cls = T.classes.map((c) => `<button class="nav ${active === c.id ? 'on' : ''}" data-act="openClass" data-id="${esc(c.id)}"><span>${(LANG[c.language] || LANG.French).flag}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span></button>`).join('');
+  const cls = T.classes.map((c) => `<button class="nav ${active === c.id ? 'on' : ''}" data-act="openClass" data-id="${esc(c.id)}"><span>${flagOf(c.language, 22)}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span></button>`).join('');
   $('#app').innerHTML = `<button class="menubtn" data-act="menu">☰</button><div class="shell">
     <aside class="side" id="side">
-      <div class="logo">🇫🇷 French with Haresh <small>teachers</small></div>
+      <div class="logo"><img src="/logo.svg" alt="" style="width:38px;height:38px;vertical-align:middle;margin-right:8px">French with Haresh <small>teachers</small></div>
       <button class="nav ${active === 'home' ? 'on' : ''}" data-act="tHome">🏠 Home</button>
       <button class="nav ${active === 'lib' ? 'on' : ''}" data-act="tLib">📚 Library</button>
       <button class="nav ${active === 'tl' ? 'on' : ''}" data-act="tTl">🗓 Timeline</button>
@@ -44,7 +44,7 @@ ROUTES.push([/^\/t$/, async () => {
     const hs = feat.homework.slice().sort((x, y) => (y.start_at <= Date.now()) - (x.start_at <= Date.now()) || y.start_at - x.start_at);
     const pick = (T.homeHw && hs.find((h) => h.id === T.homeHw)) || hs[0];
     const d = await api('/homework/' + pick.id), c = feat.cls;
-    const bar = `<div class="spread"><div class="row"><span style="font-size:34px">${(LANG[c.language] || LANG.French).flag}</span><h1>${esc(c.name)}</h1><span class="mute">${feat.students.length} students</span></div>
+    const bar = `<div class="spread"><div class="row"><span style="font-size:34px">${flagOf(c.language, 40)}</span><h1>${esc(c.name)}</h1><span class="mute">${feat.students.length} students</span></div>
       <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode2" data-c="${esc(c.code)}" title="Copy">⧉</button></div><button class="btn ghost" data-act="notify" data-id="${esc(c.id)}">🔔 Send notification</button><button class="btn ghost" data-act="openClass" data-id="${esc(c.id)}">All homework &amp; students</button></div></div>
       <div class="row" style="margin:16px 0 4px"><span class="mute small" style="font-weight:800">HOMEWORK</span><select id="homeHw" style="max-width:360px">${hs.map((h) => `<option value="${esc(h.id)}" ${h.id === pick.id ? 'selected' : ''}>${esc(h.title)}</option>`).join('')}</select>${n < 4 ? '<button class="btn ghost sm" data-act="hideSetup">Setup checklist</button>' : ''}</div>`;
     shell('home', bar + '<div class="card" style="margin-top:10px">' + hwHtml(d, false) + '</div>');
@@ -144,10 +144,10 @@ ROUTES.push([/^\/t\/class\/(\w+)$/, async (id) => {
         : '<div class="card mute">Nothing assigned to this class yet. Open the Library and assign a homework.</div>');
   } else {
     inner = `<div class="spread" style="margin-bottom:14px"><h3>Students</h3><div class="row"><button class="btn ghost" data-act="showPins">🔑 Student PINs</button><button class="btn" data-act="addStudents">＋ Add students</button></div></div>` +
-      (o.students.length ? `<div class="card scroll" style="padding:6px 14px"><table><tr><th>Student</th><th>Time on app</th><th>Today</th><th>Yesterday</th><th>Last active</th><th>Done on time</th><th></th></tr>${o.students.map((s) => `<tr><td><b>${esc(s.name)}</b></td><td>${fmtDur(s.secsTotal)}</td><td>${fmtDur(s.secsToday)}</td><td>${fmtDur(s.secsYesterday)}</td><td>${esc(ago(s.lastActive))}</td><td>${s.onTime} / ${s.hwTotal}</td><td style="text-align:right;white-space:nowrap"><button class="btn ghost sm" data-act="newPin" data-id="${esc(s.id)}">New PIN</button> <button class="btn ghost sm" data-act="rmStudent" data-id="${esc(s.id)}">Remove</button></td></tr>`).join('')}</table></div>`
+      (o.students.length ? `<div class="card scroll" style="padding:6px 14px"><table><tr><th>Student</th><th>Time on app</th><th>Today</th><th>Yesterday</th><th>Last active</th><th>Done on time</th><th></th></tr>${o.students.map((s) => `<tr><td><b>${esc(s.name)}</b></td><td>${fmtDur(s.secsTotal)}</td><td>${fmtDur(s.secsToday)}</td><td>${fmtDur(s.secsYesterday)}</td><td>${esc(ago(s.lastActive))}</td><td>${s.onTime} / ${s.hwTotal}</td><td style="text-align:right;white-space:nowrap"><button class="btn ghost sm" data-act="pinCard" data-id="${esc(s.id)}">🖨 PIN card</button> <button class="btn ghost sm" data-act="newPin" data-id="${esc(s.id)}">New PIN</button> <button class="btn ghost sm" data-act="rmStudent" data-id="${esc(s.id)}">Remove</button></td></tr>`).join('')}</table></div>`
         : '<div class="card mute">No students yet. Add your class list to get a PIN for each child.</div>');
   }
-  shell(c.id, `<div class="spread"><div class="row"><span style="font-size:34px">${flag}</span><h1>${esc(c.name)}</h1><span class="mute">${o.students.length} students</span></div>
+  shell(c.id, `<div class="spread"><div class="row"><span style="font-size:34px">${flagOf(c.language, 40)}</span><h1>${esc(c.name)}</h1><span class="mute">${o.students.length} students</span></div>
     <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode" title="Copy">⧉</button></div><button class="btn ghost" data-act="notify" data-id="${esc(c.id)}">🔔 Send notification</button><button class="btn ghost" data-act="classSettings">⚙ Class settings</button></div></div>
     <div class="tabs" style="margin-top:18px"><button class="${T.tab === 'hw' ? 'on' : ''}" data-act="tabHw">📝 Homework ${o.homework.length}</button><button class="${T.tab === 'st' ? 'on' : ''}" data-act="tabSt">👥 Students ${o.students.length}</button></div>${inner}`);
 }]);
@@ -183,9 +183,16 @@ function pinFoot() {
   return `<div class="row" style="justify-content:space-between"><div class="row"><button class="btn ghost" data-act="copyPins">⧉ Copy table</button><button class="btn ghost" data-act="paperCards">🖨 Paper cards</button></div><button class="btn" data-act="doneReload">Done</button></div>`;
 }
 ACT.showPins = () => { PINLIST = CLS.students; modal('<h2>Student PINs</h2>' + (PINLIST.length ? pinTable(PINLIST) : '<p class="mute">No students yet.</p>') + pinFoot()); };
+const cardHtml = (s) => `<div class="pcardp"><img src="/logo.svg" alt="" style="width:64px;height:64px;float:right"><b>French with Haresh</b><br>${esc(s.name)}<br>Website: ${esc(location.origin)}<br>Class code: <b>${esc(CLS.cls.code)}</b><br>PIN:<div class="big">${esc(s.pin)}</div><div style="font-size:12px;color:#666">Personal to you. Please do not share it: it works on one device at a time.</div></div>`;
+ACT.pinCard = (t) => {
+  const s = CLS.students.find((x) => x.id === t.dataset.id); if (!s) return;
+  PINLIST = [s];
+  modal(`<h2>${esc(s.name)}</h2><div class="pbox" style="text-align:center">Class code <b style="letter-spacing:3px">${esc(CLS.cls.code)}</b><div style="font-size:40px;letter-spacing:10px;font-weight:800;margin:10px 0">${esc(s.pin)}</div><span class="mute small">${esc(location.origin)}</span></div><div class="foot"><button class="btn ghost" data-act="close">Close</button><button class="btn" data-act="printOne">🖨 Print card</button></div>`);
+};
+ACT.printOne = () => printHTML('<div class="pcards">' + cardHtml(PINLIST[0]) + '</div>');
 ACT.copyPins = () => copyText('Student\tPIN\n' + PINLIST.map((s) => s.name + '\t' + s.pin).join('\n'));
 ACT.paperCards = () => {
-  printHTML('<div class="pcards">' + PINLIST.map((s) => `<div class="pcardp"><b>French with Haresh</b><br>${esc(s.name)}<br>Website: ${esc(location.origin)}<br>Class code: <b>${esc(CLS.cls.code)}</b><br>PIN:<div class="big">${esc(s.pin)}</div></div>`).join('') + '</div>');
+  printHTML('<div class="pcards">' + PINLIST.map((s) => cardHtml(s)).join('') + '</div>');
 };
 
 /* add students */
@@ -406,7 +413,7 @@ function hwHtml(d, standalone) {
     <div class="spread"><div><div class="row"><h1>${esc(hw.title)}</h1><span class="chip">${esc(hw.tier)}</span></div><div class="mute">${esc(hw.topic || '')}</div><div class="mute small">${hw.folder ? '📁 ' + esc(hw.folder) + ' · ' : ''}${hw.items.length} items · ${hw.exercises.length} activities</div></div>
     <div class="row"><button class="btn ghost sm" data-act="paperQ" data-id="${esc(hw.id)}">🖨 Paper quizzes</button><button class="btn ghost sm" data-act="editHw" data-id="${esc(hw.id)}">✏ Edit</button><button class="btn ghost sm" data-act="delHw" data-id="${esc(hw.id)}">🗑 Delete</button></div></div>
     <details class="card" style="margin-top:14px" open><summary style="cursor:pointer"><b>Words and sentences</b> <span class="chip">${hw.items.length}</span></summary><div class="scroll" style="max-height:420px;overflow:auto;margin-top:8px"><table><tr><th>#</th><th>French</th><th>English</th><th></th></tr>${hw.items.map((i, n) => `<tr><td class="mute">${n + 1}</td><td><b>${esc(i.fr)}</b></td><td>${esc(i.en)}</td><td>${i.s ? '<span class="chip">sentence</span>' : ''}</td></tr>`).join('')}</table></div></details>
-    <div class="card" style="margin-top:14px"><div class="spread"><h3>Assignments</h3><button class="btn sm" data-act="assignOne" data-id="${esc(hw.id)}">＋ Assign</button></div>${(d.assignments || []).length ? (d.assignments).map((a) => `<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><div><b>${esc(a.class_name)}</b> <span class="chip">${esc(audLabel(a.audience))}</span> <span class="mute small">${a.size} students · ${esc(fmtDate(a.start_at))} → ${esc(fmtDate(a.due_at))}</span></div><div class="row"><button class="btn ghost sm" data-act="editAsg" data-id="${esc(a.id)}" data-s="${a.start_at}" data-d="${a.due_at || ''}">Dates</button><button class="btn ghost sm" data-act="rmAsg" data-id="${esc(a.id)}">Remove</button></div></div>`).join('') : '<p class="mute" style="margin:8px 0 0">Not assigned to anyone yet.</p>'}</div>
+    <div class="card" style="margin-top:14px"><div class="spread"><h3>Assignments</h3></div>${(d.assignments || []).length ? (d.assignments).map((a) => `<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><div><b>${esc(a.class_name)}</b> <span class="chip">${esc(audLabel(a.audience))}</span> <span class="mute small">${a.size} students · ${esc(fmtDate(a.start_at))} → ${esc(fmtDate(a.due_at))}</span></div><div class="row"><button class="btn ghost sm" data-act="editAsg" data-id="${esc(a.id)}" data-s="${a.start_at}" data-d="${a.due_at || ''}">Dates</button><button class="btn ghost sm" data-act="rmAsg" data-id="${esc(a.id)}">Remove</button></div></div>`).join('') : '<p class="mute" style="margin:8px 0 0">Not assigned to anyone yet.</p>'}</div>
     <div class="tabs" style="margin-top:16px">${[['timings', 'Timings'], ['results', 'Results'], ['board', 'Leaderboard']].map(([k, l]) => `<button class="${T.htab === k ? 'on' : ''}" data-act="htab" data-k="${k}">${l}</button>`).join('')}</div>${inner}`;
   ACT.delHw = () => modal(`<h2>Delete this homework?</h2><p><b>${esc(hw.title)}</b> will be deleted from your library and from every class it is assigned to, with all results.</p><div class="foot"><button class="btn ghost" data-act="close">Keep it</button><button class="btn red" data-act="delHw2">Delete</button></div>`);
   ACT.delHw2 = async () => { await api('/homework/' + hw.id, 'DELETE'); closeModal(); go('#/t/library'); };

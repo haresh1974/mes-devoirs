@@ -77,6 +77,7 @@ function dueLeft(ms) {
   if (ms < Date.now()) return 'Past due';
   return d <= 1 ? 'Due today' : d + ' days to go';
 }
+const flagOf = (l, n) => (l === 'Spanish' ? LANG.Spanish.flag : `<img src="/logo.svg" alt="" style="width:${n}px;height:${n}px;vertical-align:middle">`);
 const LANG = { French: { flag: '🇫🇷', tts: 'fr-FR' }, Spanish: { flag: '🇪🇸', tts: 'es-ES' } };
 
 
@@ -175,7 +176,7 @@ async function route() {
     if (m) {
       try { await fn(...m.slice(1)); }
       catch (e) {
-        if (e.status === 401) { go('#/'); return; }
+        if (e.status === 401) { if (/^\/s(\/|$)/.test(h)) sessionStorage.setItem('kicked', '1'); go('#/'); return; }
         $('#app').innerHTML = '<div class="landing"><div class="authbox"><h2>Oops</h2><p>' + esc(e.message) + '</p><button class="btn" data-act="home">Back</button></div></div>';
       }
       window.scrollTo(0, 0);
@@ -197,7 +198,7 @@ ACT.logout = async () => { try { await api('/logout', 'POST', {}); } catch (e) {
 
 /* landing & sign-in */
 function studentLoginPage(prefill) {
-  $('#app').innerHTML = `<div class="landing"><div style="font-size:54px">🇫🇷</div><h1>French with Haresh</h1><div class="authbox">
+  $('#app').innerHTML = `<div class="landing"><img src="/logo.svg" alt="French with Haresh" style="width:120px;height:120px"><h1>French with Haresh</h1>${sessionStorage.getItem('kicked') ? (sessionStorage.removeItem('kicked'), '<div class="pbox" style="max-width:380px;margin:0 auto 12px">You were signed out because this PIN was used on another device. If that was not you, tell your teacher.</div>') : ''}<div class="authbox">
     <h2>Student sign in</h2><p class="mute" style="margin-top:0">Ask your teacher for the class code and your PIN.</p>
     <label class="f">Class code</label><input id="code" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="e.g. ABCDEF" value="${esc(prefill || '')}" style="text-transform:uppercase;letter-spacing:4px;font-weight:800">
     <label class="f">Your PIN</label><input id="pin" type="text" inputmode="numeric" maxlength="8" autocomplete="off" class="pin" placeholder="• • • •">

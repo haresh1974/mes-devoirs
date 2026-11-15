@@ -9,7 +9,7 @@ function startHeartbeat() {
   }, 15000);
 }
 function sTop(coins, back) {
-  return `<div class="stop">${back ? '<button class="icon-btn" data-act="sHome" title="Home">←</button>' : '<div style="font-weight:800;font-size:20px">🇫🇷 French with Haresh</div>'}<div class="row">${coins == null ? '' : '<span class="coins">' + coins + '</span>'}<button class="icon-btn" title="Voice" data-act="sVoice">${ICON_SPK}</button><button class="icon-btn" title="Sign out" data-act="logout">↪</button></div></div>`;
+  return `<div class="stop">${back ? '<button class="icon-btn" data-act="sHome" title="Home">←</button>' : '<div style="font-weight:800;font-size:20px"><img src="/logo.svg" alt="" style="width:34px;height:34px;vertical-align:middle;margin-right:8px">French with Haresh</div>'}<div class="row">${coins == null ? '' : '<span class="coins">' + coins + '</span>'}<button class="icon-btn" title="Voice" data-act="sVoice">${ICON_SPK}</button><button class="icon-btn" title="Sign out" data-act="logout">↪</button></div></div>`;
 }
 ACT.sHome = () => { ST.hw = null; go('#/s'); };
 ACT.sVoice = () => voiceModal(ST.lang);
@@ -439,7 +439,7 @@ async function finishPlay() {
   const secs = Math.round((Date.now() - G.t0) / 1000), g = G;
   let gained = 0, failed = false;
   try { gained = (await api('/student/attempt', 'POST', { homework_id: g.id, lesson: g.kind, score: Math.round(g.score), total: g.total, secs })).gained; }
-  catch (e) { failed = true; if (e.status === 401) return go('#/'); }
+  catch (e) { failed = true; if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
   const pct = Math.round(g.score / g.total * 100), balance = (g.coins || 0) + (gained || 0);
   $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div><div class="kick">SESSION COMPLETE</div>
     <div class="bigcoin"><span class="coinic">🪙</span>${gained || 0}</div><div class="mute" style="font-weight:800;font-size:19px">coins earned</div>

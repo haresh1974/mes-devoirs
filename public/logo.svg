@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="600" viewBox="0 0 600 600">
+<defs><clipPath id="c"><circle cx="300" cy="300" r="176"/></clipPath>
+<path id="arcT" d="M 68 300 A 232 232 0 0 1 532 300"/>
+<path id="arcB" d="M 52 300 A 248 248 0 0 0 548 300"/></defs>
+<circle cx="300" cy="300" r="292" fill="#fff" stroke="#0B2A6F" stroke-width="6"/>
+<circle cx="300" cy="300" r="278" fill="#0B2A6F"/>
+<circle cx="300" cy="300" r="186" fill="#fff"/>
+<circle cx="300" cy="300" r="178" fill="#FFF8E7"/>
+<g clip-path="url(#c)"><rect x="100" y="400" width="134" height="100" fill="#1F4FBF"/><rect x="234" y="400" width="132" height="100" fill="#fff"/><rect x="366" y="400" width="134" height="100" fill="#E1342F"/></g>
+<g fill="none" stroke="#0B2A6F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-6)">
+<path d="M300 150 L300 175"/><path d="M288 215 L312 215"/>
+<path d="M300 175 L284 255 L262 345 L236 430"/><path d="M300 175 L316 255 L338 345 L364 430"/>
+<path d="M277 290 L323 290"/><path d="M255 355 L345 355"/><path d="M252 355 Q300 295 348 355"/>
+<path d="M284 255 L316 255"/><path d="M284 255 L323 290 M316 255 L277 290"/></g>
+<text font-family="Georgia, serif" font-weight="bold" font-size="40" letter-spacing="4" fill="#fff"><textPath xlink:href="#arcT" startOffset="50%" text-anchor="middle">LEARN FRENCH</textPath></text>
+<text font-family="Georgia, serif" font-weight="bold" font-size="34" letter-spacing="3" fill="#fff"><textPath xlink:href="#arcB" startOffset="50%" text-anchor="middle">WITH HARESH SIR</textPath></text>
+<circle cx="60" cy="300" r="7" fill="#E1342F"/><circle cx="540" cy="300" r="7" fill="#E1342F"/>
+</svg>

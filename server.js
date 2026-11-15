@@ -106,6 +106,7 @@ app.post('/api/student/login', wrap(async (req, res) => {
   const c = await db.get('SELECT id FROM classes WHERE code = ?', [code]);
   const s = c && await db.get('SELECT * FROM students WHERE class_id = ? AND pin = ?', [c.id, pin]);
   if (!s) return res.status(400).json({ error: 'Class code or PIN is not right.' });
+  await db.run('DELETE FROM sessions WHERE kind = ? AND user_id = ?', ['student', s.id]); // one device per PIN
   const token = crypto.randomBytes(32).toString('hex');
   await db.run('INSERT INTO sessions (token,kind,user_id,created) VALUES (?,?,?,?)', [token, 'student', s.id, now()]);
   await db.run('UPDATE students SET last_active = ? WHERE id = ?', [now(), s.id]);
