@@ -436,7 +436,10 @@ ROUTES.push([/^\/t\/library$/, async () => {
 }]);
 function drawLib() {
   const q = (LIB.q || '').toLowerCase();
-  const list = LIB.homework.filter((h) => !q || (h.title + ' ' + (h.topic || '') + ' ' + (h.folder || '')).toLowerCase().includes(q));
+  const cm = /class=(\w+)/.exec(location.hash), cid = cm && cm[1], ccls = cid && (T.classes || []).find((c) => c.id === cid);
+  const gotAll = (h) => ccls && h.assignments.some((a) => a.class_id === cid && a.audience === 'all');
+  const hidden = ccls && !LIB.showAll ? LIB.homework.filter(gotAll).length : 0;
+  const list = LIB.homework.filter((h) => !(ccls && !LIB.showAll && gotAll(h))).filter((h) => !q || (h.title + ' ' + (h.topic || '') + ' ' + (h.folder || '')).toLowerCase().includes(q));
   const groups = {};
   list.forEach((h) => { (groups[h.folder || 'Unfiled'] = groups[h.folder || 'Unfiled'] || []).push(h); });
   const names = Object.keys(groups).sort((a, b) => a === 'Unfiled' ? 1 : b === 'Unfiled' ? -1 : a.localeCompare(b));
@@ -444,8 +447,10 @@ function drawLib() {
     ${h.assignments.length ? '<div class="mini">' + h.assignments.map((a) => `<span class="badge ${a.start_at > Date.now() ? 'n' : 'g'}" title="${esc(audLabel(a.audience))}">${esc(a.class_name)} · due ${esc(fmtShort(a.due_at))} · ${a.counts.complete}/${a.size}</span>`).join('') + '</div>' : ''}</div>
     <div class="row" style="flex:none"><button class="btn sm" data-act="assignOne" data-id="${esc(h.id)}">Assign</button><button class="btn ghost sm" data-act="openHw" data-id="${esc(h.id)}">Open</button><button class="btn ghost sm" data-act="editHw" data-id="${esc(h.id)}">Edit</button></div></div>`;
   $('#libBody').innerHTML = `<div class="spread"><div><h1>Homework library</h1><p class="sub">All your homework lives here. Pick one or several (a week's pack) and assign them to a class or to chosen students.</p></div><button class="btn" data-act="libNew">＋ New homework</button></div>
+    ${ccls ? `<div class="card" style="margin-bottom:14px;background:#eef4ff"><b>Assigning to ${esc(ccls.name)}</b><div class="mute small">Homework this whole class already has is hidden${hidden ? ' (' + hidden + ' hidden)' : ''}. Press Assign on any homework, then choose the whole class or specific students.</div><label class="row" style="margin-top:6px"><input type="checkbox" id="libAll" ${LIB.showAll ? 'checked' : ''}> Show homework already assigned to this class</label></div>` : ''}
     <div class="row" style="margin-bottom:14px"><input id="libQ" type="text" placeholder="Search homework or folder" value="${esc(LIB.q || '')}" style="max-width:340px"><button class="btn ghost" data-act="assignSel">Assign ticked…</button><span class="mute small">${LIB.homework.length} homework</span></div>
     ${names.map((n) => `<details class="folder" ${q || !LIB.closed || !LIB.closed[n] ? 'open' : ''} data-f="${esc(n)}"><summary>📁 ${esc(n)} <span class="chip">${groups[n].length}</span></summary>${groups[n].map(row).join('')}</details>`).join('') || '<div class="card mute">No homework yet. Create one with “New homework”.</div>'}`;
+  if ($('#libAll')) $('#libAll').addEventListener('change', (e) => { LIB.showAll = e.target.checked; drawLib(); });
   $('#libQ').addEventListener('input', (e) => { LIB.q = e.target.value; const p = e.target.selectionStart; drawLib(); const i = $('#libQ'); i.focus(); i.setSelectionRange(p, p); });
   document.querySelectorAll('.lck').forEach((c) => c.addEventListener('change', () => { LIB.sel = LIB.sel || {}; LIB.sel[c.value] = c.checked; }));
   document.querySelectorAll('details.folder').forEach((d) => d.addEventListener('toggle', () => { LIB.closed = LIB.closed || {}; LIB.closed[d.dataset.f] = !d.open; }));
@@ -490,7 +495,7 @@ async function drawAsX() {
   if (w === 'students') {
     box.innerHTML = '<div class="mute small">Loading…</div>';
     const o = await api('/classes/' + cid + '/overview');
-    box.innerHTML = '<div class="card" style="max-height:200px;overflow:auto;padding:10px 14px;margin:8px 0">' + (o.students.map((s) => `<label class="row"><input type="checkbox" class="asSt" value="${esc(s.id)}"> ${esc(s.name)} <span class="mute small">${s.onTime}/${s.hwTotal} on time</span></label>`).join('') || '<span class="mute">No students in this class.</span>') + '</div>';
+    box.innerHTML = '<div class="card" style="max-height:200px;overflow:auto;padding:10px 14px;margin:8px 0">' + (o.students.map((s) => { const has = ASG.ids.length && ASG.ids.every((id) => (LIB.homework.find((h) => h.id === id) || { assignments: [] }).assignments.some((a) => a.class_id === cid && (a.student_ids || []).includes(s.id))); return `<label class="row"><input type="checkbox" class="asSt" value="${esc(s.id)}" ${has ? 'disabled' : ''}> ${esc(s.name)} ${has ? '<span class="chip">already has it</span>' : `<span class="mute small">${s.onTime}/${s.hwTotal} on time</span>`}</label>`; }).join('') || '<span class="mute">No students in this class.</span>') + '</div>';
     return;
   }
   const prev = LIB.homework.filter((h) => h.assignments.some((a) => a.class_id === cid));

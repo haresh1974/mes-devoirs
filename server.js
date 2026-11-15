@@ -195,7 +195,7 @@ function summarise(a, h, classStudents, atts, className) {
   const counts = { new: 0, progress: 0, complete: 0 };
   ids.forEach((sid) => { counts[hwStatus(h, sid, atts).status]++; });
   return { id: a.id, homework_id: h.id, class_id: a.class_id, class_name: className, start_at: a.start_at, due_at: a.due_at, audience: a.audience,
-    size: ids.length, counts };
+    size: ids.length, student_ids: ids, counts };
 }
 
 app.get('/api/classes/:id/overview', teacherOnly(async (req, res) => {
