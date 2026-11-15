@@ -311,7 +311,7 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   if (g.fast) { Object.assign(G, { fast: true, mode: g.fast, lives: 3, climb: 0, top: 10, endAt: Date.now() + (g.fast === 'climb' ? 60000 : 120000), refill: () => build().filter((q) => !q.retry) }); G.planned = 999; }
   let tick = null;
   if (G.vmode === 'normal') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.qEnd - Date.now()) / 1000), el = $('#gQT'); if (el) { el.textContent = Math.max(0, left); el.parentElement.style.color = left <= 5 ? '#DC2626' : ''; } if (left <= 0 && G.phase === 'ask') { const q = curQ(); if (q.t === 'type') G.st.val = G.st.val || '\u2026'; if (q.t === 'pick' && G.st.sel == null) G.st.sel = (q.opts.findIndex((o) => o !== q.answer)); ACT.gCheck(); } }, 400);
-  if (G.mode === 'box' || G.mode === 'abox' || G.mode === 'climb') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent = (G.mode === 'climb') ? Math.max(0, left) : Math.floor(Math.max(0, left) / 60) + ':' + String(Math.max(0, left) % 60).padStart(2, '0'); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
+  if (G.mode === 'box' || G.mode === 'abox' || G.mode === 'climb') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent =  Math.floor(Math.max(0, left) / 60) + ':' + String(Math.max(0, left) % 60).padStart(2, '0'); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
   cleanup = () => { if (tick) clearInterval(tick); stopSpeech(); G = null; };
   await waitVoices();
   nextQ();
@@ -549,6 +549,29 @@ function canCheck() {
 const wave = (i) => Array.from({ length: 13 }, (_, k) => '<i style="height:' + (8 + ((k * 7 + i * 5) % 6) * 5) + 'px"></i>').join('');
 const audioRow = (txt) => canSpeak() ? `<div class="audio"><button class="abtn" data-act="gSay" data-t="${esc(txt)}">${ICON_SPK}<span>Listen</span></button><button class="abtn slow" data-act="gSay" data-t="${esc(txt)}" data-slow="1" title="Slowly">${ICON_SLOW}</button></div>` : '';
 
+
+function drawWall(q, s, ask) {
+  if (!document.getElementById('wallCss')) {
+    const st = document.createElement('style'); st.id = 'wallCss';
+    st.textContent = `.wall{position:relative;width:100%;max-width:900px;box-sizing:border-box;margin:0 auto;border-radius:14px;overflow:hidden;min-height:520px;background:repeating-linear-gradient(0deg,#eef1f6 0 78px,#cfd6e2 78px 80px),#eef1f6;border:3px solid #cfd6e2}
+.wall .wtop{padding-left:56px!important;display:flex;justify-content:space-between;align-items:center;padding:8px 16px;font-size:24px;font-weight:800;color:#12305a}
+.wall .wq{margin:8px auto 0;width:min(80%,520px);background:#fff;border:3px solid #12305a;border-radius:10px;padding:14px 18px;text-align:center;font-size:20px;font-weight:700;color:#12305a;box-shadow:0 4px 10px #0002}
+.wall .holds{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 18px;padding:26px 90px 30px}
+.wall .hold{border:0;border-radius:46% 54% 50% 50%/55% 45% 55% 45%;min-height:78px;font-size:16px;font-weight:700;color:#fff;cursor:pointer;padding:10px 14px;box-shadow:0 5px 0 #0003;transition:transform .15s}
+.wall .hold:hover{transform:scale(1.05)}
+.wall .hold:nth-child(1){background:#e74c3c}.wall .hold:nth-child(2){background:#3498db}.wall .hold:nth-child(3){background:#f39c12}.wall .hold:nth-child(4){background:#8e44ad}
+.wall .hold.ok{background:#2ecc71!important}.wall .hold.bad{background:#555!important;animation:bagshake .3s}
+.wall .climber{position:absolute;left:14px;font-size:44px;transition:bottom .5s}
+.wall .rope{position:absolute;left:34px;bottom:0;top:0;width:4px;background:#9aa7bd}
+.wall .top{position:absolute;left:8px;top:6px;font-size:24px}`;
+    document.head.appendChild(st);
+  }
+  const clock = Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000));
+  const mm = Math.floor(clock / 60) + ':' + String(clock % 60).padStart(2, '0');
+  const pos = 6 + Math.round(G.climb / G.top * 78);
+  const holds = q.opts.map((o, i) => { let c = ''; if (!ask) c = o === q.answer ? ' ok' : (i === s.sel ? ' bad' : ''); return `<button class="hold${c}" data-act="gPick" data-i="${i}" ${ask ? '' : 'disabled'}>${esc(o)}</button>`; }).join('');
+  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="wall"><div class="rope"></div><div class="top">🏁</div><div class="climber" style="bottom:${pos}%">🧗</div><div class="wtop"><span>⛰️ ${G.climb} / ${G.top}</span><span style="font-size:22px">${'❤️'.repeat(3)}</span><span><b id="gClock">${mm}</b></span></div><div class="wq">${esc(q.prompt || q.title)}</div><div class="holds">${holds}</div></div></div>`;
+}
 function drawRing(q, s, ask) {
   if (!document.getElementById('ringCss')) {
     const st = document.createElement('style'); st.id = 'ringCss';
@@ -581,6 +604,7 @@ ACT.gShowS = () => { G.showS = !G.showS; drawPlay(); };
 function drawPlay() {
   const q = curQ(), s = G.st, ask = G.phase === 'ask';
   if ((G.mode === 'box' || G.mode === 'abox') && q.t === 'pick') return drawRing(q, s, ask);
+  if (G.mode === 'climb' && q.t === 'pick') return drawWall(q, s, ask);
   const pct = Math.round(G.answered / (G.planned + 0.0001) * 100);
   let body = '';
   const sub = (x) => (x ? `<div class="hint">${esc(x)}</div>` : '');
@@ -628,7 +652,7 @@ function drawPlay() {
   const modeBar = G.mode === 'box' || G.mode === 'abox'
     ? `<div class="spread" style="font-weight:800;margin:6px 4px"><span style="font-size:22px">${'❤️'.repeat(Math.max(0, G.lives))}${'🖤'.repeat(Math.max(0, 3 - G.lives))}</span><span>⏱ <b id="gClock">${Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000))}</b>s · ✅ ${G.right}</span></div>`
     : G.mode === 'climb'
-      ? `<div style="margin:6px 4px;font-weight:800"><div class="spread"><span>⛰️ Reach the summit!</span><span>⏱ <b id="gClock">${Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000))}</b>s · ${G.climb} / ${G.top}</span></div><div style="position:relative;height:14px;background:#dfe6f5;border-radius:8px;margin-top:6px"><i style="display:block;height:100%;width:${Math.round(G.climb / G.top * 100)}%;background:#2ecc71;border-radius:8px;transition:width .4s"></i><span style="position:absolute;top:-12px;left:calc(${Math.round(G.climb / G.top * 100)}% - 12px);font-size:22px;transition:left .4s">🧗</span></div></div>`
+      ? `<div style="margin:6px 4px;font-weight:800"><div class="spread"><span>⛰️ Reach the summit!</span><span>⏱ <b id="gClock">${Math.floor(Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000)) / 60)}:${String(Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000)) % 60).padStart(2, '0')}</b> · ${G.climb} / ${G.top}</span></div><div style="position:relative;height:14px;background:#dfe6f5;border-radius:8px;margin-top:6px"><i style="display:block;height:100%;width:${Math.round(G.climb / G.top * 100)}%;background:#2ecc71;border-radius:8px;transition:width .4s"></i><span style="position:absolute;top:-12px;left:calc(${Math.round(G.climb / G.top * 100)}% - 12px);font-size:22px;transition:left .4s">🧗</span></div></div>`
       : G.vmode === 'normal' ? `<div class="spread" style="font-weight:800;margin:6px 4px"><span>Normal mode</span><span>⏱ <b id="gQT">${Math.max(0, Math.ceil((G.qEnd - Date.now()) / 1000))}</b>s</span></div>` : G.vmode === 'test' ? '<div style="font-weight:800;margin:6px 4px">📝 Test mode: answers are shown at the end</div>' : '';
   $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back to path">🏠</button><div class="track"><i style="width:${pct}%"></i></div><span class="coins">${G.practice ? '⭐ ' + G.score : G.coins + G.score * 10}</span></div>${modeBar}<div class="pcard">${body}</div><div class="pbottom">${bottom}${stages}</div></div>`;
   const inp = $('#ans');
