@@ -185,7 +185,7 @@ ACT.phLevel = (t) => { PH.level = t.dataset.id; PH.step = 'lessons'; PH.sel = []
 ACT.phPick = (t) => { const id = t.dataset.id, i = PH.sel.indexOf(id); if (i >= 0) PH.sel.splice(i, 1); else if (PH.sel.length < 3) PH.sel.push(id); else toast('You can pick up to 3 lessons'); drawHub(); };
 ACT.phAgain = () => { const u = PH_AGAIN; if (location.hash === u) route(); else go(u); };
 ACT.phHub = () => { if (PH) { PH.step = 'game'; PH.keep = null; } go('#/s/practice'); };
-ACT.phBack = () => { if (PH.step === 'lessons') { PH.step = 'level'; drawHub(); } else if (PH.step === 'level') { PH.step = 'game'; drawHub(); } else go('#/s'); };
+ACT.phBack = () => { if (PH.step === 'lessons') { PH.step = 'level'; drawHub(); } else if (PH.step === 'level') { PH.step = 'game'; drawHub(); } else go(typeof T !== 'undefined' && T.name ? '#/t' : '#/s'); };
 ACT.phGo = () => { if (PH.sel.length) { PH.keep = 'lessons'; go('#/s/practice/play/' + PH.game + '/' + PH.level + '/' + PH.sel.join(',')); } };
 ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, level, ids) => {
   startHeartbeat(); ST.hw = null;

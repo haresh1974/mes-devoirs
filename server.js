@@ -68,6 +68,14 @@ const studentOnly = (fn) => wrap(async (req, res) => {
   req.student = s;
   return fn(req, res);
 });
+const practiceUser = (fn) => wrap(async (req, res) => {
+  const s = await auth(req, 'student');
+  if (s) { req.student = s; return fn(req, res); }
+  const t = await auth(req, 'teacher');
+  if (!t) return res.status(401).json({ error: 'Please sign in.' });
+  req.teacher = t; req.student = null; // teachers can try the games; nothing is saved
+  return fn(req, res);
+});
 async function ownClass(req, id) {
   return db.get('SELECT * FROM classes WHERE id = ? AND teacher_id = ?', [id, req.teacher.id]);
 }
@@ -571,17 +579,18 @@ async function seedLessons() {
   }
   if (n) console.log('Practice lessons added:', n);
 }
-app.get('/api/student/practice', studentOnly(async (req, res) => {
+app.get('/api/student/practice', practiceUser(async (req, res) => {
   const rows = await db.all('SELECT id,kind,level,title,topic,items,verbs FROM lessons ORDER BY sort');
   res.json({ tts: ttsOn(), lessons: rows.map((r) => ({ id: r.id, kind: r.kind, level: r.level, title: r.title, topic: r.topic, n: JSON.parse(r.items).length + JSON.parse(r.verbs).length * 6 })) });
 }));
-app.get('/api/student/practice/lessons', studentOnly(async (req, res) => {
+app.get('/api/student/practice/lessons', practiceUser(async (req, res) => {
   const ids = String(req.query.ids || '').split(',').map((x) => x.trim()).filter(Boolean).slice(0, 3);
   if (!ids.length) return res.json({ tts: ttsOn(), lessons: [] });
   const rows = await db.all('SELECT * FROM lessons WHERE id IN (' + inList(ids) + ')', ids);
   res.json({ tts: ttsOn(), lessons: rows.map((r) => ({ id: r.id, kind: r.kind, level: r.level, title: r.title, items: JSON.parse(r.items), verbs: JSON.parse(r.verbs) })) });
 }));
-app.post('/api/student/practice/result', studentOnly(async (req, res) => {
+app.post('/api/student/practice/result', practiceUser(async (req, res) => {
+  if (!req.student) return res.json({ ok: true });
   const b = req.body || {};
   const ids = (Array.isArray(b.ids) ? b.ids : []).map(String).slice(0, 3);
   const total = Math.max(1, Math.min(200, parseInt(b.total, 10) || 1));

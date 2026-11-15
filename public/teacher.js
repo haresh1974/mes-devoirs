@@ -11,6 +11,7 @@ function shell(active, content) {
       <div class="logo"><img src="/logo.svg" alt="" style="width:38px;height:38px;vertical-align:middle;margin-right:8px">French with Haresh <small>teachers</small></div>
       <button class="nav ${active === 'home' ? 'on' : ''}" data-act="tHome">🏠 Home</button>
       <button class="nav ${active === 'lib' ? 'on' : ''}" data-act="tLib">📚 Library</button>
+      <button class="nav" data-act="tPractice">🎮 Practice games</button>
       <button class="nav ${active === 'tl' ? 'on' : ''}" data-act="tTl">🗓 Timeline</button>
       <button class="nav ${active === 'help' ? 'on' : ''}" data-act="tHelp">❓ Help</button>
       <div class="sidehead">CLASSES</div>
@@ -21,6 +22,7 @@ function shell(active, content) {
 ACT.voiceTest = () => voiceModal('fr-FR');
 ACT.menu = () => $('#side').classList.toggle('open');
 ACT.tHome = () => go('#/t');
+ACT.tPractice = () => { if (typeof PH !== 'undefined' && PH) PH.keep = null; go('#/s/practice'); };
 ACT.tLib = () => go('#/t/library');
 ACT.tTl = () => go('#/t/timeline');
 ACT.tHelp = () => go('#/t/help');
