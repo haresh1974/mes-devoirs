@@ -155,8 +155,8 @@ const GAMES = [
   { id: 'listen', ic: '👂', name: 'Listening Trainer', d: 'Train your ear', col: '#0E9F6E', src: ['vocab', 'sent'], kinds: [['listen', 10], ['tap', 8]] },
   { id: 'dict', ic: '✍️', name: 'Dictation Trainer', d: 'Hear it, then type it', col: '#D97706', src: ['vocab', 'sent'], kinds: [['dictation', 12], ['tap', 4]] },
   { id: 'work', ic: '🏋️', name: 'Workouts', d: 'One lesson, a dozen activities', col: '#0891B2', src: ['vocab', 'sent', 'verb', 'gram'], kinds: [['gappick', 3], ['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
-  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '75 seconds, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'box', kinds: [['translate', 40], ['meaning', 40], ['truefalse', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] },
-  { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['listen', 60]] },
+  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '2 minutes, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'box', kinds: [['meaning', 60]] },
+  { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['audmean', 60]] },
   { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] }
 ];
 const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['advanced', 'Advanced'], ['aqa', 'AQA GCSE'], ['igcse', 'IGCSE - CIE'], ['pearson', 'Pearson GCSE']];
@@ -308,10 +308,10 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   if (!qs.length) { toast('Not enough content in these lessons for this game'); return go('#/s/practice'); }
   G = { id: 'practice', kind: game, lang: 'fr-FR', queue: qs, idx: 0, planned: qs.length, answered: 0, score: 0, total: qs.reduce((n, q) => n + q.total, 0), t0: Date.now(), coins: 0, phase: 'ask', st: {}, staged: false, stageN: [0, 0, 0], stageA: [0, 0, 0], right: 0, asked: 0, practice: { game, level, ids: ids.split(','), mode: vopt ? vopt.mode : '' } };
   if (vopt) { G.vmode = vopt.mode; G.noRetry = vopt.mode !== 'practice'; G.miss = []; }
-  if (g.fast) { Object.assign(G, { fast: true, mode: g.fast, lives: 3, climb: 0, top: 10, endAt: Date.now() + 75000, refill: () => build().filter((q) => !q.retry) }); G.planned = 999; }
+  if (g.fast) { Object.assign(G, { fast: true, mode: g.fast, lives: 3, climb: 0, top: 10, endAt: Date.now() + (g.fast === 'climb' ? 60000 : 120000), refill: () => build().filter((q) => !q.retry) }); G.planned = 999; }
   let tick = null;
   if (G.vmode === 'normal') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.qEnd - Date.now()) / 1000), el = $('#gQT'); if (el) { el.textContent = Math.max(0, left); el.parentElement.style.color = left <= 5 ? '#DC2626' : ''; } if (left <= 0 && G.phase === 'ask') { const q = curQ(); if (q.t === 'type') G.st.val = G.st.val || '\u2026'; if (q.t === 'pick' && G.st.sel == null) G.st.sel = (q.opts.findIndex((o) => o !== q.answer)); ACT.gCheck(); } }, 400);
-  if (G.mode === 'box' || G.mode === 'abox') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent = Math.max(0, left); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
+  if (G.mode === 'box' || G.mode === 'abox' || G.mode === 'climb') tick = setInterval(() => { if (!G) return; const left = Math.ceil((G.endAt - Date.now()) / 1000), el = $('#gClock'); if (el) el.textContent = Math.max(0, left); if (left <= 0 && G.phase === 'ask') { clearInterval(tick); finishPlay(); } }, 500);
   cleanup = () => { if (tick) clearInterval(tick); stopSpeech(); G = null; };
   await waitVoices();
   nextQ();
@@ -352,7 +352,9 @@ function buildQuestions(kind, data) {
   } else if (kind === 'translate') {
     take(pool, 8).forEach((it) => qs.push({ t: 'pick', title: 'Translate this', prompt: it.en, opts: shuffle([it].concat(others(it, pool, 2))).map((o) => o.fr), answer: it.fr, say: it.fr, speakOpts: true, total: 1 }));
   } else if (kind === 'meaning') {
-    take(pool, 8).forEach((it) => qs.push({ t: 'pick', title: 'What does this mean?', prompt: it.fr, speak: it.fr, opts: shuffle([it].concat(others(it, pool, 2))).map((o) => o.en), answer: it.en, say: it.fr, total: 1 }));
+    take(pool, 8).forEach((it) => qs.push({ t: 'pick', title: 'What does this mean?', prompt: it.fr, speak: it.fr, opts: shuffle([it].concat(others(it, pool, 3))).map((o) => o.en), answer: it.en, say: it.fr, total: 1 }));
+  } else if (kind === 'audmean') {
+    take(items, 12).forEach((it) => qs.push({ t: 'pick', title: 'Listen: what does it mean?', audio: it.fr, opts: shuffle([it].concat(others(it, items, 3))).map((o) => o.en), answer: it.en, say: it.fr, total: 1 }));
   } else if (kind === 'flash') {
     take(pool, 8).forEach((it) => qs.push({ t: 'flash', fr: it.fr, en: it.en, total: 1 }));
   } else if (kind === 'typeit') {
@@ -595,7 +597,7 @@ function drawPlay() {
   const modeBar = G.mode === 'box' || G.mode === 'abox'
     ? `<div class="spread" style="font-weight:800;margin:6px 4px"><span style="font-size:22px">${'❤️'.repeat(Math.max(0, G.lives))}${'🖤'.repeat(Math.max(0, 3 - G.lives))}</span><span>⏱ <b id="gClock">${Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000))}</b>s · ✅ ${G.right}</span></div>`
     : G.mode === 'climb'
-      ? `<div style="margin:6px 4px;font-weight:800"><div class="spread"><span>⛰️ Reach the summit!</span><span>${G.climb} / ${G.top}</span></div><div style="position:relative;height:14px;background:#dfe6f5;border-radius:8px;margin-top:6px"><i style="display:block;height:100%;width:${Math.round(G.climb / G.top * 100)}%;background:#2ecc71;border-radius:8px;transition:width .4s"></i><span style="position:absolute;top:-12px;left:calc(${Math.round(G.climb / G.top * 100)}% - 12px);font-size:22px;transition:left .4s">🧗</span></div></div>`
+      ? `<div style="margin:6px 4px;font-weight:800"><div class="spread"><span>⛰️ Reach the summit!</span><span>⏱ <b id="gClock">${Math.max(0, Math.ceil((G.endAt - Date.now()) / 1000))}</b>s · ${G.climb} / ${G.top}</span></div><div style="position:relative;height:14px;background:#dfe6f5;border-radius:8px;margin-top:6px"><i style="display:block;height:100%;width:${Math.round(G.climb / G.top * 100)}%;background:#2ecc71;border-radius:8px;transition:width .4s"></i><span style="position:absolute;top:-12px;left:calc(${Math.round(G.climb / G.top * 100)}% - 12px);font-size:22px;transition:left .4s">🧗</span></div></div>`
       : G.vmode === 'normal' ? `<div class="spread" style="font-weight:800;margin:6px 4px"><span>Normal mode</span><span>⏱ <b id="gQT">${Math.max(0, Math.ceil((G.qEnd - Date.now()) / 1000))}</b>s</span></div>` : G.vmode === 'test' ? '<div style="font-weight:800;margin:6px 4px">📝 Test mode: answers are shown at the end</div>' : '';
   $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back to path">🏠</button><div class="track"><i style="width:${pct}%"></i></div><span class="coins">${G.practice ? '⭐ ' + G.score : G.coins + G.score * 10}</span></div>${modeBar}<div class="pcard">${body}</div><div class="pbottom">${bottom}${stages}</div></div>`;
   const inp = $('#ans');
@@ -691,7 +693,7 @@ ACT.gCheck = () => {
 };
 ACT.gNext = () => {
   if (G.fast) {
-    const over = (G.mode === 'climb' && (G.climb >= G.top || G.asked >= 30)) || ((G.mode === 'box' || G.mode === 'abox') && (G.lives <= 0 || Date.now() >= G.endAt));
+    const over = (G.mode === 'climb' && (G.climb >= G.top || G.asked >= 30 || Date.now() >= G.endAt)) || ((G.mode === 'box' || G.mode === 'abox') && (G.lives <= 0 || Date.now() >= G.endAt));
     if (over) return finishPlay();
     G.idx++;
     if (G.idx >= G.queue.length) { const more = G.refill(); if (!more.length) return finishPlay(); G.queue.push(...more); }
