@@ -184,7 +184,8 @@ function phCss() {
 .ph-hero:before{content:"";position:absolute;right:50px;bottom:-60px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.08)}
 .ph-hero h2{margin:0;font-size:25px;letter-spacing:-.3px}.ph-hero p{margin:4px 0 0;opacity:.92;font-size:14px}
 .ph-stats{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;position:relative;z-index:1}.ph-stats span{background:rgba(255,255,255,.18);border-radius:999px;padding:5px 12px;font-weight:800;font-size:13px}
-.ph-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:560px){.ph-game{padding:12px 9px}.ph-game b{font-size:13.5px}.ph-game small{font-size:10.5px}.ph-game .gi{width:42px;height:42px}.ph-cat b{font-size:13px}.ph-cats{gap:8px}.ph-lvl h3{font-size:14px}}
 .ph-game{position:relative;border:0;border-radius:22px;padding:16px 14px 15px;color:#fff;text-align:left;cursor:pointer;overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.2),0 12px 20px rgba(0,0,0,.08);transition:transform .12s,box-shadow .12s;font:inherit;background-image:linear-gradient(160deg,rgba(255,255,255,.26),rgba(255,255,255,0) 55%,rgba(0,0,0,.2))}
 .ph-game:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
 .ph-game:after{content:"";position:absolute;right:-26px;bottom:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.14)}
@@ -197,7 +198,7 @@ function phCss() {
 .ph-lvl:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}.ph-lvl[disabled]{opacity:.45;cursor:default}
 .ph-lvl .n{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:20px;flex:none}
 .ph-lvl h3{margin:0;font-size:18px}.ph-lvl .d{display:flex;gap:4px;margin-top:6px}.ph-lvl .d i{width:18px;height:6px;border-radius:3px;background:#e2e8f0}
-.ph-cats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ph-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ph-lvls{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ph-lvls .ph-lvl{flex-direction:column;text-align:center;margin:0;padding:14px 8px;gap:8px}.ph-lvls .ph-lvl .d{justify-content:center;flex-wrap:wrap}.ph-lvls .ph-lvl .d{gap:3px;flex-wrap:nowrap}.ph-lvls .ph-lvl .d i{width:6px;height:5px}.ph-lvls .badge{white-space:nowrap;font-size:11px;padding:3px 7px}
 .ph-cat{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px 12px;text-align:left;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 4px 0 var(--line);min-height:104px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .1s}
 .ph-cat:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}.ph-cat .e{font-size:28px;line-height:1}.ph-cat b{font-size:15px;line-height:1.2;margin-top:8px;display:block}.ph-cat small{color:var(--mute);font-weight:700}
 .ph-cat.on{border-color:#4f46e5;background:#eef2ff;box-shadow:0 4px 0 #c7d2fe}.ph-cat.all{grid-column:1/-1;flex-direction:row;justify-content:flex-start;align-items:center;min-height:0;gap:12px;background:linear-gradient(135deg,#eef2ff,#faf5ff)}
@@ -225,11 +226,11 @@ function drawHub() {
       `<div class="ph-grid">${GAMES.map((g) => `<button class="ph-game" data-act="phGame" data-id="${g.id}" style="background-color:${g.col}">${g.id === 'gram' ? '<span class="ph-new">NEW</span>' : ''}<div class="gi">${gIcon(g.id, 34)}</div><b>${g.name}</b><small>${g.d}</small></button>`).join('')}</div>`;
   } else if (P.step === 'level') {
     title = gm.name;
-    body = mk(gm.name) + `<div class="ph-sec">Select your difficulty level</div>` + LEVELS.map(([id, nm], k) => {
+    body = mk(gm.name) + `<div class="ph-sec">Select your difficulty level</div>` + '<div class="ph-lvls">' + LEVELS.map(([id, nm], k) => {
       const n = P.all.filter((l) => l.level === id && gm.src.includes(l.kind)).length;
       const dots = Array.from({ length: 9 }, (_, d) => `<i style="${d <= k ? 'background:' + LV_COL[k] : ''}"></i>`).join('');
       return `<button class="ph-lvl" data-act="phLevel" data-id="${id}" ${n ? '' : 'disabled'}><div class="n" style="background:${LV_COL[k]}">${k + 1}</div><div style="flex:1"><h3>${nm}</h3><div class="d">${dots}</div></div><span class="badge ${n ? 'g' : ''}">${n ? n + ' lessons' : 'Soon'}</span></button>`;
-    }).join('');
+    }).join('') + '</div>';
   } else if (P.step === 'cat') {
     title = gm.name; const cs = hubCats(), tot = cs.reduce((n, c) => n + c[1], 0);
     if (gm.id === 'verb') {
