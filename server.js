@@ -577,6 +577,8 @@ async function seedLessons() {
     if (have.has(l.id)) await db.run('UPDATE lessons SET kind=?,level=?,title=?,topic=?,items=?,verbs=?,sort=? WHERE id=?', [...vals, l.id]);
     else { await db.run('INSERT INTO lessons (kind,level,title,topic,items,verbs,sort,id) VALUES (?,?,?,?,?,?,?,?)', [...vals, l.id]); n++; }
   }
+  const ids = new Set(seed.map((l) => l.id));
+  for (const id of have) if (!ids.has(id)) await db.run('DELETE FROM lessons WHERE id = ?', [id]);
   if (n) console.log('Practice lessons added:', n);
 }
 app.get('/api/student/practice', practiceUser(async (req, res) => {

@@ -135,41 +135,60 @@ ACT.stGo = () => { if (SD && SD.secs >= STUDY_SECS) go('#/s/hw/' + SD.id); };
 
 
 /* ---- practice hub: game type > level > up to 3 lessons ---- */
+const GICON = {
+  vocab: '<rect x="9" y="12" width="22" height="26" rx="4"/><rect x="17" y="8" width="22" height="26" rx="4" fill="#fff" fill-opacity=".25"/><path d="M22 18h12M22 24h12M22 30h7"/>',
+  sent: '<rect x="6" y="9" width="17" height="11" rx="3"/><rect x="25" y="9" width="17" height="11" rx="3"/><rect x="6" y="28" width="26" height="11" rx="3"/><path d="M36 28v11" stroke-dasharray="2 4"/>',
+  verb: '<circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="9"/><circle cx="24" cy="24" r="2.5" fill="#fff"/><path d="M24 24L38 10M34 9l4 1 1 4"/>',
+  gram: '<path d="M15 9H9v30h6M33 9h6v30h-6"/><path d="M17 31h14" stroke-width="3.5"/><path d="M19 23l5-9 5 9M20.5 20h7"/>',
+  listen: '<path d="M9 28v-4a15 15 0 0130 0v4"/><rect x="7" y="27" width="8" height="12" rx="3" fill="#fff" fill-opacity=".3"/><rect x="33" y="27" width="8" height="12" rx="3" fill="#fff" fill-opacity=".3"/>',
+  dict: '<path d="M10 38h28"/><path d="M14 30l16-16 5 5-16 16-7 2z" fill="#fff" fill-opacity=".25"/><path d="M27 17l5 5"/>',
+  work: '<path d="M16 24h16"/><rect x="8" y="15" width="6" height="18" rx="2" fill="#fff" fill-opacity=".3"/><rect x="34" y="15" width="6" height="18" rx="2" fill="#fff" fill-opacity=".3"/><path d="M4 21v6M44 21v6"/>',
+  box: '<path d="M14 18c0-5 4-8 9-8h6c6 0 10 4 10 10v8c0 6-4 10-10 10h-7c-5 0-8-3-8-8z" fill="#fff" fill-opacity=".25"/><path d="M14 33h26M22 10v9"/>',
+  abox: '<path d="M10 20v8M17 14v20M24 8v32M31 14v20M38 20v8"/>',
+  climb: '<path d="M4 40L19 14l8 12 5-7 12 21z" fill="#fff" fill-opacity=".25"/><path d="M19 14V6l7 3-7 3"/>'
+};
+const gIcon = (id, sz) => `<svg viewBox="0 0 48 48" width="${sz || 40}" height="${sz || 40}" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GICON[id] || ''}</svg>`;
 const GAMES = [
   { id: 'vocab', ic: '📚', name: 'Vocab Trainer', d: 'Learn and test words', col: '#1F4FBF', src: ['vocab'], kinds: [['flash', 6], ['match', 2], ['translate', 6], ['meaning', 5], ['typeit', 6], ['truefalse', 5]] },
   { id: 'sent', ic: '🧱', name: 'Sentence Trainer', d: 'Build and complete sentences', col: '#7B3FE4', src: ['sent'], kinds: [['build', 5], ['cloze', 6], ['spaces', 3], ['odd', 3], ['tap', 4]] },
   { id: 'verb', ic: '🎯', name: 'Verb Trainer', d: 'Conjugate in every tense', col: '#E1342F', src: ['verb'], kinds: [['conjmatch', 3], ['conjpick', 8], ['conjtype', 8]] },
+  { id: 'gram', name: 'Grammar Trainer', d: 'Fill the gap, master the rules', col: '#0F766E', src: ['gram'], kinds: [['gappick', 8], ['gaptype', 8]] },
   { id: 'listen', ic: '👂', name: 'Listening Trainer', d: 'Train your ear', col: '#0E9F6E', src: ['vocab', 'sent'], kinds: [['listen', 10], ['tap', 8]] },
   { id: 'dict', ic: '✍️', name: 'Dictation Trainer', d: 'Hear it, then type it', col: '#D97706', src: ['vocab', 'sent'], kinds: [['dictation', 12], ['tap', 4]] },
-  { id: 'work', ic: '🏋️', name: 'Workouts', d: 'A mix of everything', col: '#0891B2', src: ['vocab', 'sent', 'verb'], kinds: [['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
-  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '75 seconds, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb'], fast: 'box', kinds: [['translate', 40], ['meaning', 40], ['truefalse', 40], ['cloze', 20], ['conjpick', 20]] },
+  { id: 'work', ic: '🏋️', name: 'Workouts', d: 'A mix of everything', col: '#0891B2', src: ['vocab', 'sent', 'verb', 'gram'], kinds: [['gappick', 3], ['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
+  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '75 seconds, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'box', kinds: [['translate', 40], ['meaning', 40], ['truefalse', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] },
   { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['listen', 60]] },
-  { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20]] }
+  { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] }
 ];
 const LEVELS = [['primary', 'Primary'], ['beginner', 'Beginner'], ['preint', 'Pre-intermediate'], ['inter', 'Intermediate'], ['higher', 'Higher'], ['advanced', 'Advanced'], ['igcse', 'IGCSE (CIE)']];
-const KIND_NAME = { vocab: 'Vocab', sent: 'Sentences', verb: 'Verbs' };
+const KIND_NAME = { vocab: 'Vocab', sent: 'Sentences', verb: 'Verbs', gram: 'Grammar' };
 let PH = null, PH_AGAIN = '';
 ROUTES.push([/^\/s\/practice$/, async () => {
   startHeartbeat(); ST.hw = null;
   const d = await api('/student/practice');
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
-  PH = { all: d.lessons, step: (PH && PH.keep) || 'game', game: PH && PH.game, level: PH && PH.level, sel: [], q: '' };
+  PH = { all: d.lessons, step: (PH && PH.keep) || 'game', game: PH && PH.game, level: PH && PH.level, sel: [], q: '', cat: PH && PH.cat };
   drawHub();
 }]);
 const gameOf = (id) => GAMES.find((g) => g.id === id);
-function hubLessons() { const g = gameOf(PH.game); return PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)); }
+function hubLessons() { const g = gameOf(PH.game); return PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind) && (!PH.cat || l.topic === PH.cat)); }
+function hubCats() { const g = gameOf(PH.game), m = {}; PH.all.filter((l) => l.level === PH.level && g.src.includes(l.kind)).forEach((l) => { const c = l.topic || 'Other'; m[c] = (m[c] || 0) + 1; }); return Object.entries(m).sort((a, b) => a[0].localeCompare(b[0])); }
 function drawHub() {
   const P = PH; let body = '', title = 'Practice games', back = '#/s';
   if (P.step === 'game') {
-    body = `<p class="mute" style="margin:0 0 14px">What is the main focus today?</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${GAMES.map((g) => `<button data-act="phGame" data-id="${g.id}" style="border:0;border-radius:18px;padding:16px 12px;color:#fff;text-align:left;background:${g.col};box-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer"><div style="font-size:30px">${g.ic}</div><div style="font-weight:800;font-size:16px;margin-top:4px">${g.name}</div><div style="font-size:12px;opacity:.9">${g.d}</div></button>`).join('')}</div>`;
+    body = `<p class="mute" style="margin:0 0 14px">What is the main focus today?</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${GAMES.map((g) => `<button data-act="phGame" data-id="${g.id}" style="border:0;border-radius:18px;padding:16px 12px;color:#fff;text-align:left;background:${g.col};box-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer"><div style="width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center">${gIcon(g.id, 34)}</div><div style="font-weight:800;font-size:16px;margin-top:4px">${g.name}</div><div style="font-size:12px;opacity:.9">${g.d}</div></button>`).join('')}</div>`;
   } else if (P.step === 'level') {
-    const g = gameOf(P.game); title = g.ic + ' ' + g.name;
+    const g = gameOf(P.game); title = g.name;
     body = `<p class="mute" style="margin:0 0 14px">Select your difficulty level</p>` + LEVELS.map(([id, nm]) => {
       const n = P.all.filter((l) => l.level === id && g.src.includes(l.kind)).length;
       return `<button class="hcard" data-act="phLevel" data-id="${id}" ${n ? '' : 'disabled style="opacity:.5"'}><div class="spread"><h3>${nm}</h3><span class="badge ${n ? 'g' : ''}">${n ? n + ' lessons' : 'Coming soon'}</span></div></button>`;
     }).join('');
+  } else if (P.step === 'cat') {
+    const g = gameOf(P.game), lv = LEVELS.find((x) => x[0] === P.level)[1]; title = g.name + ' · ' + lv;
+    const cs = hubCats(), tot = cs.reduce((n, c) => n + c[1], 0);
+    body = `<p class="mute" style="margin:0 0 14px">Choose a category</p><button class="hcard" data-act="phCat" data-id=""><div class="spread"><h3>⭐ All categories</h3><span class="badge g">${tot} lessons</span></div></button>` + cs.map(([c, n]) => `<button class="hcard" data-act="phCat" data-id="${esc(c)}"><div class="spread"><h3>${esc(c)}</h3><span class="badge g">${n} lesson${n > 1 ? 's' : ''}</span></div></button>`).join('');
   } else {
-    const g = gameOf(P.game), lv = LEVELS.find((x) => x[0] === P.level)[1]; title = g.ic + ' ' + g.name + ' · ' + lv;
+    const g = gameOf(P.game), lv = LEVELS.find((x) => x[0] === P.level)[1]; title = g.name + ' · ' + lv + (P.cat ? ' · ' + P.cat : '');
     const q = P.q.toLowerCase(), list = hubLessons().filter((l) => !q || (l.title + ' ' + l.topic).toLowerCase().includes(q));
     body = `<input id="phQ" type="text" placeholder="Search by lesson title" value="${esc(P.q)}" style="margin-bottom:12px">` + list.map((l) => {
       const on = P.sel.includes(l.id);
@@ -181,11 +200,12 @@ function drawHub() {
   const qi = $('#phQ'); if (qi) qi.addEventListener('input', (e) => { PH.q = e.target.value; const p = e.target.selectionStart; drawHub(); const i = $('#phQ'); i.focus(); i.setSelectionRange(p, p); });
 }
 ACT.phGame = (t) => { PH.game = t.dataset.id; PH.step = 'level'; PH.sel = []; drawHub(); };
-ACT.phLevel = (t) => { PH.level = t.dataset.id; PH.step = 'lessons'; PH.sel = []; PH.q = ''; drawHub(); };
+ACT.phLevel = (t) => { PH.level = t.dataset.id; PH.step = 'cat'; PH.cat = ''; PH.sel = []; PH.q = ''; drawHub(); };
+ACT.phCat = (t) => { PH.cat = t.dataset.id || ''; PH.step = 'lessons'; PH.sel = []; PH.q = ''; drawHub(); };
 ACT.phPick = (t) => { const id = t.dataset.id, i = PH.sel.indexOf(id); if (i >= 0) PH.sel.splice(i, 1); else if (PH.sel.length < 3) PH.sel.push(id); else toast('You can pick up to 3 lessons'); drawHub(); };
 ACT.phAgain = () => { const u = PH_AGAIN; if (location.hash === u) route(); else go(u); };
 ACT.phHub = () => { if (PH) { PH.step = 'game'; PH.keep = null; } go('#/s/practice'); };
-ACT.phBack = () => { if (PH.step === 'lessons') { PH.step = 'level'; drawHub(); } else if (PH.step === 'level') { PH.step = 'game'; drawHub(); } else go(typeof T !== 'undefined' && T.name ? '#/t' : '#/s'); };
+ACT.phBack = () => { if (PH.step === 'lessons') { PH.step = 'cat'; drawHub(); } else if (PH.step === 'cat') { PH.step = 'level'; drawHub(); } else if (PH.step === 'level') { PH.step = 'game'; drawHub(); } else go(typeof T !== 'undefined' && T.name ? '#/t' : '#/s'); };
 ACT.phGo = () => { if (PH.sel.length) { PH.keep = 'lessons'; go('#/s/practice/play/' + PH.game + '/' + PH.level + '/' + PH.sel.join(',')); } };
 ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, level, ids) => {
   startHeartbeat(); ST.hw = null;
@@ -193,7 +213,7 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   const d = await api('/student/practice/lessons?ids=' + encodeURIComponent(ids));
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
   const data = { items: [], verbs: [], grammar: [], N: 1, li: 0 };
-  d.lessons.forEach((l) => { data.items.push(...l.items); data.verbs.push(...l.verbs); });
+  d.lessons.forEach((l) => { l.items.forEach((i) => (i.g ? data.grammar : data.items).push(i)); data.verbs.push(...l.verbs); });
   const build = () => {
     const out = [];
     g.kinds.forEach(([k, n]) => {
