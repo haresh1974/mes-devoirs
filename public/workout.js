@@ -162,7 +162,7 @@ function wkBuild(L, mod) {
     if (canSpeak()) add('dict', 'Dictation', 'Listen and type the form you hear.', 'type', cap(combos, 8).map((c) => ({ q: 'Listen 🔊', audio: pronounFor(c.i, c.f) + ' ' + c.f, ans: pronounFor(c.i, c.f) + ' ' + c.f })));
   } else {
     const gram = items.filter((i) => i.g);
-    const G2 = (L.items || []).filter((g) => g.s && g.a).map((g) => { const m = g.s.match(/\s*(\([^)]*\))\s*$/); return m ? Object.assign({}, g, { s: g.s.replace(/\s*\([^)]*\)\s*$/, ''), h: g.h || m[1].slice(1, -1) }) : g; }).filter((g) => g.s.includes('___'));
+    const G2 = (L.items || []).filter((g) => g.s && g.a).map((g) => { const hs = (g.s.match(/\([^)]*\)/g) || []).map((x) => x.slice(1, -1)); return hs.length ? Object.assign({}, g, { s: g.s.replace(/\s*\([^)]*\)/g, '').replace(/\s+([.?!,])/g, '$1').trim(), h: [hs.join(', '), g.h].filter(Boolean).join(' · ') }) : g; }).filter((g) => g.s.includes('___'));
     add('gap', 'Complete with the correct option', 'Choose the word that fills the gap.', 'pick', cap(G2.filter((g) => g.o && g.o.length), 12).map((g) => ({ q: g.s.replace('___', '_____'), sub: g.h, ans: g.a, opts: shuffle([g.a].concat(g.o.slice(0, 3))), after: g.s.replace('___', g.a) })));
     add('gaptype', 'Complete from memory', 'Type the missing word.', 'type', cap(G2, 12).map((g) => ({ q: g.s.replace('___', '_____'), sub: g.h, ans: g.a, ph: pat(g.a), after: g.s.replace('___', g.a) })));
     add('tf', 'True or false', 'Is the sentence correct?', 'pick', cap(G2.filter((g) => g.o && g.o.length), 12).map((g, i) => { const t = i % 2 === 0; return { q: g.s.replace('___', t ? g.a : g.o[0]), ans: t ? 'True' : 'False', opts: ['True', 'False'], after: g.s.replace('___', g.a) }; }));
