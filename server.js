@@ -717,6 +717,8 @@ app.post('/api/library/warm', wrap(async (req, res) => {
 
 /* ---------- static ---------- */
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
+// Teacher-only resources (private repos): only a signed-in teacher can open them.
+app.use('/resources/teacher', (req, res, next) => { auth(req, 'teacher').then((t) => { if (!t) return res.redirect('/#/t'); res.set('Cache-Control', 'private, no-cache'); next(); }).catch(next); }, express.static(path.join(__dirname, 'private')));
 app.use(express.static(path.join(__dirname, 'public'), { etag: true, setHeaders: (res, f) => { if (/\.(js|css|html)$/.test(f)) res.set('Cache-Control', 'no-cache'); } }));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 

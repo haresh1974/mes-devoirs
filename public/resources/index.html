@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resources · French with Haresh</title>
+<style>
+:root{--bg:#f3f5fb;--ink:#18264a;--blue:#2e4fc4;--mute:#56627f;--line:#d6ddee}
+@media (prefers-color-scheme:dark){:root{--bg:#121a33;--ink:#eef1fb;--blue:#8aa4ff;--mute:#9aa6c4;--line:#2a3556}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+main{width:min(94vw,820px);margin:0 auto;padding:22px 0 60px}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:6px}.top a.b{color:var(--blue);text-decoration:none;font-weight:800}
+h1{font-size:1.7rem;margin:6px 0 4px}p.lead{margin:0 0 22px;color:var(--mute)}
+h2{font-size:1.05rem;margin:26px 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+a.c{display:block;padding:16px;border-radius:16px;border:2px solid var(--line);background:rgba(127,127,127,.06);color:var(--ink);text-decoration:none}
+a.c:hover{border-color:var(--blue)}a.c b{display:block;font-size:1.05rem}a.c span{display:block;margin-top:4px;color:var(--mute);font-size:.9rem}
+a.c i{font-style:normal;font-size:1.6rem;display:block;margin-bottom:6px}.tag{display:inline-block;font-size:.7rem;font-weight:800;background:#e4ebff;color:#2e4fc4;border-radius:999px;padding:2px 8px;margin-top:8px}
+.t{display:none}.teacher .t{display:block}
+</style></head><body><main>
+<div class="top"><a class="b" href="/">← French with Haresh</a></div>
+<h1>📎 Resources</h1><p class="lead">Extra practice tools from Haresh Sir, kept separate from the Practice games. Open them in Chrome or Safari; speaking pages need the microphone.</p>
+
+<h2>Translation</h2>
+<div class="grid">
+<a class="c" href="translation-fr-en/"><i>🇫🇷➜🇬🇧</i><b>Translation: French to English</b><span>Translate, build with tiles and learn the strategy. Includes the Studio GCSE booklet themes.</span></a>
+<a class="c" href="translation-en-fr/"><i>🇬🇧➜🇫🇷</i><b>Translation: English to French</b><span>The French Translation Lab: tap a phrase for its meaning and check your version.</span></a>
+</div>
+
+<h2>Speaking and dialogues</h2>
+<div class="grid">
+<a class="c" href="igcse-speaking/"><i>🎤</i><b>IGCSE speaking practice</b><span>Practice Box with 117 Cambridge role plays and 16 themes, plus 16 speaking pages and a mini exam.</span><em class="tag">IGCSE</em></a>
+<a class="c" href="icse-dialogues/"><i>💬</i><b>ICSE French dialogues</b><span>Dialogue practice for the ICSE oral.</span><em class="tag">ICSE</em></a>
+</div>
+
+<div class="t"><h2>Teacher only</h2>
+<div class="grid">
+<a class="c" href="teacher/grammar-tests/"><i>📝</i><b>Grammar tests (Sets A to N)</b><span>Slip tests, 25-mark practice sets and 40-mark tests with explained mistakes. Students send the result to you.</span><em class="tag">ICSE Grade 10</em></a>
+<a class="c" href="teacher/icse-comprehensions/"><i>📖</i><b>Compréhension: 46 past-paper passages</b><span>Marked reading comprehension with hints and a PDF report.</span><em class="tag">ICSE Grade 10</em></a>
+</div></div>
+<script>fetch('/api/me').then(r=>r.json()).then(m=>{if(m&&m.role==='teacher')document.body.classList.add('teacher')}).catch(()=>{})</script>
+</main></body></html>

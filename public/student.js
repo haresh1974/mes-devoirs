@@ -29,9 +29,10 @@ ROUTES.push([/^\/s$/, async () => {
   const notes = (d.notices || []).filter((n) => !seen.includes(n.id)).map((n) => `<div class="notice"><span>🔔</span><div style="flex:1"><b>Message from your teacher</b><div>${esc(n.message)}</div></div><button class="icon-btn" data-act="seeNote" data-id="${esc(n.id)}" style="width:30px;height:30px">✕</button></div>`).join('');
   $('#app').innerHTML = `<div class="sbody">${sTop(d.student.coins, false)}
     <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><p class="mute" style="margin:0 0 20px">${esc(d.cls.name)}</p>${notes}
-    <button class="hcard" data-act="sPractice" style="background:linear-gradient(135deg,#1F4FBF,#6C4BDB);color:#fff"><div class="spread"><h3 style="color:#fff">🎮 Practice games</h3><span class="badge g">NEW</span></div><div style="opacity:.9">Vocab, sentences, verbs, listening, dictation and speed games</div></button>
+    <button class="hcard" data-act="sPractice" style="background:linear-gradient(135deg,#1F4FBF,#6C4BDB);color:#fff"><div class="spread"><h3 style="color:#fff">🎮 Practice games</h3><span class="badge g">NEW</span></div><div style="opacity:.9">Vocab, sentences, verbs, listening, dictation and speed games</div></button><button class="hcard" data-act="sRes"><div class="spread"><h3>📎 Resources</h3></div><div class="mute small">Translation, IGCSE speaking and ICSE dialogues</div></button>
         ${list || '<div class="card mute" style="text-align:center">No homework yet. Check back soon!</div>'}</div>`;
 }]);
+ACT.sRes = () => { location.href = '/resources/'; };
 ACT.sPractice = () => { if (PH) PH.keep = null; go('#/s/practice'); };
 ACT.seeNote = (t) => { let a = []; try { a = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {} a.push(t.dataset.id); try { localStorage.setItem('md_seen', JSON.stringify(a.slice(-50))); } catch (e) {} route(); };
 ACT.sOpen = (t) => go('#/s/hw/' + t.dataset.id);
