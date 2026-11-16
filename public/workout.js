@@ -63,13 +63,16 @@ ROUTES.push([/^\/s\/practice\/workout\/(\w+)\/([\w,-]+)(?:\/(\w+))?$/, async (le
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
   const L = d.lessons[0];
   if (!L) return go('#/s/practice');
-  if (L.kind === 'gram' && (L.items || []).length < 10) {
+  const need = L.kind === 'gram' ? 10 : (L.kind === 'vocab' || L.kind === 'sent' || L.kind === 'speak' || L.kind === 'lis') ? 6 : 0;
+  if (need && (L.items || []).length < need) {
     try {
       const all = (PH.all && PH.all.length ? PH.all : (await api('/student/practice')).lessons) || [];
-      const sib = all.filter((x) => x.kind === 'gram' && x.level === L.level && x.id !== L.id && x.topic === (all.find((y) => y.id === L.id) || {}).topic).slice(0, 6).map((x) => x.id);
-      for (let i = 0; i < sib.length && L.items.length < 14; i += 3) {
+      const me = all.find((y) => y.id === L.id) || {};
+      const sib = all.filter((x) => x.kind === L.kind && x.level === L.level && x.id !== L.id && x.topic === me.topic).slice(0, 6).map((x) => x.id);
+      const seen = new Set((L.items || []).map((g) => g.fr || g.s));
+      for (let i = 0; i < sib.length && L.items.length < need + 4; i += 3) {
         const r = await api('/student/practice/lessons?ids=' + sib.slice(i, i + 3).join(','));
-        (r.lessons || []).forEach((l) => (l.items || []).forEach((g) => { if (g.s && g.a) L.items.push(g); }));
+        (r.lessons || []).forEach((l) => (l.items || []).forEach((g) => { const k = g.fr || g.s; if (k && !seen.has(k) && !g.q && (L.kind === 'gram' ? g.s && g.a : g.fr && g.en)) { seen.add(k); L.items.push(g); } }));
       }
     } catch (e) {}
   }
@@ -97,14 +100,16 @@ function wkBuild(L, mod) {
   const frOpts = (it, pool, n) => shuffle([it.fr].concat(shuffle([...new Set(pool.filter((x) => x.fr !== it.fr).map((x) => x.fr))]).slice(0, n - 1)));
   const pat = (a) => tk(a).map((w) => Array.from(w).map((c, i) => (i === 0 || !/\p{L}/u.test(c) ? c : '·')).join('')).join(' ');
   const add = (id, name, instr, t, its, extra) => { if (its && its.length >= (t === 'match' ? 3 : 2)) out.push(Object.assign({ id, name, instr, t, items: its }, extra || {})); };
-  if (items.length >= 4 && !verbs.length && !items.some((i) => i.g)) {
+  if (items.length >= 3 && !verbs.length && !items.some((i) => i.g)) {
     const sents = items.filter((i) => i.s || tk(i.fr).length >= 3), words = items.filter((i) => !(i.s || tk(i.fr).length >= 3));
     const isSent = mod === 'read' || sents.length >= Math.max(4, items.length / 2);
-    const base = isSent ? sents : items;
+    const base0 = isSent ? sents : items, base = base0.filter((it) => !/[()]/.test(it.fr + it.en)).length >= 3 ? base0.filter((it) => !/[()]/.test(it.fr + it.en)) : base0;
+    const uq = (arr) => { const a = new Set(), b = new Set(); return arr.filter((x) => { if (a.has(x.l) || b.has(x.r)) return false; a.add(x.l); b.add(x.r); return true; }); };
     const N = 12;
     if (mod === 'read') {
       add('rcomp', 'Comprehension questions', 'Read the text, then choose the correct answer.', 'pick', cap(qitems.filter((q) => q.o), 10).map((q) => ({ q: q.q, ans: q.a, opts: shuffle([q.a].concat(q.o)) })));
-      add('rtf', 'True or false', 'According to the text, is each statement true or false?', 'pick', cap(qitems.filter((q) => !q.o), 10).map((q) => ({ q: q.q, ans: q.a, opts: ['True', 'False'] })));
+      const mtf = cap(qitems.filter((q) => q.o && q.o.length), 8).map((q, i) => { const t = i % 2 === 0; return { q: q.q + '  →  ' + (t ? q.a : q.o[0]), ans: t ? 'True' : 'False', opts: ['True', 'False'], after: q.q + ' → ' + q.a }; });
+      add('rtf', 'True or false', 'According to the text, is each statement true or false?', 'pick', cap(qitems.filter((q) => !q.o), 10).map((q) => ({ q: q.q, ans: q.a, opts: ['True', 'False'] })).concat(mtf));
     }
     if (mod === 'listen') {
       const au = (it) => it.fr;
@@ -125,13 +130,13 @@ function wkBuild(L, mod) {
       sp('s5', 'Translate aloud', 'Read the English, then say it in French.', base.slice().reverse(), (it) => ({ q: it.en, ans: it.fr, audio: it.fr, noAudioFirst: true }));
     } else {
     add('mcq', 'Multiple choice quiz', 'Choose the correct English meaning.', 'pick', cap(base, N).map((it) => ({ q: it.fr, ans: it.en, opts: enOpts(it, items, 3), audio: it.fr })));
-    add('dmatch', 'Drag and match', 'Match each French item to its English meaning.', 'match', cap(base, 8).map((it) => ({ l: it.fr, r: it.en })));
-    add('match', 'Match English and French', 'Tap an English item, then its French match.', 'match', cap(base, 8).map((it) => ({ l: it.en, r: it.fr })));
+    add('dmatch', 'Drag and match', 'Match each French item to its English meaning.', 'match', uq(cap(base, 10).map((it) => ({ l: it.fr, r: it.en }))).slice(0, 8));
+    add('match', 'Match English and French', 'Tap an English item, then its French match.', 'match', uq(cap(base, 10).map((it) => ({ l: it.en, r: it.fr }))).slice(0, 8));
     add('frmcq', 'One of three', 'Choose the correct French from the three options.', 'pick', cap(base, N).map((it) => ({ q: it.en, ans: it.fr, opts: frOpts(it, items, 3), audio: it.fr })));
     if (isSent) {
-      add('halves', 'Match the sentence halves', 'Join each beginning to its ending.', 'match', cap(base.filter((it) => tk(it.fr).length >= 4), 7).map((it) => { const t = tk(it.fr), h = Math.ceil(t.length / 2); return { l: t.slice(0, h).join(' ') + ' …', r: '… ' + t.slice(h).join(' ') }; }));
+      add('halves', 'Match the sentence halves', 'Join each beginning to its ending.', 'match', uq(cap(base.filter((it) => tk(it.fr).length >= 4), 9).map((it) => { const t = tk(it.fr), h = Math.ceil(t.length / 2); return { l: t.slice(0, h).join(' ') + ' …', r: '… ' + t.slice(h).join(' ') }; })).slice(0, 7));
       add('order', 'Ordering task', 'Put the words in the right order. Tap the words to build the sentence.', 'order', cap(base.filter((it) => tk(it.fr).length >= 3 && tk(it.fr).length <= 12), 8).map((it) => { const t = tk(it.fr); return { q: it.en, ans: t, bank: shuffle(t.map((w, i) => ({ w, i }))).map((x) => x.w), say: it.fr }; }));
-      add('enorder', 'Build the English', 'Put the English words in the right order.', 'order', cap(base.filter((it) => tk(it.en).length >= 3 && tk(it.en).length <= 11), 6).map((it) => { const t = tk(it.en); return { q: it.fr, ans: t, bank: shuffle(t.slice()), say: it.fr, audio: it.fr }; }));
+      add('enorder', 'Build the English', 'Put the English words in the right order.', 'order', cap(base.filter((it) => tk(it.en).length >= 3 && tk(it.en).length <= 11 && !/[()]/.test(it.en)), 6).map((it) => { const t = tk(it.en); return { q: it.fr, ans: t, bank: shuffle(t.slice()), say: it.fr, audio: it.fr }; }));
     }
     const kw = cap(base.map((it) => ({ it, k: keyWord(it) })).filter((x) => x.k), N);
     add('broken', 'Broken words', 'Each word has been cut in two. Choose the missing second part.', 'pick', kw.map(({ it, k }) => { const cs = Array.from(k.w), h = Math.max(1, Math.ceil(cs.length / 2)), a = cs.slice(0, h).join(''), b = cs.slice(h).join(''); const others = shuffle(kw.map((x) => Array.from(x.k.w)).filter((c) => c.length > 1).map((c) => c.slice(Math.ceil(c.length / 2)).join('')).filter((x) => x && x !== b)); const opts = shuffle([b].concat([...new Set(others)].slice(0, 2))); return { q: k.t.map((w, i) => (i === k.i ? a + ' ‥' : w)).join(' '), sub: it.en, ans: b, opts }; }));
