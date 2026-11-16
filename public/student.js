@@ -9,7 +9,21 @@ function startHeartbeat() {
   }, 15000);
 }
 function sTop(coins, back) {
-  return `<div class="stop">${back ? '<button class="icon-btn" data-act="sHome" title="Home">←</button>' : '<div style="font-weight:800;font-size:20px"><img src="/logo.svg" alt="" style="width:34px;height:34px;vertical-align:middle;margin-right:8px">French with Haresh</div>'}<div class="row">${coins == null ? '' : '<span class="coins">' + coins + '</span>'}<button class="icon-btn" title="Voice" data-act="sVoice">${ICON_SPK}</button><button class="icon-btn" title="Sign out" data-act="logout">↪</button></div></div>`;
+  return `<div class="stop">${back ? '<button class="icon-btn" data-act="sHome" title="Home" aria-label="Home">←</button>' : '<div class="brand"><img src="/logo.svg" alt=""><span>French with Haresh</span></div>'}<div class="tools">${coins == null ? '' : '<span class="coinpill" title="Your coins"><i></i>' + coins + '</span>'}<button class="icon-btn" title="Voice" aria-label="Voice settings" data-act="sVoice">${ICON_SPK}</button><button class="icon-btn" title="Sign out" aria-label="Sign out" data-act="logout">↪</button></div></div>`;
+}
+/* shared bits for the student pages */
+function sDue(ms) { const t = dueLeft(ms); const cls = !ms ? 'none' : ms < Date.now() ? 'late' : (ms - Date.now()) < 2 * 86400000 ? 'soon' : 'ok'; return `<span class="due ${cls}">${cls === 'late' ? '⏰ ' : ''}${esc(t)}</span>`; }
+function sRing(pct, done) { return `<span class="ring ${done ? 'done' : ''}" style="--p:${pct}"><b>${done ? '✓' : pct + '%'}</b></span>`; }
+function sPraise(pct, summit) {
+  const n = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 40 ? 1 : 0;
+  const [fr, en] = summit ? ['Au sommet !', 'You reached the top!'] : pct >= 90 ? ['Excellent !', 'Excellent!'] : pct >= 70 ? ['Très bien !', 'Very good!'] : pct >= 40 ? ['Bien joué !', 'Well played!'] : ['Courage !', 'Keep going, try once more!'];
+  return `<div class="stars" aria-label="${n} out of 3 stars">${[0, 1, 2].map((i) => `<i class="${i < n ? 'on' : ''}">★</i>`).join('')}</div><div class="praise">${fr}</div><div class="praise-en">${en}</div>`;
+}
+function sConfetti() {
+  try { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) { return; }
+  const box = document.createElement('div'); box.className = 'confetti'; const cols = ['#2447D6', '#EF4B3F', '#FFC531', '#12B886', '#ffffff'];
+  for (let i = 0; i < 36; i++) { const c = document.createElement('i'); c.style.cssText = `left:${Math.random() * 100}%;background:${cols[i % cols.length]};animation-delay:${Math.random() * 0.5}s;animation-duration:${1.6 + Math.random() * 1.2}s;transform:rotate(${Math.random() * 360}deg)`; box.appendChild(c); }
+  document.body.appendChild(box); setTimeout(() => box.remove(), 3400);
 }
 ACT.sHome = () => { ST.hw = null; go('#/s'); };
 ACT.sVoice = () => voiceModal(ST.lang);
@@ -20,17 +34,25 @@ ROUTES.push([/^\/s$/, async () => {
   startHeartbeat(); ST.hw = null;
   const d = await api('/student/home');
   VOICE.cloud = !!d.tts; ST.lang = langOf(d.cls.language);
-  const list = d.homework.map((h) => {
-    const pct = h.total ? Math.round(h.done / h.total * 100) : 0;
-    return `<button class="hcard" data-act="sOpen" data-id="${esc(h.id)}"><div class="spread"><h3>${esc(h.title)}</h3>${h.status === 'complete' ? '<span class="badge g">✓ Done</span>' : ''}</div>
-      <div class="mute">${esc(h.topic || '')}</div><div class="spread small" style="margin-top:8px;font-weight:800"><span>${esc(dueLeft(h.due_at))}</span><span>#${h.rank} of ${h.of}</span></div><div class="pbar"><i style="width:${pct}%"></i></div></button>`;
-  }).join('');
+  const pctOf = (h) => (h.total ? Math.round(h.done / h.total * 100) : 0), isDone = (h) => h.status === 'complete';
+  const hws = d.homework.slice().sort((x, y) => (isDone(x) - isDone(y)) || ((x.due_at || 9e15) - (y.due_at || 9e15)));
+  const todo = hws.filter((h) => !isDone(h)), next = todo[0];
+  const card = (h) => `<button class="hw ${isDone(h) ? 'fin' : ''}" data-act="sOpen" data-id="${esc(h.id)}">${sRing(pctOf(h), isDone(h))}<span class="hw-t"><b>${esc(h.title)}</b>${h.topic ? `<small>${esc(h.topic)}</small>` : ''}<span class="hw-m">${isDone(h) ? '<span class="due fin">Done</span>' : sDue(h.due_at)}<span class="rank">#${h.rank} of ${h.of}</span></span></span><span class="go" aria-hidden="true">›</span></button>`;
   let seen = []; try { seen = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {}
-  const notes = (d.notices || []).filter((n) => !seen.includes(n.id)).map((n) => `<div class="notice"><span>🔔</span><div style="flex:1"><b>Message from your teacher</b><div>${esc(n.message)}</div></div><button class="icon-btn" data-act="seeNote" data-id="${esc(n.id)}" style="width:30px;height:30px">✕</button></div>`).join('');
-  $('#app').innerHTML = `<div class="sbody">${sTop(d.student.coins, false)}
-    <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><div class="myc">${(d.classes || []).map((c) => `<button class="${c.current ? 'on' : ''}" data-act="sSwitch" data-id="${esc(c.id)}" ${c.current ? 'aria-current="true"' : ''}>${esc(c.name)}</button>`).join('')}<button class="add" data-act="sJoin">＋ Join another class</button></div>${notes}
-    <button class="hcard" data-act="sPractice" style="background:linear-gradient(135deg,#1F4FBF,#6C4BDB);color:#fff"><div class="spread"><h3 style="color:#fff">🎮 Practice games</h3><span class="badge g">NEW</span></div><div style="opacity:.9">Vocab, sentences, verbs, listening, dictation and speed games</div></button>${d.tests && d.tests.total ? `<button class="hcard" data-act="sTests" style="background:linear-gradient(135deg,#0f766e,#14a39a);color:#fff"><div class="spread"><h3 style="color:#fff">📝 Class tests</h3>${d.tests.todo ? `<span class="badge g">${d.tests.todo} to do</span>` : ''}</div><div style="opacity:.9">Tests your teacher has set for your class</div></button>` : ''}<button class="hcard" data-act="sRes"><div class="spread"><h3>📎 Resources</h3></div><div class="mute small">Translation, speaking and reading for your class</div></button>
-        ${list || '<div class="card mute" style="text-align:center">No homework yet. Check back soon!</div>'}</div>`;
+  const notes = (d.notices || []).filter((n) => !seen.includes(n.id)).map((n) => `<div class="notice"><span>🔔</span><div style="flex:1"><b>Message from your teacher</b><div>${esc(n.message)}</div></div><button class="icon-btn" data-act="seeNote" data-id="${esc(n.id)}" style="width:30px;height:30px" aria-label="Close message">✕</button></div>`).join('');
+  const first = String(d.student.name || '').trim().split(/\s+/)[0] || 'toi';
+  const line = !hws.length ? 'No homework yet. Warm up with a game while you wait.' : !todo.length ? 'All your homework is done. Bravo! Fancy a game?' : todo.length === 1 ? 'You have 1 piece of homework to finish.' : 'You have ' + todo.length + ' pieces of homework to finish.';
+  const many = (d.classes || []).length > 1;
+  const hero = next ? `<button class="cahier" data-act="sOpen" data-id="${esc(next.id)}"><span class="stamp ${pctOf(next) ? 'go' : ''}">${pctOf(next) ? pctOf(next) + '%' : 'À faire'}</span><span class="c-k">Next up</span><span class="c-t">${esc(next.title)}</span>${next.topic ? `<span class="c-s">${esc(next.topic)}</span>` : ''}<span class="c-bar"><i style="width:${Math.max(4, pctOf(next))}%"></i></span><span class="c-f">${sDue(next.due_at)}<span class="c-btn">${next.done ? 'Continue' : 'Start'}</span></span></button>` : '';
+  const tile = (act, ic, name, sub, cls, badge) => `<button class="qt ${cls}" data-act="${act}">${badge ? `<span class="qb">${badge}</span>` : ''}<span class="qi" aria-hidden="true">${ic}</span><b>${name}</b><small>${sub}</small></button>`;
+  const rest = hws.filter((h) => !next || h.id !== next.id);
+  $('#app').innerHTML = `<div class="sbody shome">${sTop(d.student.coins, false)}
+    <header class="hello"><h1>Bonjour, ${esc(first)} !</h1><p>${line}</p>
+      <div class="myc">${(d.classes || []).map((c) => `<button class="${c.current ? 'on' : ''}" data-act="sSwitch" data-id="${esc(c.id)}" ${c.current ? 'aria-current="true"' : ''}>${many && c.current ? '✓ ' : ''}${esc(c.name)}</button>`).join('')}<button class="add" data-act="sJoin">＋ Join a class</button></div></header>
+    ${notes}${hero}
+    <div class="qtiles ${d.tests && d.tests.total ? 'three' : ''}">${tile('sPractice', '🎮', 'Games', 'Play and practise', 'bleu')}${d.tests && d.tests.total ? tile('sTests', '📝', 'Tests', 'From your teacher', 'menthe', d.tests.todo ? d.tests.todo + ' to do' : '') : ''}${tile('sRes', '📚', 'Resources', 'Read, speak, translate', 'soleil')}</div>
+    ${rest.length ? `<h2 class="sec">${next ? 'More homework' : 'My homework'}</h2>${rest.map(card).join('')}` : ''}
+    ${!hws.length ? '<div class="empty"><span aria-hidden="true">🗒️</span><b>Your homework will appear here</b><p>When your teacher sets homework, you will see it on this page.</p></div>' : ''}</div>`;
 }]);
 ACT.sRes = () => { location.href = '/resources/'; };
 ACT.sSwitch = async (t) => { if (t.classList.contains('on')) return; try { await api('/student/switch', 'POST', { id: t.dataset.id }); PH = null; route(); } catch (e) { toast(e.message); } };
@@ -819,10 +841,11 @@ async function finishPlay() {
     const pct = Math.round(g.score / g.total * 100);
     try { await api('/student/practice/result', 'POST', { game: g.practice.game + (g.practice.mode ? '·' + g.practice.mode : ''), level: g.practice.level, ids: g.practice.ids, score: Math.round(g.score), total: g.total, secs }); } catch (e) { if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
     const summit = g.mode === 'climb' && g.climb >= g.top;
-    $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${summit ? '🏔️' : pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div><div class="kick">${summit ? 'YOU REACHED THE SUMMIT!' : 'SESSION COMPLETE'}</div>
-      <div class="stat3b"><div><b>${Math.round(g.score)}/${g.total}</b><span>CORRECT</span></div><div><b>${pct}%</b><span>ACCURACY</span></div><div><b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b><span>TIME</span></div></div>
+    $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${summit ? '🏔️' : pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div>${sPraise(pct, summit)}
+      <div class="stat3b"><div><b>${Math.round(g.score)}/${g.total}</b><span>Correct</span></div><div><b>${pct}%</b><span>Accuracy</span></div><div><b>${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</b><span>Time</span></div></div>
       ${g.miss && g.miss.length ? '<div class="card" style="text-align:left;margin:14px 0"><b>Review your mistakes</b>' + g.miss.map((m) => `<div style="margin-top:8px">${esc(m.p)} <b style="color:#16a34a">${esc(m.a)}</b>${m.g ? ` <span class="mute">(you: ${esc(m.g)})</span>` : ''}</div>`).join('') + '</div>' : ''}
       <button class="bigblue" data-act="phAgain">Play again</button><button class="btn ghost" style="width:100%;margin-top:10px" data-act="phHub">Back to games</button></div></div>`;
+    if (pct >= 70) sConfetti();
     G.again = '#/s/practice/play/' + g.practice.game + '/' + g.practice.level + '/' + g.practice.ids.join(',');
     PH_AGAIN = G.again; return;
   }
@@ -830,9 +853,10 @@ async function finishPlay() {
   try { gained = (await api('/student/attempt', 'POST', { homework_id: g.id, lesson: g.kind, score: Math.round(g.score), total: g.total, secs })).gained; }
   catch (e) { failed = true; if (e.status === 401) { sessionStorage.setItem('kicked', '1'); return go('#/'); } }
   const pct = Math.round(g.score / g.total * 100), balance = (g.coins || 0) + (gained || 0);
-  $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div><div class="kick">SESSION COMPLETE</div>
+  $('#app').innerHTML = `<div class="sbody"><div class="finish"><div class="conf">${pct >= 90 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div>${sPraise(pct, false)}
     <div class="bigcoin"><span class="coinic">🪙</span>${gained || 0}</div><div class="mute" style="font-weight:800;font-size:19px">coins earned</div>
-    <div class="stat3b"><div><b>${Math.round(g.score)}/${g.total}</b><span>CORRECT</span></div><div><b>${pct}%</b><span>ACCURACY</span></div><div><b>🪙 ${balance}</b><span>BALANCE</span></div></div>
+    <div class="stat3b"><div><b>${Math.round(g.score)}/${g.total}</b><span>Correct</span></div><div><b>${pct}%</b><span>Accuracy</span></div><div><b>🪙 ${balance}</b><span>Coins</span></div></div>
     ${failed ? '<p class="err">Could not save this result. Check your connection and try again.</p>' : ''}
-    <button class="bigblue" data-act="gQuit">Back to Home</button></div></div>`;
+    <button class="bigblue" data-act="gQuit">Back to home</button></div></div>`;
+  if (pct >= 70 && !failed) sConfetti();
 }
