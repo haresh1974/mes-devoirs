@@ -1,0 +1,817 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Speaking Practice Box</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+:root {
+  --bg: #f3f5fb; --paper: #ffffff; --ink: #18264a; --ink-2: #56627f; --line: #d6ddee;
+  --blue: #2c52c4; --blue-ink: #ffffff; --blue-soft: #e4ebff;
+  --red: #d0334a; --good: #17804f; --good-soft: #dcf3e6; --bad: #c42f3f; --bad-soft: #fde3e6;
+  --warn: #8f5400; --warn-soft: #fff0d6;
+  --f-display: 'Fredoka', system-ui, sans-serif;
+  --f-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1526; --paper: #172038; --ink: #e8edf9; --ink-2: #9aa6c4; --line: #2a3556;
+    --blue: #8aa5ff; --blue-ink: #0f1526; --blue-soft: #202d59; --red: #ff7081;
+    --good: #55d696; --good-soft: #12372a; --bad: #ff7c88; --bad-soft: #3d1b22; --warn: #f2b866; --warn-soft: #3a2c10;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1526; --paper: #172038; --ink: #e8edf9; --ink-2: #9aa6c4; --line: #2a3556;
+  --blue: #8aa5ff; --blue-ink: #0f1526; --blue-soft: #202d59; --red: #ff7081;
+  --good: #55d696; --good-soft: #12372a; --bad: #ff7c88; --bad-soft: #3d1b22; --warn: #f2b866; --warn-soft: #3a2c10;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 17px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.in { max-width: 920px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+button, input, select { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; text-wrap: balance; line-height: 1.2; }
+h2 { font-size: 1.4rem; } h3 { font-size: 1.1rem; }
+p { margin: 0; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar .in { padding-block: .6rem; display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.brand { font-family: var(--f-display); font-weight: 600; font-size: 1.1rem; color: var(--blue); }
+.brand small { font-family: var(--f-body); font-weight: 700; font-size: .85rem; color: var(--ink-2); margin-left: .5rem; }
+.home { margin-left: auto; }
+main { padding-block: 1.25rem 3rem; display: grid; gap: 1.1rem; }
+.lede { color: var(--ink-2); max-width: 64ch; }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem; display: grid; gap: .9rem; }
+.notice { padding: .7rem .9rem; border-radius: 10px; background: var(--warn-soft); color: var(--warn); font-weight: 700; }
+.small { font-size: .9rem; color: var(--ink-2); }
+.fb { font-weight: 700; } .fb.good { color: var(--good); } .fb.bad { color: var(--bad); }
+.zone { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); }
+.btn { min-height: 46px; padding: .65rem 1.2rem; border-radius: 10px; border: 2px solid var(--blue); background: var(--blue); color: var(--blue-ink); font-weight: 700; font-size: 1rem; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--blue); }
+.btn.danger { background: transparent; border-color: var(--bad); color: var(--bad); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.big { min-height: 54px; font-size: 1.1rem; padding-inline: 1.6rem; }
+.toggle { min-height: 40px; padding: .4rem .9rem; border-radius: 999px; border: 2px solid var(--line); background: var(--paper); color: var(--ink); font-weight: 700; cursor: pointer; font-size: .95rem; }
+.toggle[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
+.actions { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.modes { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.mode { text-align: left; background: var(--paper); border: 2px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; cursor: pointer; color: var(--ink); display: grid; gap: .3rem; }
+.mode:hover { border-color: var(--blue); }
+.mode b { font-family: var(--f-display); font-size: 1.2rem; color: var(--blue); }
+.mode span { color: var(--ink-2); font-size: .95rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.grid { display: grid; gap: .5rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.pick { text-align: left; background: var(--paper); border: 2px solid var(--line); border-radius: 10px; padding: .55rem .75rem; cursor: pointer; color: var(--ink); display: grid; gap: .1rem; font-size: .95rem; }
+.pick:hover { border-color: var(--blue); }
+.pick[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
+.pick b { font-size: 1rem; }
+.pick span { color: var(--ink-2); font-size: .88rem; }
+.qfr { font-family: var(--f-display); font-weight: 500; font-size: 1.35rem; color: var(--blue); line-height: 1.3; }
+.qen { color: var(--ink-2); font-style: italic; }
+.phase { display: inline-block; padding: .15rem .75rem; border-radius: 999px; font-weight: 700; font-size: .9rem; background: var(--blue-soft); color: var(--blue); width: fit-content; }
+.phase.rec { background: var(--bad-soft); color: var(--bad); }
+.meter { height: 12px; border-radius: 6px; background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--good); transition: width .08s linear; }
+.clocks { display: grid; gap: .6rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.clock { border: 1px solid var(--line); border-radius: 12px; padding: .6rem .8rem; display: grid; gap: .1rem; background: var(--bg); }
+.clock .lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); }
+.clock .val { font-family: var(--f-display); font-weight: 600; font-size: 1.8rem; font-variant-numeric: tabular-nums; color: var(--blue); }
+.goal { height: 14px; border-radius: 7px; background: var(--line); overflow: hidden; }
+.goal i { display: block; height: 100%; width: 0; background: var(--blue); }
+.goal.hit i { background: var(--good); }
+.rules { margin: 0; padding-left: 1.25rem; display: grid; gap: .3rem; }
+.ans { border: 1px solid var(--line); border-radius: 10px; padding: .6rem .8rem; display: grid; gap: .35rem; }
+.ahead { display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap; align-items: baseline; }
+.ans audio { width: 100%; max-width: 26rem; }
+.anslist { display: grid; gap: .6rem; }
+.markrow { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+select, input[type=text] { font: inherit; padding: .45rem .6rem; border-radius: 10px; border: 2px solid var(--line); background: var(--paper); color: var(--ink); }
+input[type=range] { width: 100%; max-width: 360px; }
+details { border: 1px solid var(--line); border-radius: 10px; padding: .5rem .8rem; background: var(--paper); }
+summary { cursor: pointer; font-weight: 700; }
+table.t { border-collapse: collapse; width: 100%; font-size: .92rem; margin-top: .5rem; }
+.t th, .t td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.big-total { font-family: var(--f-display); font-size: 1.6rem; color: var(--blue); }
+@media (max-width: 600px) { .bar { position: static; } .clock .val { font-size: 1.4rem; } .clock { padding: .5rem .6rem; } }
+</style></head><body>
+
+<header class="bar"><div class="in">
+  <div class="brand">Speaking Practice Box<small>Learn French with Haresh Sir</small></div>
+  <button class="toggle home" type="button" id="homebtn" hidden>Home</button>
+</div></header>
+<main class="in" id="main"></main>
+
+<script src="hub_index.js"></script>
+<script src="hub_fixed.js"></script>
+<script src="hub_themes.js"></script>
+<script src="lame.min.js"></script>
+<script>
+(function () {
+'use strict';
+var IDX = window.HUB_INDEX || [], FIX = window.HUB_FIXED || {}, TH = window.HUB_THEMES || [];
+var framed = false;
+try { framed = window.top !== window.self; } catch (e) { framed = true; }
+var RP_GOAL = 120, RP_CAP = 180, TH_GOAL = 240, TH_CAP = 260, EXTRA_BELOW = 210;
+var SIL_WARN = 10000, SIL_STOP = 16000;
+var WHYRE = /parce\s*qu|\bcar\b|puisque|à cause|c['’]est pour|pour que|grâce à/i;
+var IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+var TL = { 1: 'Voyages et transports', 2: 'Transports et voyages', 3: 'Voyages et transports (3)', 4: 'Les transports', 5: 'Communication et technologie (1)', 6: 'Communication et technologie (2)', 7: 'Communication et technologie (3)', 8: 'Communication et technologie (4)', 9: 'Le monde naturel et l’environnement', 10: 'L’éducation', 11: 'Le monde naturel (2)', 12: 'Environnement 1', 13: 'Environnement 2', 14: 'Environnement 3', 15: 'Environnement 4', 16: 'Environnement 5' };
+
+function $(s) { return document.querySelector(s); }
+function E(tag, attrs) {
+  var e = document.createElement(tag), a = attrs || {};
+  Object.keys(a).forEach(function (k) {
+    var v = a[k];
+    if (v === false || v == null) return;
+    if (k === 'class') e.className = v;
+    else if (k.indexOf('on') === 0) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  });
+  for (var i = 2; i < arguments.length; i++) {
+    var kids = [].concat(arguments[i]);
+    for (var j = 0; j < kids.length; j++) { var kid = kids[j]; if (kid == null || kid === false) continue; e.append(kid.nodeType ? kid : document.createTextNode(kid)); }
+  }
+  return e;
+}
+function fmt(s) { s = Math.max(0, Math.floor(s)); var m = Math.floor(s / 60), r = s % 60; return m + ':' + (r < 10 ? '0' : '') + r; }
+function yieldUi() { return new Promise(function (r) { setTimeout(r, 0); }); }
+
+/* ---------- state ---------- */
+var S = { screen: 'home', mode: null, series: IDX.length ? IDX[0].series : '', rp: null, ths: [], showFr: true, showEn: false, name: '' };
+var R = null;   /* the running or finished session */
+var M = { state: 'idle', mode: '', msg: '', stream: null, ctx: null, an: null, buf: null, thr: 0.01, floor: 0 };
+var seriesLoaded = {};
+
+function loadSeries(ser) {
+  window.HUB_RP = window.HUB_RP || {};
+  if (window.HUB_RP[ser]) return Promise.resolve(window.HUB_RP[ser]);
+  if (seriesLoaded[ser]) return seriesLoaded[ser];
+  var fn = 'hub_rp_' + ser.replace('/', '').replace(' ', '_') + '.js';
+  seriesLoaded[ser] = new Promise(function (res, rej) {
+    var s = document.createElement('script'); s.src = fn;
+    s.onload = function () { window.HUB_RP[ser] ? res(window.HUB_RP[ser]) : rej(new Error('missing data')); };
+    s.onerror = function () { delete seriesLoaded[ser]; rej(new Error('could not load ' + fn)); };
+    document.head.append(s);
+  });
+  return seriesLoaded[ser];
+}
+
+/* ---------- microphone ---------- */
+function rms() {
+  if (!M.an) return 0;
+  M.an.getFloatTimeDomainData(M.buf);
+  var s = 0;
+  for (var i = 0; i < M.buf.length; i++) s += M.buf[i] * M.buf[i];
+  return Math.sqrt(s / M.buf.length);
+}
+function meter(v) { var m = document.getElementById('meter-fill'); if (m) m.style.width = Math.min(100, v * 350) + '%'; }
+function sampleLevels(ms) {
+  return new Promise(function (res) {
+    var out = [], t0 = performance.now(), id = setInterval(function () {
+      var v = rms(); out.push(v); meter(v);
+      if (performance.now() - t0 >= ms) { clearInterval(id); res(out); }
+    }, 50);
+  });
+}
+function pct(arr, p) { var a = arr.slice().sort(function (x, y) { return x - y; }); return a.length ? a[Math.min(a.length - 1, Math.floor(a.length * p))] : 0; }
+function stopStream() {
+  if (M.stream) { M.stream.getTracks().forEach(function (t) { t.stop(); }); M.stream = null; }
+  if (M.ctx) { try { M.ctx.close(); } catch (e) { /* ignore */ } M.ctx = null; }
+  M.an = null;
+}
+async function micCheck() {
+  if (framed) { M.state = 'blocked'; M.msg = 'The microphone is blocked inside this shared preview. Open the teacher’s own link (it starts with https://) to record.'; draw(); return; }
+  if (!window.isSecureContext || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+    M.state = 'blocked';
+    M.msg = window.isSecureContext === false ? 'The microphone only works on a safe web link. This page was opened as a file. Please open the link your teacher sent (it starts with https://).' : 'This browser cannot use the microphone. Try Chrome or Safari.';
+    draw(); return;
+  }
+  stopStream();
+  M.state = 'asking'; M.msg = ''; draw();
+  try { M.stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (e) {
+    M.stream = null; M.state = 'blocked';
+    var nm = e && e.name;
+    M.msg = (nm === 'NotAllowedError' || nm === 'SecurityError') ? 'The microphone is blocked. Allow it for this page (tap the lock icon next to the web address, or on iPad: Settings, Safari, Microphone), then press Check again.'
+      : nm === 'NotFoundError' ? 'No microphone was found on this device.'
+      : nm === 'NotReadableError' ? 'Another app is using the microphone. Close it and press Check again.'
+      : 'The microphone could not be started.';
+    draw(); return;
+  }
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    M.ctx = new AC();
+    if (M.ctx.resume) await M.ctx.resume();
+    M.an = M.ctx.createAnalyser(); M.an.fftSize = 1024;
+    M.buf = new Float32Array(M.an.fftSize);
+    M.ctx.createMediaStreamSource(M.stream).connect(M.an);
+  } catch (e2) { M.state = 'blocked'; M.msg = 'The microphone could not be started.'; draw(); return; }
+  M.state = 'floor'; draw();
+  var quiet = await sampleLevels(1200);
+  M.floor = pct(quiet, 0.5);
+  M.state = 'speak'; draw();
+  var talk = await sampleLevels(3200);
+  var level = pct(talk, 0.9);
+  var thr = Math.max(0.006, M.floor * 2.5);
+  if (level < thr * 1.6) { M.state = 'weak'; thr = Math.max(0.003, Math.min(thr, level * 0.4)); }
+  else M.state = 'ok';
+  M.thr = thr; M.mode = 'mic';
+  draw();
+}
+function skipMic() { stopStream(); M.state = 'skip'; M.mode = 'timer'; draw(); }
+function pickMime() {
+  var c = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+  for (var i = 0; i < c.length; i++) if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(c[i])) return c[i];
+  return '';
+}
+
+/* ---------- plan ---------- */
+function themeObj(n) { return TH.filter(function (t) { return t.n === n; })[0]; }
+function cardMeta(sel) { var s = IDX.filter(function (x) { return x.series === sel.series; })[0]; return s ? { s: s, c: s.cards.filter(function (c) { return c.n === sel.n; })[0] } : null; }
+function planReady() {
+  if (S.mode === 'rp') return !!S.rp;
+  if (S.mode === 'theme') return S.ths.length === 1;
+  return !!S.rp && S.ths.length === 2;
+}
+function buildPlan() {
+  var plan = [];
+  if (S.rp && (S.mode === 'rp' || S.mode === 'exam')) plan.push({ type: 'rp', sel: S.rp });
+  if (S.mode === 'theme' || S.mode === 'exam') S.ths.forEach(function (n, i) { plan.push({ type: 'th', n: n, which: i + 1 }); });
+  return plan;
+}
+function segLabel(p) {
+  if (p.type === 'rp') { var m = cardMeta(p.sel); return 'Role play · ' + m.s.label + ' · Card ' + p.sel.n; }
+  return 'Topic conversation · Speaking ' + p.n + ' · ' + TL[p.n];
+}
+
+/* ---------- audio playback ---------- */
+var tok = 0;
+function stopAudio() { tok++; if (R && R.aud) { try { R.aud.pause(); } catch (e) { /* ignore */ } R.aud = null; } }
+function playSeq(list, done) {
+  var my = ++tok, i = 0;
+  function next() {
+    if (my !== tok) return;
+    if (i >= list.length) { done(); return; }
+    var a = new Audio(list[i++]); R.aud = a;
+    var fired = false;
+    function go() { if (fired) return; fired = true; if (my !== tok) return; setTimeout(next, i >= list.length ? 0 : 500); }
+    a.addEventListener('ended', go); a.addEventListener('error', go);
+    var pr = a.play(); if (pr && pr.catch) pr.catch(go);
+  }
+  next();
+}
+
+/* ---------- reason (Pourquoi) sensing ---------- */
+function isWhyPr(p) { return !!p && /pourquoi/i.test(p.fr || ''); }
+function whyNeeded() {
+  var G = R.G, c = G.it; if (!c || c.kind === 'x') return false;
+  if (isWhyPr(c)) return true;
+  var nx = G.items[G.i + 1]; return !!(nx && nx.qn === c.qn && nx.kind === c.kind && isWhyPr(nx));
+}
+function startWhy(turn) {
+  if (M.mode !== 'mic' || IOS || !turn || turn.asrFail) return;
+  var SRC = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SRC) return;
+  try {
+    var r = new SRC(); r.lang = 'fr-FR'; r.continuous = true; r.interimResults = true;
+    r.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' '; turn.heard = t; if (WHYRE.test(t)) turn.why = true; };
+    r.onerror = function (e) { if (e && /not-allowed|service-not-allowed|audio-capture/.test(e.error || '')) turn.asrFail = true; };
+    r.onend = function () { if (!turn.asrStop && !turn.asrFail && R && R.G && R.G.turn === turn && R.G.state === 'answering') { try { r.start(); } catch (x) { /* ignore */ } } };
+    turn.asrStop = false; turn.asr = r; r.start(); turn.asrOn = true;
+  } catch (e) { turn.asr = null; turn.asrFail = true; }
+}
+function stopWhy(turn) { if (turn && turn.asr) { turn.asrStop = true; try { turn.asr.stop(); } catch (e) { /* ignore */ } turn.asr = null; } }
+function whyTick(turn) {
+  var G = R.G, el = document.getElementById('why-live'); if (!el) return;
+  var msg = '', ok = false;
+  if (whyNeeded()) {
+    if (!turn.why && !turn.asrOn && isWhyPr(G.it) && turn.voiced >= 6) turn.whyProb = true;
+    if (turn.why) { msg = '✓ Reason heard. Well done!'; ok = true; G.whySeen[G.it.qn] = true; }
+    else if (turn.whyProb) { msg = '✓ Reason probably given. Well done!'; ok = true; }
+    else if (isWhyPr(G.it) && G.whySeen[G.it.qn]) { msg = '✓ You already gave a reason earlier. Add one more detail.'; ok = true; }
+    else if (isWhyPr(G.it) && turn.voiced > 8) msg = 'Do not forget to say why: « Parce que… » or « Car… ».';
+  }
+  if (msg) { el.textContent = msg; el.style.display = ''; el.style.borderColor = ok ? '#2e7d32' : ''; } else el.style.display = 'none';
+}
+function whyLabel(r) {
+  var s = '';
+  if (!r.whyReq || !isWhyPr(r.it)) return s;
+  if (r.why) s += ' · reason heard ✓';
+  else s += r.whyProb ? ' · reason probably given' : (r.whyEarly ? ' · reason given earlier' : ' · reason not heard');
+  return s;
+}
+
+/* ---------- running a segment ---------- */
+function startSession() {
+  R = { plan: buildPlan(), si: 0, segs: [], screen: 'run', mp3: null, marks: { rp: [null, null, null, null, null], c: null, l: null }, G: null, aud: null };
+  S.screen = 'run';
+  beginSegment();
+}
+async function beginSegment() {
+  var p = R.plan[R.si], G = { p: p, state: 'loading', items: [], i: 0, sum: 0, extraN: 0, turn: null, raf: 0, whySeen: {}, capped: false, results: [], pre: [], goal: 0, cap: 0, qSrc: '', extras: [] };
+  R.G = G; R.screen = 'run'; draw();
+  try {
+    if (p.type === 'rp') {
+      var arr = await loadSeries(p.sel.series), card = arr.filter(function (c) { return c.n === p.sel.n; })[0];
+      G.card = card; G.goal = RP_GOAL; G.cap = RP_CAP;
+      G.pre = [FIX.greet, card.scenSrc];
+      card.q.forEach(function (parts, qi) { parts.forEach(function (pt, pi) { G.items.push({ kind: 'rp', qn: qi + 1, part: pi, parts: parts.length, fr: pt.fr, en: '', src: pt.src, altSrc: '' }); }); });
+    } else {
+      var th = themeObj(p.n); G.th = th; G.goal = TH_GOAL; G.cap = TH_CAP;
+      G.pre = [];
+      if (R.si > 0 && R.plan[R.si - 1].type === 'rp') G.pre.push(FIX.rpEnd);
+      G.pre.push(p.which === 2 ? th.intro2 : th.intro1);
+      th.prompts.forEach(function (q) { G.items.push({ kind: 'th', qn: parseInt(q.q.slice(1), 10), part: q.part, parts: 0, fr: q.fr, en: q.en, src: q.src, altFr: q.altFr, altEn: q.altEn, altSrc: q.altSrc }); });
+      G.extras = th.extras.slice();
+    }
+  } catch (e) { G.state = 'error'; G.err = e.message; draw(); return; }
+  G.items.forEach(function (it) { it.parts = G.items.filter(function (x) { return x.qn === it.qn; }).length; });
+  G.state = 'intro'; draw();
+  var seq = G.pre.filter(Boolean);
+  playSeq(seq, function () { beginItem(); });
+}
+function beginItem() {
+  var G = R.G; G.it = G.items[G.i]; G.it.stage = 'o'; G.it.rep = 0; G.turn = null; G.state = 'asking';
+  G.qSrc = G.it.src; draw();
+  playSeq([G.it.src], startTurn);
+}
+function canAlt() { var it = R.G.it; return it.kind === 'th' && it.qn >= 3 && !!it.altSrc && it.stage === 'o' && it.rep >= 1; }
+function canRepeat() { return R.G.it.rep < 1; }
+function ask(src) {
+  var G = R.G; G.state = 'asking'; cancelAnimationFrame(G.raf); stopWhy(G.turn); draw();
+  stopSeg(G.turn).then(function () { G.qSrc = src; draw(); playSeq([src], startTurn); });
+}
+function doRepeat() {
+  var G = R.G; if (G.state !== 'answering' || !canRepeat()) return;
+  G.it.rep++; G.turn.repN++;
+  ask(G.it.stage === 'a' ? G.it.altSrc : G.it.src);
+}
+function doAlt() {
+  var G = R.G; if (G.state !== 'answering' || !canAlt()) return;
+  G.it.stage = 'a'; G.it.rep = 0; G.turn.altUsed = true;
+  ask(G.it.altSrc);
+}
+function startTurn() {
+  var G = R.G; G.state = 'answering';
+  var now = performance.now();
+  if (M.ctx && M.ctx.state === 'suspended' && M.ctx.resume) { try { M.ctx.resume(); } catch (e) { /* ignore */ } }
+  if (G.turn) { G.turn.last = now; G.turn.lastVoice = now; startSeg(G.turn); startWhy(G.turn); draw(); cancelAnimationFrame(G.raf); G.raf = requestAnimationFrame(turnTick); return; }
+  var t = { last: now, voiced: 0, wall: 0, lastAbove: -1e9, lastVoice: now, segs: [], cur: null, mime: '', repN: 0, altUsed: false, extUsed: false, silent: false, why: false, whyProb: false, asr: null, asrOn: false, asrFail: false, asrStop: false };
+  G.turn = t; startSeg(t); startWhy(t); draw();
+  cancelAnimationFrame(G.raf); G.raf = requestAnimationFrame(turnTick);
+}
+function startSeg(turn) {
+  if (M.mode !== 'mic' || !M.stream) return;
+  try {
+    if (!turn.mime) turn.mime = pickMime();
+    var seg = { q: R.G.qSrc || '', blob: null, chunks: [] };
+    var rec = turn.mime ? new MediaRecorder(M.stream, { mimeType: turn.mime }) : new MediaRecorder(M.stream);
+    rec.addEventListener('dataavailable', function (e) { if (e.data && e.data.size) seg.chunks.push(e.data); });
+    rec.addEventListener('stop', function () { if (seg.chunks.length) seg.blob = new Blob(seg.chunks, { type: turn.mime || 'audio/webm' }); seg.done = true; if (seg.onDone) seg.onDone(); });
+    rec.start(1000);
+    seg.rec = rec; turn.cur = seg; turn.segs.push(seg);
+  } catch (e) { turn.cur = null; }
+}
+function stopSeg(turn) {
+  return new Promise(function (res) {
+    var seg = turn && turn.cur;
+    if (!seg || seg.done || !seg.rec || seg.rec.state === 'inactive') { res(); return; }
+    seg.onDone = res;
+    try { seg.rec.stop(); } catch (e) { res(); }
+  });
+}
+function turnTick() {
+  var G = R && R.G; if (!G || G.state !== 'answering') return;
+  var turn = G.turn, now = performance.now(), dt = now - turn.last;
+  turn.last = now; turn.wall += dt / 1000;
+  var lvl = 0;
+  if (M.mode === 'mic') {
+    lvl = rms();
+    if (lvl > M.thr) { turn.lastAbove = now; turn.lastVoice = now; }
+    if (now - turn.lastAbove < 700) turn.voiced += dt / 1000;
+  } else turn.voiced += dt / 1000;
+  var total = G.sum + turn.voiced;
+  var c1 = document.getElementById('clk-turn'), c2 = document.getElementById('clk-sum'), g = document.getElementById('goal-fill'), gb = document.getElementById('goal');
+  if (c1) c1.textContent = fmt(turn.voiced);
+  if (c2) c2.textContent = fmt(total);
+  if (g) g.style.width = Math.min(100, total / G.goal * 100) + '%';
+  if (gb && total >= G.goal) gb.classList.add('hit');
+  if (M.mode === 'mic') {
+    meter(lvl);
+    var sw = document.getElementById('sil-warn');
+    if (sw) sw.hidden = !(now - turn.lastVoice > SIL_WARN);
+  }
+  whyTick(turn);
+  if (G.it.kind === 'x' && total >= G.goal) { finishTurn(); return; }
+  if (total >= G.cap) { G.capped = true; finishTurn(); return; }
+  if (M.mode === 'mic' && now - turn.lastVoice > SIL_STOP) { onSilence(); return; }
+  G.raf = requestAnimationFrame(turnTick);
+}
+function onSilence() {
+  var G = R.G;
+  if (canRepeat()) { doRepeat(); return; }
+  if (canAlt()) { doAlt(); return; }
+  G.turn.silent = G.turn.voiced < 1.5; finishTurn();
+}
+var extN = 0;
+function onNext() {
+  var G = R.G; if (G.state !== 'answering') return;
+  var t = G.turn, it = G.it;
+  /* the examiner may ask for more detail once if the answer was very short (Cambridge allows extension questions) */
+  if (G.p.type === 'th' && it.kind === 'th' && M.mode === 'mic' && !t.extUsed && t.voiced >= 0.8 && t.voiced < 6 && FIX.more1) {
+    t.extUsed = true; extN++;
+    ask(extN % 2 ? FIX.more1 : FIX.more2); return;
+  }
+  finishTurn();
+}
+async function finishTurn() {
+  var G = R.G; if (G.state !== 'answering') return;
+  G.state = 'saving'; cancelAnimationFrame(G.raf);
+  var t = G.turn; stopWhy(t); var wr = whyNeeded(), wearly = !!G.whySeen[G.it.qn]; await stopSeg(t);
+  if (t.why) G.whySeen[G.it.qn] = true;
+  var first = null; t.segs.forEach(function (s) { if (!first && s.blob) first = s.blob; });
+  var res = { it: G.it, voiced: t.voiced, wall: t.wall, segs: t.segs, mime: t.mime, blob: first, repN: t.repN, altUsed: t.altUsed, ext: t.extUsed, silent: t.silent, why: t.why, whyProb: t.whyProb, whyReq: wr, whyEarly: wearly, pre: G.results.length === 0 ? G.pre.filter(Boolean) : [], url: '' };
+  G.results.push(res); G.sum += t.voiced; G.i++;
+  if (G.capped || G.sum >= G.cap) { G.capped = true; endSegment(); return; }
+  if (G.i < G.items.length) { beginItem(); return; }
+  if (G.p.type === 'th' && G.sum < EXTRA_BELOW && G.extraN < G.extras.length && G.sum < G.goal) {
+    var x = G.extras[G.extraN++];
+    G.items.push({ kind: 'x', qn: 0, part: 0, parts: 1, fr: x.fr, en: x.en, src: x.src, altSrc: '' });
+    beginItem(); return;
+  }
+  endSegment();
+}
+function endSegment() {
+  var G = R.G;
+  R.segs.push({ p: G.p, results: G.results, sum: G.sum, capped: G.capped, goal: G.goal, card: G.card, th: G.th });
+  stopAudio();
+  if (R.si + 1 < R.plan.length) { R.screen = 'between'; draw(); return; }
+  R.screen = 'done'; stopStream(); draw(); prepareMp3();
+}
+function nextSegment() { R.si++; beginSegment(); }
+function quit() {
+  if (R && R.G) { cancelAnimationFrame(R.G.raf); }
+  stopAudio(); stopStream(); M = { state: 'idle', mode: '', msg: '', stream: null, ctx: null, an: null, buf: null, thr: 0.01, floor: 0 };
+  R = null; S.screen = 'home'; draw();
+}
+
+/* ---------- MP3 ---------- */
+async function pcm24k(buf) {
+  var AC = window.AudioContext || window.webkitAudioContext, ac = new AC();
+  var audio = await new Promise(function (res, rej) { var p = ac.decodeAudioData(buf, res, rej); if (p && p.then) p.then(res, rej); });
+  try { ac.close(); } catch (e) { /* ignore */ }
+  var RATE = 24000, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  var off = new OAC(1, Math.max(1, Math.ceil(audio.duration * RATE)), RATE);
+  var s = off.createBufferSource(); s.buffer = audio; s.connect(off.destination); s.start(0);
+  var rendered = await new Promise(function (res, rej) { var p = off.startRendering(res); if (p && p.then) p.then(res, rej); });
+  return rendered.getChannelData(0);
+}
+var qCache = {};
+async function qPcm(src) {
+  if (!qCache[src]) { var b = await (await fetch(src)).arrayBuffer(); qCache[src] = await pcm24k(b); }
+  return qCache[src];
+}
+async function resultMp3(r) {
+  var RATE = 24000, parts = [], n = 0;
+  function add(f) { parts.push(f); n += f.length; }
+  function gap(sec) { add(new Float32Array(Math.round(sec * RATE))); }
+  for (var p = 0; p < r.pre.length; p++) { try { add(await qPcm(r.pre[p])); gap(0.5); } catch (e) { /* skipped */ } }
+  for (var i = 0; i < r.segs.length; i++) {
+    var sg = r.segs[i];
+    if (sg.q) { try { add(await qPcm(sg.q)); gap(0.4); } catch (e) { /* skipped */ } }
+    if (sg.blob) { add(await pcm24k(await sg.blob.arrayBuffer())); gap(0.7); }
+    await yieldUi();
+  }
+  var all = new Float32Array(n), o = 0;
+  parts.forEach(function (q) { all.set(q, o); o += q.length; });
+  var pcm = new Int16Array(all.length);
+  for (var k = 0; k < all.length; k++) { var v = Math.max(-1, Math.min(1, all[k])); pcm[k] = v < 0 ? v * 32768 : v * 32767; }
+  var enc = new lamejs.Mp3Encoder(1, RATE, 64), out = [], step = 1152 * 10;
+  for (var j = 0; j < pcm.length; j += step) {
+    var b2 = enc.encodeBuffer(pcm.subarray(j, j + step)); if (b2.length) out.push(new Uint8Array(b2));
+    if ((j / step) % 20 === 19) await yieldUi();
+  }
+  var e2 = enc.flush(); if (e2.length) out.push(new Uint8Array(e2));
+  return new Blob(out, { type: 'audio/mpeg' });
+}
+async function prepareMp3() {
+  var list = [];
+  R.segs.forEach(function (sg) { sg.results.forEach(function (r) { if (r.blob) list.push(r); }); });
+  var st = R.mp3 = { ready: false, done: 0, total: list.length, segAll: [], all: null, allUrl: '' };
+  if (M.mode !== 'mic' || !list.length || typeof lamejs === 'undefined') {
+    list.forEach(function (r) { r.url = URL.createObjectURL(r.blob); });
+    st.ready = true; if (R.screen === 'done') draw(); return;
+  }
+  var me = R;
+  for (var i = 0; i < list.length; i++) {
+    if (R !== me) return;
+    try { var m = await resultMp3(list[i]); list[i].mp3 = m; list[i].url = URL.createObjectURL(m); } catch (e) { list[i].mp3 = null; list[i].url = URL.createObjectURL(list[i].blob); }
+    st.done++;
+    var el = document.getElementById('mp3-status'); if (el) el.textContent = 'Preparing your MP3… ' + st.done + ' of ' + st.total;
+    await yieldUi();
+  }
+  var every = [];
+  R.segs.forEach(function (sg, si) {
+    var ps = sg.results.filter(function (r) { return r.mp3; }).map(function (r) { return r.mp3; });
+    if (ps.length) { sg.mp3 = new Blob(ps, { type: 'audio/mpeg' }); sg.mp3url = URL.createObjectURL(sg.mp3); every = every.concat(ps); }
+  });
+  if (every.length) { st.all = new Blob(every, { type: 'audio/mpeg' }); st.allUrl = URL.createObjectURL(st.all); }
+  st.ready = true; if (R.screen === 'done') draw();
+}
+
+/* ---------- marks ---------- */
+var RPD = ['0 · No creditable response.', '1 · Information partly communicated or ambiguous; errors get in the way of the message.', '2 · Information communicated; language appropriate and accurate (minor errors are allowed).'];
+function band(n) { return n >= 13 ? 'Very good' : n >= 10 ? 'Good' : n >= 7 ? 'Satisfactory' : n >= 4 ? 'Weak' : n >= 1 ? 'Poor' : 'No creditable response'; }
+var BANDS = [
+  ['13–15 Very good', 'Confident, relevant answers. Ideas are developed and opinions are justified. Wide range of vocabulary and structures, mostly accurate, several tenses. Good pronunciation and fluency.'],
+  ['10–12 Good', 'Mostly relevant, some development and opinions. Good range of language; some errors that do not stop the message. Some hesitation.'],
+  ['7–9 Satisfactory', 'Generally relevant but answers are short with limited development. Adequate, fairly basic language; errors sometimes get in the way.'],
+  ['4–6 Weak', 'Often very short or only partly relevant; the examiner has to prompt a lot. Limited vocabulary and structures; frequent errors.'],
+  ['1–3 Poor', 'Very limited response, mostly single words. Errors often stop the message.'],
+  ['0', 'No creditable response.']
+];
+function marksTotal() {
+  var m = R.marks, t = 0, any = false;
+  m.rp.forEach(function (v) { if (v != null) { t += v; any = true; } });
+  if (m.c != null) { t += m.c; any = true; } if (m.l != null) { t += m.l; any = true; }
+  return any ? t : null;
+}
+function hasRp() { return R.segs.some(function (s) { return s.p.type === 'rp'; }); }
+function themeSegs() { return R.segs.filter(function (s) { return s.p.type === 'th'; }); }
+function maxTotal() { return (hasRp() ? 10 : 0) + (themeSegs().length ? 30 : 0); }
+
+/* ---------- report / send ---------- */
+function reportText() {
+  var d = new Date(), L = [];
+  L.push('Speaking Practice Box'); L.push('Student: ' + (S.name || '(no name)')); L.push('Date: ' + d.toLocaleDateString() + ' ' + d.toLocaleTimeString());
+  L.push('Mode: ' + (M.mode === 'mic' ? 'recorded' : 'timer only')); L.push('');
+  R.segs.forEach(function (sg) {
+    L.push(segLabel(sg.p) + ' - speaking time ' + fmt(sg.sum) + ' (target ' + fmt(sg.goal) + ')' + (sg.capped ? ' - stopped at the time limit' : ''));
+    sg.results.forEach(function (r) {
+      var nm = r.it.kind === 'x' ? 'Extra question' : (r.it.kind === 'rp' ? 'Question ' + r.it.qn + (r.it.parts > 1 ? ' part ' + (r.it.part + 1) : '') : 'Question ' + r.it.qn + (r.it.parts > 1 ? ' part ' + (r.it.part + 1) : ''));
+      L.push('  ' + nm + ': ' + fmt(r.voiced) + (r.repN ? ', repeated ' + r.repN + 'x' : '') + (r.altUsed ? ', different question used' : '') + (r.ext ? ', asked for more detail' : '') + (r.silent ? ', no answer heard' : '') + whyLabel(r));
+    });
+  });
+  L.push(''); L.push('Self-marks (Cambridge 0520/03):');
+  if (hasRp()) L.push('  Role play: ' + R.marks.rp.map(function (v) { return v == null ? '-' : v; }).join(' + ') + ' (out of 10)');
+  if (themeSegs().length) { L.push('  Communication: ' + (R.marks.c == null ? '-' : R.marks.c) + ' of 15'); L.push('  Quality of Language: ' + (R.marks.l == null ? '-' : R.marks.l) + ' of 15'); }
+  var t = marksTotal(); L.push('  Total: ' + (t == null ? '-' : t) + ' of ' + maxTotal());
+  return L.join('\n');
+}
+function dlName(s) { return (S.name || 'my').replace(/[^\w\-]+/g, '_') + '_' + s; }
+function sendFiles() {
+  var fs = [new File([reportText()], dlName('report.txt'), { type: 'text/plain' })];
+  R.segs.forEach(function (sg, i) {
+    if (sg.mp3) fs.push(new File([sg.mp3], dlName((sg.p.type === 'rp' ? 'role_play' : 'topic_' + sg.p.n) + '.mp3'), { type: 'audio/mpeg' }));
+    else sg.results.forEach(function (r, j) { if (r.blob) fs.push(new File([r.blob], dlName('seg' + (i + 1) + '_answer' + (j + 1) + (/mp4/.test(r.mime) ? '.m4a' : '.webm')), { type: r.mime || r.blob.type })); });
+  });
+  return fs;
+}
+function sendToTeacher(msgEl) {
+  var say = function (t) { msgEl.textContent = t; };
+  if (R.mp3 && !R.mp3.ready) { say('Please wait a moment: your MP3 is still being prepared.'); return; }
+  var fs = sendFiles();
+  if (navigator.canShare && navigator.canShare({ files: fs })) {
+    navigator.share({ files: fs, title: 'Speaking practice', text: reportText() }).then(function () { say('Sent. Thank you!'); }, function (e) { if (e && e.name !== 'AbortError') say('Sharing did not work. Use "Download everything" instead.'); });
+  } else say('Sharing is not available here. Use "Download everything" and send the files to your teacher.');
+}
+function downloadAll() {
+  if (R.mp3 && !R.mp3.ready) return;
+  sendFiles().forEach(function (f, i) {
+    setTimeout(function () { var u = URL.createObjectURL(f), a = document.createElement('a'); a.href = u; a.download = f.name; document.body.append(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }, i * 400);
+  });
+}
+function copyReport(msgEl) {
+  var t = reportText();
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { msgEl.textContent = 'Report copied. Paste it in a message to your teacher.'; }, function () { msgEl.textContent = 'Copy did not work. Please use "Download everything".'; });
+}
+
+/* ---------- screens ---------- */
+function rulesBlock() {
+  return E('details', {}, E('summary', {}, 'How the Cambridge speaking test works'),
+    E('ul', { class: 'rules', style: 'margin-top:.5rem' },
+      E('li', {}, 'Three parts, about 10 minutes: a role play (about 2 minutes), then two topic conversations (about 4 minutes each). All in French.'),
+      E('li', {}, 'The examiner reads everything exactly as printed. The recording is never stopped.'),
+      E('li', {}, 'Role play: 5 questions. Questions with two parts are asked one part at a time. A question can be repeated once if you do not understand, but it is never explained or changed. If there is still no answer, the examiner moves on.'),
+      E('li', {}, 'Role play marks: 0, 1 or 2 for each of the 5 answers = 10 marks.'),
+      E('li', {}, 'Topic conversations: 5 questions each, in order. Questions 1 and 2: repeated once, then the next question. Questions 3, 4 and 5: repeated once, then the examiner asks a different question on the same idea (repeated once if needed), then moves on.'),
+      E('li', {}, 'If your answers are short, the examiner can say “Donne-moi plus de détails” or “Peux-tu me dire autre chose à ce sujet ?”. If a conversation is 3½ minutes or less, the examiner adds up to 2 more questions to reach 4 minutes.'),
+      E('li', {}, 'Topic marks: Communication out of 15 and Quality of Language out of 15, for both conversations together. Total = 10 + 15 + 15 = 40.')));
+}
+function drawHome(main) {
+  main.append(E('h2', {}, 'Speaking Practice Box'));
+  main.append(E('p', { class: 'lede' }, 'Practise exactly like the Cambridge IGCSE French speaking test (0520/03). Choose what you want to practise.'));
+  function mode(k, t, d) { return E('button', { class: 'mode', type: 'button', onclick: function () { S.mode = k; S.screen = 'pick'; S.showFr = k !== 'exam'; draw(); } }, E('b', {}, t), E('span', {}, d)); }
+  main.append(E('div', { class: 'modes' },
+    mode('rp', 'One role play', 'About 2 minutes. Choose from 117 real role-play cards (2021–2025).'),
+    mode('theme', 'One theme', 'A 4-minute topic conversation. Choose from your 16 speaking themes.'),
+    mode('exam', 'Mini exam', '1 role play, then 2 different themes of your choice. The full Cambridge order.')));
+  main.append(rulesBlock());
+}
+function drawPick(main) {
+  var m = S.mode, needRp = m === 'rp' || m === 'exam', needTh = m === 'theme' || m === 'exam', nTh = m === 'exam' ? 2 : 1;
+  main.append(E('h2', {}, m === 'rp' ? 'Choose a role play' : m === 'theme' ? 'Choose a theme' : 'Build your mini exam'));
+  if (needRp) {
+    var card = E('section', { class: 'card' }, E('h3', {}, (m === 'exam' ? '1. ' : '') + 'Role play'));
+    card.append(E('div', { class: 'actions' }, E('button', { class: 'btn ghost', type: 'button', onclick: function () { var s = IDX[Math.floor(Math.random() * IDX.length)]; S.series = s.series; S.rp = { series: s.series, n: 1 + Math.floor(Math.random() * s.cards.length) }; draw(); } }, 'Random role play'),
+      S.rp ? E('span', { class: 'fb good' }, 'Selected: ' + cardMeta(S.rp).s.label + ', card ' + S.rp.n) : E('span', { class: 'small' }, 'or pick an exam session, then a card')));
+    card.append(E('div', { class: 'chips' }, IDX.map(function (s) { return E('button', { class: 'toggle', type: 'button', 'aria-pressed': S.series === s.series, title: s.label, onclick: function () { S.series = s.series; draw(); } }, s.short); })));
+    var cur = IDX.filter(function (x) { return x.series === S.series; })[0];
+    if (cur) {
+      card.append(E('p', { class: 'small' }, cur.label));
+      card.append(E('div', { class: 'grid' }, cur.cards.map(function (c) {
+        var on = S.rp && S.rp.series === cur.series && S.rp.n === c.n;
+        return E('button', { class: 'pick', type: 'button', 'aria-pressed': !!on, onclick: function () { S.rp = { series: cur.series, n: c.n }; draw(); } }, E('b', {}, 'Card ' + c.n + ' · ' + c.role), E('span', {}, c.scen.split('. ')[0] + '.'));
+      })));
+    }
+    main.append(card);
+  }
+  if (needTh) {
+    var tc = E('section', { class: 'card' }, E('h3', {}, (m === 'exam' ? '2. ' : '') + (nTh === 2 ? 'Two different themes' : 'Theme')));
+    tc.append(E('p', { class: 'small' }, nTh === 2 ? 'Tap two themes. The first is topic conversation 1, the second is topic conversation 2.' : 'Tap one theme.'));
+    tc.append(E('div', { class: 'actions' }, E('button', { class: 'btn ghost', type: 'button', onclick: function () { var a = []; while (a.length < nTh) { var n = 1 + Math.floor(Math.random() * TH.length); if (a.indexOf(n) < 0) a.push(n); } S.ths = a; draw(); } }, nTh === 2 ? 'Choose 2 at random' : 'Random theme'), S.ths.length ? E('span', { class: 'fb good' }, 'Selected: ' + S.ths.map(function (n) { return 'Speaking ' + n; }).join(' then ')) : null));
+    tc.append(E('div', { class: 'grid' }, TH.map(function (t) {
+      var on = S.ths.indexOf(t.n) >= 0, pos = S.ths.indexOf(t.n);
+      return E('button', { class: 'pick', type: 'button', 'aria-pressed': on, onclick: function () {
+        var i = S.ths.indexOf(t.n);
+        if (i >= 0) S.ths.splice(i, 1);
+        else { if (S.ths.length >= nTh) S.ths.shift(); S.ths.push(t.n); }
+        draw();
+      } }, E('b', {}, 'Speaking ' + t.n + (on && nTh === 2 ? '  (topic ' + (pos + 1) + ')' : '')), E('span', {}, TL[t.n]));
+    })));
+    main.append(tc);
+  }
+  main.append(E('section', { class: 'card' }, E('h3', {}, 'Help on screen'),
+    E('p', { class: 'small' }, 'In the real test you only listen. Switch these on if you need support.'),
+    E('div', { class: 'actions' },
+      E('button', { class: 'toggle', type: 'button', 'aria-pressed': S.showFr, onclick: function () { S.showFr = !S.showFr; draw(); } }, 'Show the French question'),
+      needTh ? E('button', { class: 'toggle', type: 'button', 'aria-pressed': S.showEn, onclick: function () { S.showEn = !S.showEn; draw(); } }, 'Show English') : null)));
+  main.append(E('div', { class: 'actions' },
+    E('button', { class: 'btn big', type: 'button', disabled: !planReady(), onclick: function () { M = { state: 'idle', mode: '', msg: '', stream: null, ctx: null, an: null, buf: null, thr: 0.01, floor: 0 }; S.screen = 'mic'; draw(); } }, 'Next: microphone'),
+    E('button', { class: 'btn ghost', type: 'button', onclick: function () { S.screen = 'home'; draw(); } }, 'Back'),
+    !planReady() ? E('span', { class: 'small' }, m === 'exam' ? 'Choose 1 role play and 2 themes.' : m === 'rp' ? 'Choose a role play.' : 'Choose a theme.') : null));
+}
+function planList() {
+  return E('ol', { class: 'rules' }, buildPlan().map(function (p) { return E('li', {}, segLabel(p) + (p.type === 'rp' ? ' (about 2 min)' : ' (4 min)')); }));
+}
+function drawMic(main) {
+  main.append(E('h2', {}, 'Get ready'));
+  main.append(E('section', { class: 'card' }, E('h3', {}, 'Your practice'), planList(),
+    E('p', { class: 'small' }, 'The examiner’s voice is a computer voice. The recording is never paused. Speak clearly and in French.')));
+  var c = E('section', { class: 'card' }, E('h3', {}, 'Microphone'));
+  var st = M.state;
+  if (st === 'idle') c.append(E('p', {}, 'Your answers are recorded so you can listen to them and send them to your teacher.'));
+  if (st === 'asking') c.append(E('p', { class: 'phase' }, 'Allow the microphone when your browser asks.'));
+  if (st === 'floor') c.append(E('p', { class: 'phase' }, 'Stay quiet for a moment…'));
+  if (st === 'speak') c.append(E('p', { class: 'phase rec' }, 'Now say: “Bonjour, je m’appelle…”'));
+  if (st === 'floor' || st === 'speak') c.append(E('div', { class: 'meter' }, E('i', { id: 'meter-fill' })));
+  if (st === 'ok') c.append(E('p', { class: 'fb good' }, 'The microphone works.'));
+  if (st === 'weak') c.append(E('p', { class: 'notice' }, 'Your voice is quiet. Move closer to the microphone, or continue anyway.'));
+  if (st === 'blocked') c.append(E('p', { class: 'notice' }, M.msg));
+  if (st === 'skip') c.append(E('p', { class: 'fb' }, 'Practising without recording: the timer measures how long you take on each answer.'));
+  var acts = E('div', { class: 'actions' });
+  if (st === 'idle' || st === 'blocked' || st === 'weak') acts.append(E('button', { class: 'btn', type: 'button', onclick: micCheck }, st === 'idle' ? 'Check my microphone' : 'Check again'));
+  if (st === 'idle' || st === 'blocked' || st === 'weak') acts.append(E('button', { class: 'btn ghost', type: 'button', onclick: skipMic }, 'Practise without recording'));
+  if (st === 'ok' || st === 'weak' || st === 'skip') acts.append(E('button', { class: 'btn big', type: 'button', onclick: startSession }, 'Start now'));
+  acts.append(E('button', { class: 'btn ghost', type: 'button', onclick: function () { stopStream(); S.screen = 'pick'; draw(); } }, 'Back'));
+  c.append(acts); main.append(c);
+}
+function drawRun(main) {
+  var G = R.G, p = G.p;
+  main.append(E('div', { class: 'zone' }, 'Part ' + (R.si + 1) + ' of ' + R.plan.length + ' · ' + (p.type === 'rp' ? 'Role play' : 'Topic conversation ' + p.which)));
+  main.append(E('h2', {}, p.type === 'rp' ? 'Role play' : 'Speaking ' + p.n + ' · ' + TL[p.n]));
+  if (G.state === 'loading') { main.append(E('p', { class: 'phase' }, 'Loading the examiner’s audio…')); return; }
+  if (G.state === 'error') { main.append(E('p', { class: 'notice' }, 'Could not load this part (' + G.err + '). Check your connection and try again.'), E('button', { class: 'btn', type: 'button', onclick: quit }, 'Back to start')); return; }
+  if (p.type === 'rp' && G.card) {
+    main.append(E('section', { class: 'card' }, E('div', { class: 'zone' }, 'Scenario · The examiner plays: ' + G.card.role),
+      S.showFr || G.state !== 'intro' ? E('p', { lang: 'fr' }, G.card.scen) : E('p', { class: 'small' }, 'Listen to the scenario…')));
+  }
+  if (G.state === 'intro') { main.append(E('p', { class: 'phase' }, 'Listen to the examiner…')); main.append(quitRow()); return; }
+  var it = G.it;
+  var nq = p.type === 'rp' ? 5 : 5;
+  var label = it.kind === 'x' ? 'Extra question' : 'Question ' + it.qn + ' of ' + nq + (it.parts > 1 ? ' · part ' + (it.part + 1) + ' of ' + it.parts : '');
+  var showAlt = it.stage === 'a' && it.altSrc;
+  var fr = showAlt ? it.altFr : it.fr, en = showAlt ? it.altEn : it.en;
+  var q = E('section', { class: 'card' }, E('div', { class: 'zone' }, label));
+  q.append(G.state === 'asking' ? E('p', { class: 'phase' }, 'Listen…') : E('p', { class: 'phase rec' }, M.mode === 'mic' ? '● Recording: answer now' : 'Answer now'));
+  if (S.showFr) q.append(E('p', { class: 'qfr', lang: 'fr' }, fr));
+  if (S.showEn && en) q.append(E('p', { class: 'qen' }, en));
+  if (!S.showFr && !(S.showEn && en)) q.append(E('p', { class: 'small' }, 'Listen carefully. You only hear the question, like in the real test.'));
+  main.append(q);
+  if (M.mode === 'mic') main.append(E('div', { class: 'meter', 'aria-hidden': 'true' }, E('i', { id: 'meter-fill' })));
+  main.append(E('p', { class: 'notice', id: 'why-live', role: 'status', style: 'display:none' }, ''));
+  main.append(E('p', { class: 'notice', id: 'sil-warn', hidden: true }, 'The examiner is waiting for your answer. Speak now, or the question will be repeated.'));
+  var total = G.sum + (G.turn ? G.turn.voiced : 0);
+  main.append(E('div', { class: 'clocks' },
+    E('div', { class: 'clock' }, E('span', { class: 'lbl' }, 'This answer'), E('span', { class: 'val', id: 'clk-turn' }, fmt(G.turn ? G.turn.voiced : 0))),
+    E('div', { class: 'clock' }, E('span', { class: 'lbl' }, 'Speaking time'), E('span', { class: 'val', id: 'clk-sum' }, fmt(total))),
+    E('div', { class: 'clock' }, E('span', { class: 'lbl' }, 'Target'), E('span', { class: 'val' }, fmt(G.goal)))));
+  main.append(E('div', { class: 'goal' + (total >= G.goal ? ' hit' : ''), id: 'goal' }, E('i', { id: 'goal-fill', style: 'width:' + Math.min(100, total / G.goal * 100) + '%' })));
+  var ans = G.state === 'answering';
+  var altBtn = canAlt() && ans;
+  main.append(E('div', { class: 'actions' },
+    E('button', { class: 'btn big', type: 'button', disabled: !ans, onclick: onNext }, 'I have answered ▶'),
+    altBtn ? E('button', { class: 'btn ghost', type: 'button', onclick: doAlt }, 'Ask a different question')
+      : E('button', { class: 'btn ghost', type: 'button', disabled: !ans || !canRepeat(), onclick: doRepeat }, canRepeat() ? 'Repeat the question (once)' : 'Already repeated'),
+    E('button', { class: 'toggle', type: 'button', 'aria-pressed': S.showFr, onclick: function () { S.showFr = !S.showFr; draw(); } }, 'French text'),
+    p.type === 'th' ? E('button', { class: 'toggle', type: 'button', 'aria-pressed': S.showEn, onclick: function () { S.showEn = !S.showEn; draw(); } }, 'English') : null));
+  main.append(quitRow());
+}
+function quitRow() { return E('div', { class: 'actions' }, E('button', { class: 'btn danger', type: 'button', onclick: quit }, 'Stop and go back')); }
+function drawBetween(main) {
+  var sg = R.segs[R.segs.length - 1], nx = R.plan[R.si + 1];
+  main.append(E('h2', {}, 'Part finished'));
+  main.append(E('section', { class: 'card' },
+    E('p', { class: 'fb good', style: 'font-size:1.2rem' }, segLabel(sg.p)),
+    E('p', {}, 'You spoke for ' + fmt(sg.sum) + ' (target ' + fmt(sg.goal) + ').' + (sg.capped ? ' The part stopped at the time limit.' : '')),
+    E('p', {}, 'Next: ' + segLabel(nx)),
+    E('p', { class: 'small' }, 'Take a breath. When you press the button the examiner starts straight away.'),
+    E('div', { class: 'actions' }, E('button', { class: 'btn big', type: 'button', onclick: nextSegment }, 'Start the next part'), E('button', { class: 'btn danger', type: 'button', onclick: quit }, 'Stop here'))));
+}
+function qLabel(r) {
+  var it = r.it;
+  if (it.kind === 'x') return 'Extra question';
+  return 'Question ' + it.qn + (it.parts > 1 ? ' (part ' + (it.part + 1) + ')' : '');
+}
+function resultBox(r, i, sg) {
+  var box = E('div', { class: 'ans' },
+    E('div', { class: 'ahead' }, E('b', {}, qLabel(r)), E('span', { class: 'small' }, 'Speaking ' + fmt(r.voiced) + (r.repN ? ' · repeated' : '') + (r.altUsed ? ' · different question' : '') + (r.ext ? ' · more detail asked' : '') + (r.silent ? ' · no answer heard' : '') + whyLabel(r))),
+    E('p', { class: 'small', lang: 'fr' }, r.altUsed && r.it.altFr ? r.it.altFr : r.it.fr));
+  if (r.url) box.append(E('audio', { controls: true, src: r.url, preload: 'metadata' }));
+  else box.append(E('span', { class: 'small' }, M.mode === 'timer' ? 'Not recorded (timer only)' : 'No recording'));
+  return box;
+}
+function refreshMarks() {
+  var t = marksTotal(), el = document.getElementById('mk-total'); if (el) el.textContent = (t == null ? '–' : t) + ' / ' + maxTotal();
+  var rpt = document.getElementById('mk-rp'); if (rpt) { var s = 0, a = false; R.marks.rp.forEach(function (v) { if (v != null) { s += v; a = true; } }); rpt.textContent = (a ? s : '–') + ' / 10'; }
+  ['c', 'l'].forEach(function (k) { var b = document.getElementById('mk-' + k + '-band'); if (b) b.textContent = R.marks[k] == null ? 'not marked' : R.marks[k] + ' · ' + band(R.marks[k]); });
+}
+function drawDone(main) {
+  main.append(E('h2', {}, 'Practice finished'));
+  R.segs.forEach(function (sg, si) {
+    var hit = sg.sum >= sg.goal;
+    var c = E('section', { class: 'card' }, E('h3', {}, segLabel(sg.p)),
+      E('p', { class: 'fb ' + (hit ? 'good' : 'bad'), style: 'font-size:1.2rem' }, 'You spoke for ' + fmt(sg.sum) + ' (target ' + fmt(sg.goal) + ').'),
+      E('div', { class: 'goal' + (hit ? ' hit' : '') }, E('i', { style: 'width:' + Math.min(100, sg.sum / sg.goal * 100) + '%' })));
+    if (sg.capped) c.append(E('p', { class: 'small' }, 'This part stopped automatically at the time limit.'));
+    if (sg.p.type === 'rp') {
+      c.append(E('p', { class: 'small', lang: 'fr' }, sg.card.scen));
+      for (var q = 1; q <= 5; q++) (function (q) {
+        var rs = sg.results.filter(function (r) { return r.it.qn === q; });
+        var box = E('div', { class: 'ans' }, E('b', {}, 'Response ' + q));
+        rs.forEach(function (r) { box.append(resultBox(r, 0, sg)); });
+        var sel = E('select', { 'aria-label': 'Your mark for response ' + q, onchange: function () { R.marks.rp[q - 1] = sel.value === '' ? null : parseInt(sel.value, 10); refreshMarks(); } },
+          E('option', { value: '' }, 'Choose a mark'), E('option', { value: '2' }, '2'), E('option', { value: '1' }, '1'), E('option', { value: '0' }, '0'));
+        if (R.marks.rp[q - 1] != null) sel.value = String(R.marks.rp[q - 1]);
+        box.append(E('div', { class: 'markrow' }, E('span', { class: 'small' }, 'Mark yourself:'), sel, rs.some(function (r) { return r.silent; }) ? E('span', { class: 'small' }, 'No answer was heard, so this is probably 0.') : null));
+        c.append(box);
+      })(q);
+      c.append(E('details', {}, E('summary', {}, 'Role play marking (per answer)'), E('ul', { class: 'rules', style: 'margin-top:.5rem' }, RPD.map(function (d) { return E('li', {}, d); }).reverse())));
+      c.append(E('p', {}, 'Role play: ', E('b', { id: 'mk-rp', class: 'big-total' }, '–')));
+    } else {
+      c.append(E('div', { class: 'anslist' }, sg.results.map(function (r) { return resultBox(r, 0, sg); })));
+    }
+    if (!framed && sg.mp3url) c.append(E('div', { class: 'actions' }, E('a', { href: sg.mp3url, download: dlName((sg.p.type === 'rp' ? 'role_play' : 'topic_' + sg.p.n) + '.mp3'), class: 'btn ghost', style: 'text-decoration:none;display:inline-flex;align-items:center' }, 'Download this part (MP3)')));
+    main.append(c);
+  });
+  if (M.mode === 'mic' && R.mp3 && !R.mp3.ready) main.append(E('p', { class: 'small', id: 'mp3-status', 'aria-live': 'polite' }, 'Preparing your MP3… ' + R.mp3.done + ' of ' + R.mp3.total));
+  if (themeSegs().length) {
+    var mc = E('section', { class: 'card' }, E('h3', {}, 'Topic conversations: mark yourself'),
+      E('p', { class: 'small' }, 'In the real test, Communication and Quality of Language are each marked out of 15 for both topic conversations together.' + (themeSegs().length === 1 ? ' Here you did one, so mark that one.' : '')));
+    [['c', 'Communication', 'Were your answers relevant, developed and justified? Did you give opinions and reasons, and react to the questions?'], ['l', 'Quality of Language', 'Range of vocabulary and structures, accuracy, tenses, pronunciation and fluency.']].forEach(function (x) {
+      var k = x[0], rg = E('input', { type: 'range', min: '0', max: '15', step: '1', value: R.marks[k] == null ? '0' : String(R.marks[k]), 'aria-label': x[1] + ' mark', oninput: function () { R.marks[k] = parseInt(rg.value, 10); refreshMarks(); } });
+      mc.append(E('div', { class: 'ans' }, E('b', {}, x[1] + ' (out of 15)'), E('p', { class: 'small' }, x[2]), rg, E('span', { class: 'fb', id: 'mk-' + k + '-band' }, 'not marked')));
+    });
+    mc.append(E('details', {}, E('summary', {}, 'Mark bands (simplified)'), E('table', { class: 't' }, BANDS.map(function (b) { return E('tr', {}, E('th', {}, b[0]), E('td', {}, b[1])); })),
+      E('p', { class: 'small', style: 'margin-top:.4rem' }, 'A simplified summary of the Cambridge descriptors. Your teacher will mark against the full mark scheme.')));
+    main.append(mc);
+  }
+  main.append(E('section', { class: 'card' }, E('h3', {}, 'Your score'), E('p', {}, E('b', { class: 'big-total', id: 'mk-total' }, '–'))));
+  if (M.mode === 'mic' && R.mp3 && R.mp3.ready && R.mp3.allUrl && !framed) main.append(E('section', { class: 'card' }, E('h3', {}, 'Whole recording'), E('div', { class: 'actions' }, E('a', { href: R.mp3.allUrl, download: dlName('speaking_practice.mp3'), class: 'btn', style: 'text-decoration:none;display:inline-flex;align-items:center' }, 'Download everything as one MP3'))));
+  if (!framed) {
+    var msg = E('p', { class: 'small', 'aria-live': 'polite' }, '');
+    var nm = E('input', { type: 'text', placeholder: 'Your name', value: S.name, maxlength: '40', 'aria-label': 'Your name', style: 'width:100%;max-width:340px', oninput: function () { S.name = nm.value; } });
+    main.append(E('section', { class: 'card' }, E('h3', {}, 'Send to your teacher'), E('p', { class: 'small' }, 'Write your name, then press Send. Your teacher gets the report, your marks and your recordings.'), nm,
+      E('div', { class: 'actions' }, E('button', { class: 'btn', type: 'button', onclick: function () { sendToTeacher(msg); } }, 'Send to teacher'), E('button', { class: 'btn ghost', type: 'button', onclick: downloadAll }, 'Download everything'), E('button', { class: 'btn ghost', type: 'button', onclick: function () { copyReport(msg); } }, 'Copy report')), msg));
+  }
+  main.append(E('div', { class: 'actions' }, E('button', { class: 'btn', type: 'button', onclick: quit }, 'Practise something else')));
+  refreshMarks();
+}
+
+function draw() {
+  var main = $('#main'); main.replaceChildren();
+  var hb = $('#homebtn'); hb.hidden = S.screen === 'home' || S.screen === 'run' || (R && R.screen === 'run');
+  if (!hb.onclick) hb.onclick = quit;
+  if (S.screen === 'home') drawHome(main);
+  else if (S.screen === 'pick') drawPick(main);
+  else if (S.screen === 'mic') drawMic(main);
+  else if (S.screen === 'run' && R) {
+    if (R.screen === 'run') drawRun(main);
+    else if (R.screen === 'between') drawBetween(main);
+    else drawDone(main);
+  }
+}
+window.__hub = { S: S, get R() { return R; } };
+draw();
+})();
+</script>
+</body></html>
