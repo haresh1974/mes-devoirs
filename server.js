@@ -586,7 +586,10 @@ app.get('/api/student/home', studentOnly(async (req, res) => {
     out.push({ id: h.id, title: h.title, topic: h.topic, tier: h.tier, due_at: dueOf(mine.filter((a) => a.homework_id === id)), done: st.done.length, total: st.total, status: st.status, rank: b.findIndex((x) => x.id === s.id) + 1, of: b.length });
   }
   const notices = await db.all('SELECT id, message, created FROM notices WHERE class_id = ? AND created > ? ORDER BY created DESC LIMIT 3', [c.id, Date.now() - 14 * 86400000]);
-  res.json({ student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn() });
+  const tAsg = await db.all('SELECT id,due_at FROM test_assignments WHERE class_id = ? AND start_at <= ?', [c.id, now()]);
+  let tTodo = 0;
+  for (const a of tAsg) { const r = await db.get('SELECT status FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, s.id]); if (!r && !(a.due_at && a.due_at < now())) tTodo++; }
+  res.json({ student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn(), tests: { total: tAsg.length, todo: tTodo } });
 }));
 app.get('/api/student/homework/:id', studentOnly(async (req, res) => {
   const hw = await studentHw(req, req.params.id);
@@ -767,6 +770,197 @@ app.post('/api/library/warm', wrap(async (req, res) => {
     done++;
   }
   res.json({ generated: done, already: skipped, remaining: Math.max(0, texts.size - done - skipped) });
+}));
+
+/* ---------- class tests: assigned to a class, hidden from everyone else ---------- */
+let TESTBANK = [];
+try { TESTBANK = JSON.parse(fs.readFileSync(path.join(__dirname, 'testbank', 'registry.json'), 'utf8')); } catch (e) { /* none */ }
+const testById = (id) => TESTBANK.find((t) => t.id === id);
+const pubTest = (t) => ({ id: t.id, title: t.title, marks: t.marks, skill: t.skill, desc: t.desc });
+const ownTestAsg = async (req, id) => {
+  const a = await db.get('SELECT * FROM test_assignments WHERE id = ?', [id]);
+  if (!a) return null;
+  const c = await ownClass(req, a.class_id);
+  return c ? { a, c } : null;
+};
+// a student can only reach an assignment given to their own class, once it has started
+async function studentTestAsg(student, id) {
+  const a = await db.get('SELECT * FROM test_assignments WHERE id = ? AND class_id = ?', [id, student.class_id]);
+  return a && a.start_at <= now() && testById(a.test_id) ? a : null;
+}
+const nz = (v, d) => (Number.isFinite(+v) ? +v : d);
+
+app.get('/api/tests', teacherOnly(async (req, res) => {
+  const classes = await db.all('SELECT id,name FROM classes WHERE teacher_id = ? ORDER BY created', [req.teacher.id]);
+  const out = [];
+  for (const c of classes) {
+    const asg = await db.all('SELECT * FROM test_assignments WHERE class_id = ? ORDER BY start_at DESC', [c.id]);
+    if (!asg.length) continue;
+    const n = (await db.get('SELECT COUNT(*) AS n FROM students WHERE class_id = ?', [c.id])).n;
+    for (const a of asg) {
+      const t = testById(a.test_id); if (!t) continue;
+      const rs = await db.all('SELECT status, score FROM test_results WHERE assignment_id = ?', [a.id]);
+      const done = rs.filter((r) => r.status === 'done');
+      out.push({ id: a.id, test_id: a.test_id, title: t.title, marks: t.marks, class_id: c.id, class_name: c.name, start_at: a.start_at, due_at: a.due_at, lock_on: !!a.lock_on, max_leaves: a.max_leaves,
+        students: n, started: rs.length, done: done.length, avg: done.length ? Math.round(done.reduce((x, r) => x + r.score, 0) / done.length * 10) / 10 : null });
+    }
+  }
+  res.json({ tests: TESTBANK.map(pubTest), classes, assignments: out });
+}));
+app.post('/api/tests/assign', teacherOnly(async (req, res) => {
+  const b = req.body || {};
+  const t = testById(String(b.test_id || ''));
+  if (!t) return res.status(400).json({ error: 'Choose a test.' });
+  const cids = [...new Set((Array.isArray(b.class_ids) ? b.class_ids : []).map(String))];
+  const classes = [];
+  for (const id of cids) { const c = await ownClass(req, id); if (c) classes.push(c); }
+  if (!classes.length) return res.status(400).json({ error: 'Choose at least one class.' });
+  const start = parseInt(b.start_at, 10) || now();
+  const due = b.due_at ? parseInt(b.due_at, 10) : null;
+  if (due && due <= start) return res.status(400).json({ error: 'The closing time must be after the start time.' });
+  const lock = b.lock_on === false ? 0 : 1;
+  const max = Math.min(10, Math.max(1, parseInt(b.max_leaves, 10) || 3));
+  let made = 0, skipped = [];
+  for (const c of classes) {
+    if (await db.get('SELECT id FROM test_assignments WHERE test_id = ? AND class_id = ?', [t.id, c.id])) { skipped.push(c.name); continue; }
+    await db.run('INSERT INTO test_assignments (id,test_id,class_id,start_at,due_at,lock_on,max_leaves,created) VALUES (?,?,?,?,?,?,?,?)', [uid(), t.id, c.id, start, due, lock, max, now()]);
+    made++;
+  }
+  if (!made) return res.status(400).json({ error: 'This test is already assigned to ' + skipped.join(', ') + '. Remove that assignment first if you want to set it again.' });
+  res.json({ ok: true, made, skipped });
+}));
+app.put('/api/tests/assignments/:id', teacherOnly(async (req, res) => {
+  const o = await ownTestAsg(req, req.params.id);
+  if (!o) return res.status(404).json({ error: 'Not found.' });
+  const b = req.body || {};
+  const start = parseInt(b.start_at, 10) || o.a.start_at, due = b.due_at ? parseInt(b.due_at, 10) : null;
+  if (due && due <= start) return res.status(400).json({ error: 'The closing time must be after the start time.' });
+  await db.run('UPDATE test_assignments SET start_at = ?, due_at = ?, lock_on = ?, max_leaves = ? WHERE id = ?',
+    [start, due, b.lock_on === false ? 0 : 1, Math.min(10, Math.max(1, parseInt(b.max_leaves, 10) || o.a.max_leaves)), o.a.id]);
+  res.json({ ok: true });
+}));
+app.delete('/api/tests/assignments/:id', teacherOnly(async (req, res) => {
+  const o = await ownTestAsg(req, req.params.id);
+  if (!o) return res.status(404).json({ error: 'Not found.' });
+  await db.run('DELETE FROM test_results WHERE assignment_id = ?', [o.a.id]);
+  await db.run('DELETE FROM test_assignments WHERE id = ?', [o.a.id]);
+  res.json({ ok: true });
+}));
+app.get('/api/tests/assignments/:id/results', teacherOnly(async (req, res) => {
+  const o = await ownTestAsg(req, req.params.id);
+  if (!o) return res.status(404).json({ error: 'Not found.' });
+  const t = testById(o.a.test_id);
+  const students = await db.all('SELECT id,name FROM students WHERE class_id = ? ORDER BY name', [o.c.id]);
+  const rs = await db.all('SELECT id,student_id,status,started_at,finished_at,score,out_of,percent,secs,leaves,away_secs,auto,fix_done,fix_total FROM test_results WHERE assignment_id = ?', [o.a.id]);
+  const by = {}; rs.forEach((r) => { by[r.student_id] = r; });
+  res.json({
+    assignment: { id: o.a.id, start_at: o.a.start_at, due_at: o.a.due_at, lock_on: !!o.a.lock_on, max_leaves: o.a.max_leaves },
+    test: pubTest(t), cls: { id: o.c.id, name: o.c.name },
+    students: students.map((s) => { const r = by[s.id]; return { id: s.id, name: s.name, result_id: r ? r.id : null, status: r ? r.status : 'none',
+      score: r ? r.score : null, out_of: r ? r.out_of : null, percent: r ? r.percent : null, secs: r ? r.secs : null, leaves: r ? r.leaves : 0, away: r ? r.away_secs : 0, auto: r ? !!r.auto : false,
+      fix_done: r ? r.fix_done : null, fix_total: r ? r.fix_total : null, finished_at: r ? r.finished_at : null, started_at: r ? r.started_at : null }; })
+  });
+}));
+app.get('/api/tests/results/:rid', teacherOnly(async (req, res) => {
+  const r = await db.get('SELECT * FROM test_results WHERE id = ?', [req.params.rid]);
+  const o = r && await ownTestAsg(req, r.assignment_id);
+  if (!o) return res.status(404).json({ error: 'Not found.' });
+  const st = await db.get('SELECT name FROM students WHERE id = ?', [r.student_id]);
+  let report = null; try { report = JSON.parse(r.report || 'null'); } catch (e) { /* none */ }
+  res.json({ student: st ? st.name : '', score: r.score, out_of: r.out_of, report });
+}));
+app.post('/api/tests/results/:rid/reset', teacherOnly(async (req, res) => {
+  const r = await db.get('SELECT * FROM test_results WHERE id = ?', [req.params.rid]);
+  const o = r && await ownTestAsg(req, r.assignment_id);
+  if (!o) return res.status(404).json({ error: 'Not found.' });
+  await db.run('DELETE FROM test_results WHERE id = ?', [r.id]);
+  res.json({ ok: true });
+}));
+
+app.get('/api/student/tests', studentOnly(async (req, res) => {
+  const asg = await db.all('SELECT * FROM test_assignments WHERE class_id = ? AND start_at <= ? ORDER BY start_at DESC', [req.student.class_id, now()]);
+  const out = [];
+  for (const a of asg) {
+    const t = testById(a.test_id); if (!t) continue;
+    const r = await db.get('SELECT status,score,out_of,percent FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+    const closed = !!(a.due_at && a.due_at < now());
+    out.push({ id: a.id, title: t.title, marks: t.marks, skill: t.skill, desc: t.desc, due_at: a.due_at, closed,
+      status: r ? r.status : (closed ? 'missed' : 'todo'), score: r && r.status === 'done' ? r.score : null, out_of: r ? r.out_of : null, percent: r ? r.percent : null });
+  }
+  res.json({ tests: out });
+}));
+app.post('/api/student/tests/:aid/start', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!a) return res.status(404).json({ error: 'Test not found.' });
+  const r = await db.get('SELECT id,status FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  if (r && r.status === 'done') return res.status(409).json({ error: 'You have already finished this test.' });
+  if (r) return res.status(409).json({ error: 'You already started this test earlier. Ask your teacher to reset it so you can take it again.' });
+  if (a.due_at && a.due_at < now()) return res.status(409).json({ error: 'This test is closed. Ask your teacher.' });
+  try {
+    await db.run('INSERT INTO test_results (id,assignment_id,student_id,status,started_at,leaves) VALUES (?,?,?,?,?,0)', [uid(), a.id, req.student.id, 'started', now()]);
+  } catch (e) { return res.status(409).json({ error: 'You already started this test earlier. Ask your teacher to reset it so you can take it again.' }); }
+  res.json({ ok: true });
+}));
+app.post('/api/student/tests/:aid/event', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!a) return res.status(404).json({ error: 'Test not found.' });
+  const n = Math.min(50, Math.max(0, Math.round(nz(req.body.leaves, 0))));
+  await db.run("UPDATE test_results SET leaves = ? WHERE assignment_id = ? AND student_id = ? AND status = 'started' AND leaves < ?", [n, a.id, req.student.id, n]);
+  res.json({ ok: true });
+}));
+app.post('/api/student/tests/:aid/submit', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!a) return res.status(404).json({ error: 'Test not found.' });
+  const t = testById(a.test_id);
+  const r = await db.get('SELECT id,status,started_at,leaves FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  if (!r) return res.status(400).json({ error: 'Please start the test first.' });
+  if (r.status === 'done') return res.status(409).json({ error: 'This test was already submitted.' });
+  const rep = req.body && req.body.report;
+  if (!rep || !Array.isArray(rep.questions) || !rep.questions.length || rep.questions.length > 60) return res.status(400).json({ error: 'The result could not be read. Please try again.' });
+  // the score is re-added from the individual marks, so it cannot disagree with the answers
+  const qs = rep.questions.map((q) => ({ n: Math.round(nz(q.n, 0)), section: clean(q.section, 2), prompt: clean(q.prompt, 200), given: clean(q.given, 300), ans: clean(q.ans, 300),
+    marks: [0, 0.5, 1].includes(+q.marks) ? +q.marks : 0, attempts: Math.min(20, Math.max(0, Math.round(nz(q.attempts, 0)))) }));
+  const score = qs.reduce((n, q) => n + q.marks, 0);
+  const out = t.marks;
+  const secs = Math.max(1, Math.round((now() - r.started_at) / 1000));
+  const leaves = Math.max(r.leaves, Math.min(50, Math.round(nz(rep.tabLeaves, 0))));
+  const fix = rep.fixIt || {};
+  const clientSections = Array.isArray(rep.sections) ? rep.sections.slice(0, 12).map((s) => ({ id: clean(s.id, 2), got: nz(s.got, 0), max: nz(s.max, 0) })) : [];
+  const report = JSON.stringify({ questions: qs, sections: clientSections, late: !!(a.due_at && a.due_at < now()) });
+  await db.run("UPDATE test_results SET status='done', finished_at=?, score=?, out_of=?, percent=?, secs=?, leaves=?, away_secs=?, auto=?, fix_done=?, fix_total=?, report=? WHERE id = ?",
+    [now(), score, out, Math.round(score / out * 100), secs, leaves, Math.min(86400, Math.max(0, Math.round(nz(rep.secondsAway, 0)))), rep.autoSubmitted ? 1 : 0,
+      Math.max(0, Math.round(nz(fix.done, 0))), Math.max(0, Math.round(nz(fix.total, 0))), report, r.id]);
+  res.json({ ok: true, score });
+}));
+app.post('/api/student/tests/:aid/fix', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!a) return res.status(404).json({ error: 'Test not found.' });
+  await db.run("UPDATE test_results SET fix_done = ?, fix_total = ? WHERE assignment_id = ? AND student_id = ? AND status = 'done'",
+    [Math.max(0, Math.round(nz(req.body.done, 0))), Math.max(0, Math.round(nz(req.body.total, 0))), a.id, req.student.id]);
+  res.json({ ok: true });
+}));
+
+// The test pages. Not public files: a student only gets the page for a test assigned to their class.
+async function sendTest(res, t, site) {
+  let html = fs.readFileSync(path.join(__dirname, 'testbank', t.file), 'utf8');
+  html = html.replace('/*__SITE__*/null', () => JSON.stringify(site).replace(/</g, '\\u003c'));
+  res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Content-Type': 'text/html; charset=utf-8' });
+  res.send(html);
+}
+app.get('/tests/run/:aid', wrap(async (req, res) => {
+  const st = await auth(req, 'student');
+  if (!st) return res.redirect('/');
+  const a = await studentTestAsg(st, req.params.aid);
+  if (!a) return res.redirect('/#/s');
+  const c = await db.get('SELECT name FROM classes WHERE id = ?', [st.class_id]);
+  await sendTest(res, testById(a.test_id), { mode: 'student', assignment: a.id, title: testById(a.test_id).title, student: { name: st.name, cls: c ? c.name : '' }, lock: { on: !!a.lock_on, max: a.max_leaves } });
+}));
+app.get('/tests/preview/:tid', wrap(async (req, res) => {
+  const t = await auth(req, 'teacher');
+  if (!t) return res.redirect('/');
+  const test = testById(req.params.tid);
+  if (!test) return res.redirect('/#/t/tests');
+  await sendTest(res, test, { mode: 'preview' });
 }));
 
 /* ---------- static ---------- */

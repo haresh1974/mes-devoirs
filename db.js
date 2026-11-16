@@ -33,6 +33,15 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS assignments (
     id TEXT PRIMARY KEY, homework_id TEXT NOT NULL, class_id TEXT NOT NULL, start_at BIGINT NOT NULL,
     due_at BIGINT, audience TEXT NOT NULL, student_ids TEXT, created BIGINT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS test_assignments (
+    id TEXT PRIMARY KEY, test_id TEXT NOT NULL, class_id TEXT NOT NULL, start_at BIGINT NOT NULL,
+    due_at BIGINT, lock_on INTEGER NOT NULL, max_leaves INTEGER NOT NULL, created BIGINT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS test_results (
+    id TEXT PRIMARY KEY, assignment_id TEXT NOT NULL, student_id TEXT NOT NULL, status TEXT NOT NULL,
+    started_at BIGINT NOT NULL, finished_at BIGINT, score REAL, out_of INTEGER, percent INTEGER, secs INTEGER,
+    leaves INTEGER NOT NULL, away_secs INTEGER, auto INTEGER, fix_done INTEGER, fix_total INTEGER, report TEXT)`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS i_tres_unique ON test_results(assignment_id, student_id)`,
+  `CREATE INDEX IF NOT EXISTS i_tasg_class ON test_assignments(class_id)`,
   `CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)`,
   `CREATE TABLE IF NOT EXISTS notices (id TEXT PRIMARY KEY, class_id TEXT, message TEXT, created BIGINT)`,
   `CREATE INDEX IF NOT EXISTS i_notice_class ON notices(class_id)`,

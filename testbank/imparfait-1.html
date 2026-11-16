@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L'imparfait – Online Test (40 marks)</title>
+<style>
+:root{--navy:#1b2a4a;--navy2:#2c4170;--amber:#f5a623;--teal:#14a39a;--bg:#f4f7fc;--card:#fff;--ok:#1b8f4c;--okbg:#e3f6ea;--bad:#c62f3a;--badbg:#fdeaec;--try:#b86a00;--trybg:#fff4e0;--line:#d9e0ee;--ink:#1d2433}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Segoe UI",system-ui,-apple-system,Arial,sans-serif;font-size:17px;line-height:1.45;padding-bottom:84px}
+header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:26px 18px 30px;text-align:center;border-bottom:5px solid var(--amber)}
+header .brand{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#ffd58a;font-weight:700}
+header h1{margin:6px 0 4px;font-size:clamp(26px,5vw,38px);line-height:1.15}
+header p{margin:0;opacity:.92}
+.pill{display:inline-block;background:var(--amber);color:var(--navy);font-weight:800;border-radius:999px;padding:3px 14px;margin-top:10px}
+main{max-width:860px;margin:0 auto;padding:18px 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:16px 0;box-shadow:0 2px 8px rgba(27,42,74,.06)}
+.card h2{margin:0 0 4px;font-size:21px;color:var(--navy);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.card h2 .m{font-size:14px;background:#fff3dc;color:#8a5a00;border-radius:999px;padding:2px 12px;white-space:nowrap}
+.instr{margin:0 0 12px;color:#4a5570;font-size:15.5px}
+.q{display:flex;gap:10px;align-items:flex-start;padding:9px 8px;border-radius:10px;border-top:1px dashed var(--line);transition:background .2s}
+.q:first-of-type{border-top:0}
+.num{flex:0 0 28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.body{flex:1;min-width:0}
+.mk{flex:0 0 auto;color:#8b94ab;font-size:13px;margin-top:5px;font-weight:700}
+.prompt{font-size:18px}
+.en{font-style:italic;color:#334}
+input.t{font:inherit;border:2px solid var(--line);border-bottom-color:var(--navy2);border-radius:8px;padding:4px 10px;width:10.5em;max-width:100%;background:#fbfcff;color:var(--navy);font-weight:700}
+input.t.wide{width:100%;margin-top:6px}
+input.t:focus{outline:none;border-color:var(--teal);background:#fff;box-shadow:0 0 0 3px rgba(20,163,154,.2)}
+.opts{display:grid;gap:7px;margin-top:8px}
+.opt{display:flex;gap:10px;align-items:center;border:2px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;background:#fbfcff}
+.opt:hover{border-color:var(--teal)}
+.opt input{accent-color:var(--teal);width:18px;height:18px;margin:0}
+.opt.sel{border-color:var(--teal);background:#e8f8f6}
+/* live feedback */
+.q.right{background:var(--okbg)}
+.q.right input.t{border-color:var(--ok);background:#d4f2de;color:#0f6a37}
+.q.tryagain input.t{border-color:var(--try);background:var(--trybg)}
+.q.wrong{background:var(--badbg)}
+.q.wrong input.t{border-color:var(--bad)}
+.fb{display:none;margin-top:6px;font-weight:800;font-size:15px}
+.q.right .fb,.q.wrong .fb,.q.tryagain .fb{display:block}
+.q.right .fb{color:var(--ok)}
+.q.wrong .fb{color:var(--bad)}
+.q.tryagain .fb{color:var(--try)}
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
+.opt.corr{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.key{display:none;margin-top:4px;font-size:13.5px;color:#7a4b00;background:#fff3dc;border-radius:6px;padding:2px 8px;width:max-content;max-width:100%}
+body.teacher .key{display:block}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.who label{font-weight:800;color:var(--navy);font-size:15px;display:block}
+.who input{font:inherit;width:100%;border:2px solid var(--line);border-radius:10px;padding:9px 12px;margin-top:4px}
+.who input:focus{outline:none;border-color:var(--teal)}
+@media(max-width:560px){.who{grid-template-columns:1fr}.card{padding:14px}.prompt{font-size:17px}}
+.rules{margin:10px 0 4px;padding-left:20px;color:#3b4560;font-size:15.5px}
+.rules li{margin:4px 0}
+.teacherbar{background:#fff8e6;border:2px dashed var(--amber);border-radius:12px;padding:10px 14px;margin:16px 0;font-size:15px;display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center}
+.teacherbar b{color:#8a5a00}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:12px;padding:12px 24px;font-weight:800;font-size:18px}
+.btn:hover{background:var(--navy2)}
+.btn.amber{background:var(--amber);color:var(--navy)}
+.btn.small{font-size:14px;padding:6px 12px;border-radius:8px}
+.btn.ghost{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.submitrow{text-align:center;margin:26px 0}
+#warn,#gatewarn{color:var(--bad);font-weight:800;margin-top:10px;min-height:1.3em}
+#result{display:none}
+.score{text-align:center}
+.score .big{font-size:60px;font-weight:900;color:var(--navy);line-height:1}
+.score .big small{font-size:26px;color:#7b86a1}
+.score .msg{font-size:20px;font-weight:800;margin:6px 0 2px}
+h3{color:var(--navy);margin:22px 0 6px;font-size:19px}
+.bars{margin:8px 0}
+.bar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin:9px 0;font-size:15px}
+.bar .track{height:12px;background:#e7ecf6;border-radius:99px;overflow:hidden;margin-top:3px}
+.bar .fill{height:100%;background:linear-gradient(90deg,var(--teal),#3ccfa0);border-radius:99px}
+.bar .n{text-align:right;font-weight:800;color:var(--navy);white-space:nowrap}
+.chip{font-size:12.5px;border-radius:99px;padding:1px 9px;margin-left:6px;font-weight:800;white-space:nowrap}
+.chip.s{background:var(--okbg);color:var(--ok)}
+.chip.n{background:var(--trybg);color:var(--try)}
+.chip.r{background:var(--badbg);color:var(--bad)}
+.tip{font-size:14px;color:#4a5570;margin:2px 0 0}
+.fix{border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0;background:#fcfdff}
+.fix.done{border-color:var(--ok);background:var(--okbg)}
+.fix .h{font-weight:800;color:var(--navy);font-size:15px}
+.fix .p{font-size:17px;margin:4px 0}
+.fix .why{font-size:14.5px;color:#7a4b00;background:#fff3dc;border-radius:8px;padding:5px 9px;margin:6px 0}
+.fix .ok{display:none;color:var(--ok);font-weight:800;margin-top:4px}
+.fix.done .ok{display:block}
+.fix.done input.t{border-color:var(--ok);background:#d4f2de}
+.fixprog{font-weight:800;color:var(--navy)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+a.btn{text-decoration:none;display:inline-block}
+#keys{position:fixed;left:0;right:0;bottom:0;background:var(--navy);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:flex;gap:6px;justify-content:center;flex-wrap:wrap;z-index:20;box-shadow:0 -3px 12px rgba(0,0,0,.2)}
+#keys button{background:#fff;border:0;border-radius:8px;min-width:38px;height:40px;font-size:20px;font-weight:700;color:var(--navy)}
+#keys button:active{background:var(--amber)}
+#keys .lbl{color:#cfd7ea;font-size:12px;align-self:center;padding:0 6px}
+#hud{position:fixed;top:10px;right:10px;display:none;gap:6px;z-index:15}
+#hud span,#hud button{background:rgba(27,42,74,.92);color:#fff;border-radius:999px;padding:4px 14px;font-weight:800;font-size:14px;border:0}
+.progress{font-size:14px;color:#5a6580;text-align:center;margin-top:4px}
+#away{position:fixed;inset:0;background:rgba(15,22,40,.96);z-index:50;display:none;align-items:center;justify-content:center;padding:20px;text-align:center;color:#fff}
+#away .box{max-width:460px}
+#away h2{font-size:28px;margin:0 0 8px;color:#ffd58a}
+#away p{font-size:18px;margin:8px 0 18px}
+body.locked .prompt,body.locked .instr,body.locked h2{user-select:none;-webkit-user-select:none}
+#testwrap{display:none}
+</style>
+</head>
+<body>
+<div id="hud"><span id="timer">⏱ 00:00</span><button id="snd" type="button" title="Sound on/off">🔊</button></div>
+
+<div id="away"><div class="box">
+  <h2 id="awayT">⚠ You left the test page</h2>
+  <p id="awayP"></p>
+  <button class="btn amber" id="awayBtn" type="button">Return to the test</button>
+</div></div>
+
+<header>
+  <div class="brand">Learn French with Haresh Sir</div>
+  <h1>L’imparfait — Online Test</h1>
+  <p>Regular and irregular verbs • je / tu / il / elle / on</p>
+  <span class="pill">40 marks</span>
+</header>
+
+<main>
+<div class="teacherbar" id="teacherbar">
+  <span><b>Teacher preview.</b> This bar will not appear on the student version.</span>
+  <label><input type="checkbox" id="tview"> Show answer key</label>
+  <label><input type="checkbox" id="tlock"> Tab-lock ON (off here so you can browse freely)</label>
+  <button class="btn small ghost" id="simLeave" type="button">Simulate leaving the tab</button>
+  <button class="btn small ghost" id="fillAll" type="button">Fill in all correct answers</button>
+  <button class="btn small ghost" id="reload" type="button">Start over</button>
+</div>
+
+<div class="card" id="gate">
+  <div class="who">
+    <div><label for="sname">Your name</label><input id="sname" autocomplete="off" placeholder="e.g. Aarav Patil"></div>
+    <div><label for="sclass">Class / Division</label><input id="sclass" autocomplete="off" placeholder="e.g. 8 B"></div>
+  </div>
+  <ul class="rules" id="rulesList"></ul>
+  <div style="text-align:center;margin-top:14px"><button class="btn amber" id="start" type="button">Start the test ▶</button></div>
+  <div id="gatewarn" style="text-align:center"></div>
+</div>
+
+<div id="testwrap">
+  <div id="sections"></div>
+
+  <div class="submitrow">
+    <div class="progress" id="progress"></div>
+    <button class="btn amber" id="submit" type="button">Submit my test ✔</button>
+    <div id="warn"></div>
+  </div>
+
+  <div class="card" id="result">
+    <div class="score">
+      <div class="big"><span id="rs">0</span><small> / 40</small></div>
+      <div class="msg" id="rmsg"></div>
+      <div id="rwho" style="color:#5a6580"></div>
+      <div id="rflag" style="color:var(--bad);font-weight:800;margin-top:4px"></div>
+    </div>
+
+    <h3>📊 Your marks by skill</h3>
+    <div class="bars" id="bars"></div>
+
+    <h3>🛠 Fix-it round <span class="fixprog" id="fixprog"></span></h3>
+    <p class="instr">Every answer that did not earn full marks is here. Read the tip, then type (or choose) the correct answer. Fix-it answers <b>do not change your test mark</b>, but your teacher can see that you corrected them.</p>
+    <div id="fixlist"></div>
+
+    <div id="saveState" style="text-align:center;margin-top:14px"></div>
+    <div class="actions" id="shareActions">
+      <a class="btn" id="wa" target="_blank" rel="noopener">📲 Send my result to Haresh Sir on WhatsApp</a>
+      <button class="btn ghost" id="copy" type="button">Copy my result</button>
+    </div>
+    <div class="actions"><a class="btn amber" id="backBtn" href="/#/s/tests" style="display:none">← Back to my tests</a></div>
+    <div id="copied" style="text-align:center;color:var(--ok);font-weight:800;margin-top:8px;min-height:1.2em"></div>
+  </div>
+</div>
+</main>
+
+<div id="keys"><span class="lbl">Accents:</span></div>
+
+<script>
+/* ================= SETTINGS (teacher) ================= */
+/* The website fills this in for each student / teacher preview. Left as null it is a plain stand-alone preview. */
+const SITE = /*__SITE__*/null;
+const STUDENT_MODE = !!(SITE && SITE.mode === 'student');
+const CONFIG = {
+  TEACHER_PREVIEW : !STUDENT_MODE,                       // the yellow teacher bar never shows to students
+  TAB_LOCK        : STUDENT_MODE ? !!SITE.lock.on : true, // set per assignment by the teacher
+  MAX_LEAVES      : STUDENT_MODE ? (SITE.lock.max || 3) : 3,
+  BLOCK_COPY_PASTE: true,
+  SOUND           : true,
+  SECOND_TRY_MARK : 0.5     // marks for a short answer that is right on the 2nd attempt (1st attempt = 1, later = 0)
+};
+
+/* ================= helpers ================= */
+const $ = id => document.getElementById(id);
+const norm = s => (s||'').normalize('NFC').toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ').replace(/[.!?]+$/,'').trim();
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+const acc = (pron, v) => [v, pron.endsWith("'") ? pron+v : pron+' '+v];
+const fmt = n => { const w=Math.floor(n+1e-9); return (n%1 ? (w?w:'')+'½' : String(w)); };
+const strip = h => h.replace(/<[^>]+>/g,'');
+const nous = (n, stem, end) => `nous ${n} → remove -ons → ${stem}- + ${end}`;
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+
+/* ================= the test (40 marks) ================= */
+const SKILLS = {
+ A:{name:'Finding the “nous” form', tip:'The imperfect always starts from the present-tense nous form. Learn the tricky ones: faisons, buvons, écrivons, connaissons, conduisons.'},
+ B:{name:'Irregular imperfect forms', tip:'Method: nous form → cross out -ons → add -ais (je/tu) or -ait (il/elle/on). Practise with the verb tables.'},
+ C:{name:'Regular endings, être & reflexives', tip:'Regular verbs follow the same method (finissons → finiss-). Only être is different: ét- → j’étais. Reflexives keep me/te/se before the verb.'},
+ D:{name:'Understanding the imperfect (French → English)', tip:'Spot the verb (lisait = lire), the person (il = he), then translate as “used to…” or “was …ing”.'},
+ E:{name:'Writing the imperfect (English → French)', tip:'Find the verb → nous form → ending for je/tu/il/elle/on. Check accents and the small words (du, un, dans un).'},
+ F:{name:'Choosing the right verb form', tip:'Replace “used to + verb” with ONE French verb in the imperfect. Match the ending to the person (je/tu = -ais, il/elle/on = -ait).'},
+ G:{name:'Perfect tense vs imperfect', tip:'One finished action (yesterday, last Saturday, already) = perfect. Habit or action in progress (used to, was …ing, every day) = imperfect.'}
+};
+const SECTIONS = [
+ { id:'A', title:'A. Find the “nous” form', marks:5, type:'text',
+   instr:'Write the <b>nous</b> form of each verb in the <b>present tense</b> (this is the base for the imperfect). Example: parler → <b>parlons</b>.',
+   items:[
+    {pre:'faire →',    post:'', ans:['faisons','nous faisons'], why:'faire is irregular: nous faisons (say “fe-zon”, but write -ai- … -s-).'},
+    {pre:'boire →',    post:'', ans:['buvons','nous buvons'], why:'boire changes its stem: nous buvons.'},
+    {pre:'écrire →',   post:'', ans:['écrivons','nous écrivons'], why:'écrire: nous écrivons (stem écriv-, with the accent on é).'},
+    {pre:'connaître →',post:'', ans:['connaissons','nous connaissons'], why:'connaître: nous connaissons (double s, no accent, no î).'},
+    {pre:'conduire →', post:'', ans:['conduisons','nous conduisons'], why:'conduire: nous conduisons (stem conduis-).'}
+   ]},
+ { id:'B', title:'B. Complete with the imperfect', marks:10, type:'text',
+   instr:'Write the correct imperfect form of the verb in brackets.',
+   items:[
+    {pre:'Je',  post:'(faire)',   ans:acc('je','faisais'),  why:nous('faisons','fais','ais')},
+    {pre:'Tu',  post:'(prendre)', ans:acc('tu','prenais'),  why:nous('prenons','pren','ais')},
+    {pre:'Il',  post:'(boire)',   ans:acc('il','buvait'),   why:nous('buvons','buv','ait')},
+    {pre:'Elle',post:'(vouloir)', ans:acc('elle','voulait'),why:nous('voulons','voul','ait')},
+    {pre:'On',  post:'(pouvoir)', ans:acc('on','pouvait'),  why:nous('pouvons','pouv','ait')+' (on takes the il/elle ending).'},
+    {pre:'Je',  post:'(voir)',    ans:acc('je','voyais'),   why:nous('voyons','voy','ais')},
+    {pre:'Tu',  post:'(dire)',    ans:acc('tu','disais'),   why:nous('disons','dis','ais')},
+    {pre:'Il',  post:'(écrire)',  ans:acc('il','écrivait'), why:nous('écrivons','écriv','ait')},
+    {pre:"J'",  post:'(avoir)',   ans:acc("j'",'avais'),    why:nous('avons','av','ais')},
+    {pre:'Tu',  post:'(aller)',   ans:acc('tu','allais'),   why:nous('allons','all','ais')}
+   ]},
+ { id:'C', title:'C. Fill in the gap', marks:5, type:'text',
+   instr:'Write the verb in brackets in the <b>imperfect</b> to complete each sentence.',
+   items:[
+    {pre:"Quand j'", post:'(être) petit, je jouais aux échecs.', ans:['étais',"j'étais"], why:'être is the one exception: its stem is ét- (not “sommes”) → j’étais.'},
+    {pre:'Mon frère', post:'(finir) toujours à six heures.', ans:['finissait','mon frère finissait'], why:nous('finissons','finiss','ait')+' (mon frère = il).'},
+    {pre:'Chaque matin, je me', post:'(se lever) à six heures.', ans:['levais','me levais','je me levais'], why:'se lever: nous nous levons → lev- + ais. “me” stays before the verb.'},
+    {pre:'Ma mère', post:'(vendre) des voitures.', ans:['vendait','ma mère vendait'], why:nous('vendons','vend','ait')+' (ma mère = elle).'},
+    {pre:'Il', post:'(dormir) toujours en classe.', ans:['dormait','il dormait'], why:nous('dormons','dorm','ait')}
+   ]},
+ { id:'D', title:'D. Translate into English', marks:5, type:'mcq',
+   instr:'Choose the correct English translation.',
+   items:[
+    {q:'Il lisait', opts:['He used to read','He will read','I used to read','He used to write'], c:0, why:'lisait comes from lire (to read); il = he; imperfect = “used to”.'},
+    {q:'Tu buvais', opts:['You used to drink','You will drink','You used to eat','He used to drink'], c:0, why:'buvais comes from boire (to drink); tu = you.'},
+    {q:'Je voulais', opts:['I used to want','I will want','You used to want','I used to see'], c:0, why:'voulais comes from vouloir (to want); je = I.'},
+    {q:'Elle dormait', opts:['She was sleeping','She will sleep','He was sleeping','She was writing'], c:0, why:'dormait comes from dormir (to sleep); elle = she; imperfect = “was …ing / used to”.'},
+    {q:'Il savait', opts:['He used to know','He will know','I used to know','He knows'], c:0, why:'savait comes from savoir (to know); il = he; -ait = imperfect, not present.'}
+   ]},
+ { id:'E', title:'E. Translate into French', marks:6, type:'sentence',
+   instr:'Translate each sentence into French using the <b>imperfect</b>. Don’t forget your accents!',
+   items:[
+    {en:'I used to drink milk.',             ans:['je buvais du lait'], why:'boire: nous buvons → buv- + ais. “milk” = du lait.'},
+    {en:'She used to read a book.',          ans:['elle lisait un livre'], why:'lire: nous lisons → lis- + ait.'},
+    {en:'You used to sleep a lot.',          ans:['tu dormais beaucoup'], why:'dormir: nous dormons → dorm- + ais. “a lot” = beaucoup.'},
+    {en:'He used to want a dog.',            ans:['il voulait un chien'], why:'vouloir: nous voulons → voul- + ait.'},
+    {en:'My mother used to work in a shop.', ans:['ma mère travaillait dans un magasin','ma mère travaillait dans une boutique'], why:'travailler: nous travaillons → travaill- + ait. “in a shop” = dans un magasin. Accent on mère!'},
+    {en:'We (On) used to play football.',    ans:['on jouait au foot','on jouait au football'], why:'on + il/elle ending → jouait. jouer à + sport → au foot.'}
+   ]},
+ { id:'F', title:'F. Tangled translation', marks:5, type:'text',
+   instr:'Each sentence is half French, half English. Write the French <b>imperfect</b> verb that replaces the English words <i>“used to …”</i>.',
+   items:[
+    {pre:'Mon père used to drive', post:'une vieille voiture. → <i>(1 word)</i>', ans:['conduisait'], why:nous('conduisons','conduis','ait')+' (mon père = il).'},
+    {pre:'Je used to run', post:'tous les matins. → <i>(1 word)</i>', ans:['courais'], why:nous('courons','cour','ais')},
+    {pre:'Ma sœur used to wear', post:'des lunettes. → <i>(1 word)</i>', ans:['portait'], why:nous('portons','port','ait')+' (ma sœur = elle).'},
+    {pre:'Elle used to write', post:'des poèmes. → <i>(1 word)</i>', ans:['écrivait'], why:nous('écrivons','écriv','ait')},
+    {pre:'Tu used to send', post:'des lettres. → <i>(1 word)</i>', ans:['envoyais'], why:nous('envoyons','envoy','ais')}
+   ]},
+ { id:'G', title:'G. Perfect tense or imperfect?', marks:4, type:'mcq',
+   instr:'Choose the French sentence that correctly translates the English.',
+   items:[
+    {q:'Yesterday, I bought a book.', opts:["Hier, j'ai acheté un livre.","Hier, j'achetais un livre."], c:0, why:'“Yesterday” + one finished action = perfect tense.'},
+    {q:'He used to drink tea every morning.', opts:['Il buvait du thé tous les matins.','Il a bu du thé tous les matins.'], c:0, why:'“used to” + every morning = a habit = imperfect.'},
+    {q:'She was watching TV.', opts:['Elle regardait la télé.','Elle a regardé la télé.'], c:0, why:'“was watching” = an action in progress = imperfect.'},
+    {q:'I have already finished.', opts:["J'ai déjà fini.",'Je finissais déjà.'], c:0, why:'“have already finished” = a completed action = perfect tense.'}
+   ]}
+];
+
+/* ================= state ================= */
+const Q = [];
+let lastInput = null, qNo = 0;
+let started=false, submitted=false, warned=false, t0=0, tick=null;
+let soundOn = CONFIG.SOUND, lockOn = CONFIG.TAB_LOCK;
+let leaves=0, awayTotal=0, awayAt=0, away=false, autoSubmitted=false;
+let fixDone=0, fixTotal=0, lastReport=null;
+
+/* ================= talking to the website (student mode only) ================= */
+async function siteApi(action, body){
+  const r = await fetch(`/api/student/tests/${SITE.assignment}/${action}`, {method:'POST', credentials:'same-origin', keepalive:true,
+    headers:{'Content-Type':'application/json'}, body:JSON.stringify(body||{})});
+  let d={}; try{ d=await r.json(); }catch(e){}
+  if(!r.ok){ const e=new Error(d.error||'Something went wrong. Please try again.'); e.status=r.status; throw e; }
+  return d;
+}
+let saved=false, saving=false, fixTimer=null;
+async function saveResult(){
+  if(!STUDENT_MODE||saved||saving) return;
+  saving=true; $('saveState').innerHTML='<span style="color:#5a6580">Saving your result…</span>';
+  try{
+    await siteApi('submit',{report:lastReport});
+    saved=true; $('saveState').innerHTML='<span style="color:var(--ok);font-weight:800">✔ Your result has been saved for your teacher.</span>';
+    $('backBtn').style.display='inline-block';
+  }catch(e){
+    $('saveState').innerHTML=`<span style="color:var(--bad);font-weight:800">⚠ ${e.message}</span> <button class="btn small" id="retrySave" type="button">Try saving again</button>`;
+    $('retrySave').onclick=saveResult;
+  }
+  saving=false;
+}
+function sendFix(){ if(!STUDENT_MODE||!saved) return; clearTimeout(fixTimer); fixTimer=setTimeout(()=>{ siteApi('fix',{done:fixDone,total:fixTotal}).catch(()=>{}); },800); }
+window.addEventListener('beforeunload',e=>{ if(STUDENT_MODE&&started&&!submitted){ e.preventDefault(); e.returnValue=''; } });
+
+/* ================= sound ================= */
+let ac=null;
+function chime(){
+  if(!soundOn) return;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended') ac.resume();
+    const t=ac.currentTime;
+    [659,880].forEach((f,i)=>{
+      const o=ac.createOscillator(), g=ac.createGain(); o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t+i*.09); g.gain.exponentialRampToValueAtTime(.2,t+i*.09+.02); g.gain.exponentialRampToValueAtTime(.0001,t+i*.09+.28);
+      o.connect(g); g.connect(ac.destination); o.start(t+i*.09); o.stop(t+i*.09+.3);
+    });
+  }catch(e){}
+}
+$('snd').addEventListener('click',()=>{ soundOn=!soundOn; $('snd').textContent=soundOn?'🔊':'🔇'; if(soundOn) chime(); });
+
+/* ================= inputs ================= */
+function mkInput(cls){
+  const i = document.createElement('input');
+  i.type='text'; i.className='t '+(cls||'');
+  ['autocomplete:off','autocapitalize:none','autocorrect:off','spellcheck:false','lang:fr'].forEach(p=>{const [k,v]=p.split(':'); i.setAttribute(k,v)});
+  i.addEventListener('focus',()=>lastInput=i);
+  i.addEventListener('input',updateProgress);
+  return i;
+}
+
+/* ================= build ================= */
+function build(){
+  $('sections').innerHTML=''; Q.length=0; qNo=0;
+  SECTIONS.forEach(sec=>{
+    const card = el('div','card');
+    card.appendChild(el('h2','',`<span>${sec.title}</span><span class="m">${sec.marks} marks</span>`));
+    card.appendChild(el('p','instr',sec.instr));
+    sec.items.forEach(it=>{
+      qNo++;
+      const row = el('div','q'); row.appendChild(el('div','num',qNo));
+      const body = el('div','body'); row.appendChild(body);
+      const q = {sec:sec.id,row,n:qNo,earned:0,why:it.why,kind:sec.type};
+      const fb = el('div','fb','');
+      if(sec.type==='text' || sec.type==='sentence'){
+        let inp;
+        if(sec.type==='text'){
+          const p = el('div','prompt'); p.appendChild(document.createTextNode(it.pre+' '));
+          inp = mkInput(); p.appendChild(inp); p.appendChild(el('span','',' '+it.post)); body.appendChild(p);
+          q.prompt = `${it.pre} ____ ${strip(it.post)}`;
+        } else {
+          body.appendChild(el('div','prompt en',it.en)); inp = mkInput('wide'); body.appendChild(inp);
+          q.prompt = it.en;
+        }
+        q.inp=inp; q.accepted=it.ans.map(norm); q.ans=it.ans[0]; q.wrong=0; q.lastWrong=null; q.solved=false; q.attempts=0;
+        q.get=()=>inp.value;
+        q.fill=()=>{inp.value=it.ans[0]; check(true)};
+        const check=(commit)=>{
+          if(q.solved||submitted) return;
+          const v=norm(inp.value); if(!v) return;
+          if(q.accepted.includes(v)){
+            q.solved=true; q.attempts=q.wrong+1;
+            q.earned = q.wrong===0 ? 1 : (q.wrong===1 ? CONFIG.SECOND_TRY_MARK : 0);
+            row.classList.remove('tryagain'); row.classList.add('right','pop'); inp.readOnly=true;
+            fb.textContent = q.wrong===0 ? '✔ Correct!' : (q.wrong===1 ? '✔ Correct on your 2nd try' : '✔ Correct — well done for fixing it');
+            chime(); setTimeout(()=>row.classList.remove('pop'),400);
+          } else if(commit && v!==q.lastWrong){
+            q.wrong++; q.lastWrong=v; row.classList.add('tryagain');
+            fb.textContent = '✘ Not quite — check it and try again';
+          }
+        };
+        inp.addEventListener('input',()=>check(false));
+        inp.addEventListener('blur',()=>check(true));
+        inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); check(true);} });
+      } else {
+        body.appendChild(el('div','prompt',`<b>${it.q}</b>`));
+        const correctText = it.opts[it.c], order = shuffle(it.opts), box = el('div','opts'), radios=[];
+        order.forEach(txt=>{
+          const lab = el('label','opt'); const r=document.createElement('input'); r.type='radio'; r.name='q'+qNo; r.value=txt;
+          lab.appendChild(r); lab.appendChild(document.createTextNode(txt)); box.appendChild(lab); radios.push({r,lab,txt});
+          r.addEventListener('change',()=>{radios.forEach(x=>x.lab.classList.toggle('sel',x.r.checked)); updateProgress();});
+        });
+        body.appendChild(box);
+        q.prompt=it.q; q.ans=correctText; q.opts=order; q.radios=radios;
+        q.get=()=>{const x=radios.find(x=>x.r.checked); return x?x.txt:''};
+        q.fill=()=>{const x=radios.find(x=>x.txt===correctText); x.r.checked=true; x.lab.classList.add('sel')};
+      }
+      body.appendChild(fb); q.fb=fb;
+      body.appendChild(el('div','key','🔑 '+(q.kind==='sentence'?it.ans.join('  /  '):q.ans)));
+      q.mk=el('div','mk','[1]'); row.appendChild(q.mk);
+      card.appendChild(row); Q.push(q);
+    });
+    $('sections').appendChild(card);
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const done = Q.filter(q=>q.get().trim()!=='').length;
+  $('progress').textContent = `Answered ${done} of ${Q.length} questions`;
+}
+
+/* ================= accent keypad ================= */
+'é è ê ë à â ç î ï ô ù û œ ’'.split(' ').forEach(ch=>{
+  const b=document.createElement('button'); b.type='button'; b.textContent=ch;
+  b.addEventListener('pointerdown',e=>e.preventDefault());
+  b.addEventListener('click',()=>{
+    const i=lastInput; if(!i||i.disabled||i.readOnly) return;
+    const s=i.selectionStart??i.value.length, e2=i.selectionEnd??i.value.length;
+    i.value=i.value.slice(0,s)+ch+i.value.slice(e2); i.focus(); i.setSelectionRange(s+1,s+1);
+    i.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  $('keys').appendChild(b);
+});
+
+/* ================= start gate ================= */
+function renderRules(){
+  const r=[
+    'Answer every question. <b>Accents count</b> — use the keypad at the bottom of the screen.',
+    'Short answers turn <b style="color:var(--ok)">green</b> (with a chime) the moment they are correct. <b>1st try = 1 mark, 2nd try = ½ mark</b>, later tries = 0 — but you can keep going until it is green.',
+    'Multiple-choice answers are marked when you submit.',
+    'When you finish you will see your marks, a skill-by-skill report and a <b>Fix-it round</b> to correct your mistakes.'
+  ];
+  if(lockOn) r.push(`🔒 <b>Do not leave this page</b> (no switching tabs or apps, no copy-paste). Every time you leave it is recorded for your teacher. After ${CONFIG.MAX_LEAVES} times, your test is submitted automatically.`);
+  $('rulesList').innerHTML=r.map(x=>`<li>${x}</li>`).join('');
+}
+async function startTest(){
+  const name=$('sname').value.trim();
+  if(!name){ $('gatewarn').textContent='Please type your name first.'; $('sname').focus(); return false; }
+  if(STUDENT_MODE){
+    $('start').disabled=true; $('gatewarn').textContent='Starting…';
+    try{ await siteApi('start'); }
+    catch(e){ $('gatewarn').textContent=e.message; $('start').disabled=false; return false; }
+    $('gatewarn').textContent='';
+  }
+  return begin();
+}
+function begin(){
+  started=true; t0=Date.now();
+  $('gate').style.display='none'; $('testwrap').style.display='block'; $('hud').style.display='flex';
+  document.body.classList.toggle('locked', lockOn && CONFIG.BLOCK_COPY_PASTE);
+  tick=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); $('timer').textContent='⏱ '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); },1000);
+  window.scrollTo(0,0); chime();
+  return true;
+}
+$('start').addEventListener('click',()=>{ startTest(); });
+
+/* ================= tab-leave lock ================= */
+function leave(){
+  if(!lockOn||!started||submitted||away) return;
+  away=true; leaves++; awayAt=Date.now();
+  if(STUDENT_MODE) siteApi('event',{leaves}).catch(()=>{});
+  if(leaves>=CONFIG.MAX_LEAVES){ autoSubmitted=true; doSubmit(true); }
+}
+function back(){
+  if(!away) return; away=false; awayTotal+=Math.round((Date.now()-awayAt)/1000);
+  const box=$('away');
+  if(autoSubmitted){
+    $('awayT').textContent='⛔ Test submitted';
+    $('awayP').textContent=`You left the test page ${leaves} times, so your test was submitted automatically. Press the button to see your marks.`;
+    $('awayBtn').textContent='See my marks';
+  } else {
+    const left=CONFIG.MAX_LEAVES-leaves;
+    $('awayT').textContent=`⚠ You left the test page (${leaves} of ${CONFIG.MAX_LEAVES})`;
+    $('awayP').textContent = left===1
+      ? 'This was a serious warning: if you leave ONE more time, your test will be submitted automatically. Leaving is recorded and your teacher can see it.'
+      : 'Leaving the test page is recorded and your teacher can see it. Please stay on this page until you submit.';
+    $('awayBtn').textContent='Return to the test';
+  }
+  box.style.display='flex';
+}
+$('awayBtn').addEventListener('click',()=>{ $('away').style.display='none'; if(autoSubmitted) $('result').scrollIntoView({behavior:'smooth'}); });
+document.addEventListener('visibilitychange',()=>{ document.hidden ? leave() : back(); });
+window.addEventListener('blur',()=>leave());
+window.addEventListener('focus',()=>back());
+['copy','cut','paste','contextmenu','dragstart','drop'].forEach(ev=>document.addEventListener(ev,e=>{
+  if(lockOn && CONFIG.BLOCK_COPY_PASTE && started && !submitted) e.preventDefault();
+}));
+
+/* ================= submit & mark ================= */
+$('submit').addEventListener('click',()=>doSubmit(false));
+function doSubmit(auto){
+  if(submitted||!started) return;
+  Q.forEach(q=>{ if(q.inp && !q.solved) q.inp.blur(); });
+  const blank=Q.filter(q=>q.get().trim()==='').length;
+  if(!auto && blank && !warned){ warned=true; $('warn').textContent=`You left ${blank} question${blank>1?'s':''} blank. Press Submit again to finish anyway, or go back and answer them.`; return; }
+  submitted=true; clearInterval(tick); $('warn').textContent='';
+  const secs={}; SECTIONS.forEach(s=>secs[s.id]={id:s.id,t:s.title,max:s.marks,got:0});
+  Q.forEach(q=>{
+    if(q.kind==='mcq'){
+      q.earned = q.get()===q.ans ? 1 : 0;
+      q.radios.forEach(x=>{ x.r.disabled=true; if(x.txt===q.ans) x.lab.classList.add('corr'); else if(x.r.checked) x.lab.classList.add('bad'); });
+      q.attempts=1;
+    } else { q.inp.readOnly=true; if(!q.solved) q.attempts=q.wrong+(q.get().trim()&&!q.accepted.includes(norm(q.get()))&&norm(q.get())!==q.lastWrong?1:0); }
+    secs[q.sec].got+=q.earned;
+    q.row.classList.remove('tryagain','right','wrong');
+    if(q.earned===1){ q.row.classList.add('right'); q.fb.textContent='✔ Correct — 1 mark'; }
+    else if(q.earned>0){ q.row.classList.add('right'); q.fb.textContent=`✔ Correct on 2nd try — ${fmt(q.earned)} mark`; }
+    else if(q.kind!=='mcq' && q.solved){ q.row.classList.add('right'); q.fb.textContent='✔ Correct after several tries — 0 marks'; }
+    else { q.row.classList.add('wrong'); q.fb.textContent='✘ 0 marks — correct answer: '+(q.kind==='sentence'?'':q.ans)+(q.kind==='sentence'?q.accepted[0]:''); }
+    q.mk.textContent=`${fmt(q.earned)}/1`;
+  });
+  const total=Object.values(secs).reduce((a,s)=>a+s.got,0), pct=Math.round(total/40*100);
+  $('rs').textContent=fmt(total);
+  $('rmsg').textContent = pct>=90?'Excellent ! 🌟':pct>=75?'Très bien ! 👏':pct>=60?'Bien ! Keep practising 💪':pct>=40?'Assez bien — use the Fix-it round below 📘':'Let’s revise together — you can do it! 🌱';
+  const name=$('sname').value.trim(), cls=$('sclass').value.trim();
+  const secs_t=Math.floor((Date.now()-t0)/1000), timeTxt=`${Math.floor(secs_t/60)} min ${secs_t%60} s`;
+  $('rwho').textContent=`${name}${cls?' • Class '+cls:''} • ${pct}% • ${timeTxt}`;
+  const flags=[]; if(leaves) flags.push(`Left the test page ${leaves} time${leaves>1?'s':''} (${awayTotal}s away)`); if(autoSubmitted) flags.push('Auto-submitted');
+  $('rflag').textContent=flags.length?'⚠ '+flags.join(' • '):'';
+  const secArr=Object.values(secs);
+  $('bars').innerHTML=secArr.map(s=>{
+    const r=s.got/s.max, st=r>=.8?['s','Secure ✅']:r>=.5?['n','Nearly there 🟡']:['r','Revise 🔴'];
+    return `<div class="bar"><div><b>${SKILLS[s.id].name}</b><span class="chip ${st[0]}">${st[1]}</span><div class="track"><div class="fill" style="width:${r*100}%"></div></div>${r<.8?`<div class="tip">💡 ${SKILLS[s.id].tip}</div>`:''}</div><div class="n">${fmt(s.got)} / ${s.max}</div></div>`;
+  }).join('');
+  Object.assign(window,{__result:{total,secs:secArr}});
+  buildFix(); renderShare(name,cls,total,pct,secArr,timeTxt);
+  if(STUDENT_MODE) saveResult();
+  $('submit').disabled=true; $('submit').style.opacity=.5;
+  $('result').style.display='block';
+  if(!auto) $('result').scrollIntoView({behavior:'smooth',block:'start'});
+  const pending={name,cls,total,pct,secs:secArr,timeTxt};
+  window.__pending=pending;
+}
+
+/* ================= Fix-it round ================= */
+function buildFix(){
+  const box=$('fixlist'); box.innerHTML=''; fixDone=0;
+  const list=Q.filter(q=>q.earned<1);
+  fixTotal=list.length;
+  if(!list.length){ box.innerHTML='<div class="fix done"><div class="ok" style="display:block">🎉 Nothing to correct — full marks!</div></div>'; $('fixprog').textContent=''; return; }
+  list.forEach(q=>{
+    q.fixed=false;
+    const c=el('div','fix');
+    c.appendChild(el('div','h',`Question ${q.n} — ${SKILLS[q.sec].name}`));
+    c.appendChild(el('div','p',q.prompt));
+    c.appendChild(el('div','why','💡 '+q.why));
+    const done=()=>{ if(q.fixed) return; q.fixed=true; fixDone++; c.classList.add('done'); chime(); updFix(); };
+    if(q.kind==='mcq'){
+      const bx=el('div','opts');
+      q.opts.forEach(txt=>{
+        const lab=el('label','opt'); const r=document.createElement('input'); r.type='radio'; r.name='fx'+q.n; lab.appendChild(r); lab.appendChild(document.createTextNode(txt)); bx.appendChild(lab);
+        r.addEventListener('change',()=>{ if(q.fixed) return; if(txt===q.ans){ lab.classList.add('corr'); bx.querySelectorAll('input').forEach(x=>x.disabled=true); done(); } else { lab.classList.add('bad'); r.disabled=true; } });
+      });
+      c.appendChild(bx);
+    } else {
+      const inp=mkInput(q.kind==='sentence'?'wide':''); c.appendChild(inp);
+      const sh=el('button','btn small ghost','Show me the answer'); sh.type='button'; sh.style.marginTop='6px'; sh.style.display='block';
+      const ans=el('div','why','✅ '+(q.kind==='sentence'?q.accepted[0]:q.ans)); ans.style.display='none';
+      sh.addEventListener('click',()=>{ ans.style.display='block'; sh.style.display='none'; });
+      c.appendChild(sh); c.appendChild(ans);
+      const chk=()=>{ if(!q.fixed && q.accepted.includes(norm(inp.value))){ inp.readOnly=true; ans.style.display='none'; sh.style.display='none'; done(); } };
+      inp.addEventListener('input',chk);
+    }
+    c.appendChild(el('div','ok','✔ Corrected!'));
+    box.appendChild(c);
+  });
+  updFix();
+}
+function updFix(){
+  $('fixprog').textContent=`— corrected ${fixDone} of ${fixTotal}`;
+  const p=window.__pending; if(p) renderShare(p.name,p.cls,p.total,p.pct,p.secs,p.timeTxt);
+}
+
+/* ================= report / share ================= */
+function renderShare(name,cls,total,pct,secArr,timeTxt){
+  const lines=secArr.map(s=>`${s.id} ${fmt(s.got)}/${s.max}`).join(', ');
+  const msg=`Imparfait test – ${name}${cls?' (Class '+cls+')':''}\nScore: ${fmt(total)}/40 (${pct}%)\n${lines}\nFix-it: ${fixDone}/${fixTotal} corrected\nLeft the page: ${leaves} time(s)${autoSubmitted?' – auto-submitted':''}\nTime: ${timeTxt}`;
+  $('wa').href='https://wa.me/?text='+encodeURIComponent(msg);
+  $('copy').onclick=async()=>{ try{await navigator.clipboard.writeText(msg); $('copied').textContent='Copied ✔ — paste it into WhatsApp.';}catch(e){$('copied').textContent='Could not copy — please take a screenshot instead.';} };
+  // structured report for the website (saved to the teacher's markbook when it goes online)
+  lastReport={student:name,class:cls,score:total,outOf:40,percent:pct,time:timeTxt,
+    sections:secArr.map(s=>({id:s.id,got:s.got,max:s.max})),
+    questions:Q.map(q=>({n:q.n,section:q.sec,prompt:q.prompt,given:q.get(),ans:(q.kind==='sentence'?q.accepted[0]:q.ans),marks:q.earned,attempts:q.attempts})),
+    fixIt:{done:fixDone,total:fixTotal}, tabLeaves:leaves, secondsAway:awayTotal, autoSubmitted};
+  window.__report=lastReport;
+  sendFix();
+  document.dispatchEvent(new CustomEvent('imparfait-test-report',{detail:lastReport}));
+}
+
+/* ================= teacher preview tools ================= */
+if(!CONFIG.TEACHER_PREVIEW) $('teacherbar').remove();
+else{
+  $('tlock').checked=lockOn;
+  $('tlock').addEventListener('change',e=>{ lockOn=e.target.checked; renderRules(); });
+  $('tview').addEventListener('change',e=>document.body.classList.toggle('teacher',e.target.checked));
+  $('fillAll').addEventListener('click',()=>{ if(!started){ if(!$('sname').value.trim()) $('sname').value='Preview Student'; begin(); } if(submitted) return; Q.forEach(q=>q.fill()); updateProgress(); });
+  $('simLeave').addEventListener('click',()=>{ const was=lockOn; lockOn=true; if(!started){ if(!$('sname').value.trim()) $('sname').value='Preview Student'; begin(); } leave(); setTimeout(()=>{ back(); lockOn=was&&$('tlock').checked; },300); });
+  $('reload').addEventListener('click',()=>location.reload());
+  lockOn=false; $('tlock').checked=false;   // preview default: lock off, use "Simulate" to see it
+}
+if(STUDENT_MODE){
+  $('sname').value=SITE.student.name; $('sname').readOnly=true;
+  $('sclass').value=SITE.student.cls; $('sclass').readOnly=true;
+  $('shareActions').style.display='none';
+  if(SITE.title) document.title=SITE.title;
+}
+renderRules(); build();
+</script>
+</body>
+</html>

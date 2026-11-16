@@ -17,6 +17,7 @@ function shell(active, content) {
       <div class="tgrid">
         ${tile('tLib', '📚', 'Library', 'Create homework and assign it', '#2563eb')}
         ${tile('tPractice', '🎮', 'Practice games', 'Vocabulary, grammar, workouts and games', '#dc2626')}
+        ${tile('tTests', '📝', 'Class tests', 'Assign online tests to a class and see marks', '#0f766e')}
         ${tile('tRes', '📎', 'Resources', 'ICSE and IGCSE material to assign', '#9333ea')}
         ${tile('tPres', '📈', 'Practice results', 'What students practised on their own', '#16a34a')}
         ${tile('tTl', '🗓', 'Timeline', 'Open and scheduled homework', '#d97706')}
@@ -31,6 +32,7 @@ function shell(active, content) {
       <button class="nav ${active === 'home' ? 'on' : ''}" data-act="tHome">🏠 Home</button>
       <button class="nav ${active === 'lib' ? 'on' : ''}" data-act="tLib">📚 Library</button>
       <button class="nav" data-act="tPractice">🎮 Practice games</button>
+      <button class="nav ${active === 'tests' ? 'on' : ''}" data-act="tTests">📝 Class tests</button>
       <button class="nav" data-act="tRes">📎 Resources</button>
       <button class="nav ${active === 'pres' ? 'on' : ''}" data-act="tPres">📈 Practice results</button>
       <button class="nav ${active === 'tl' ? 'on' : ''}" data-act="tTl">🗓 Timeline</button>
@@ -45,6 +47,7 @@ ACT.menu = () => $('#side').classList.toggle('open');
 ACT.tHome = () => go('#/t');
 ACT.tPractice = () => { if (typeof PH !== 'undefined' && PH) PH.keep = null; go('#/s/practice'); };
 ACT.tRes = () => { location.href = '/resources/'; };
+ACT.tTests = () => go('#/t/tests');
 ACT.tPres = () => go('#/t/practice');
 ACT.tLib = () => go('#/t/library');
 ACT.tTl = () => go('#/t/timeline');
