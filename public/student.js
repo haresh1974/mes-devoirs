@@ -570,7 +570,7 @@ function drawWall(q, s, ask) {
   const mm = Math.floor(clock / 60) + ':' + String(clock % 60).padStart(2, '0');
   const pos = 6 + Math.round(G.climb / G.top * 78);
   const holds = q.opts.map((o, i) => { let c = ''; if (!ask) c = o === q.answer ? ' ok' : (i === s.sel ? ' bad' : ''); return `<button class="hold${c}" data-act="gPick" data-i="${i}" ${ask ? '' : 'disabled'}>${esc(o)}</button>`; }).join('');
-  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="wall"><div class="rope"></div><div class="top">🏁</div><div class="climber" style="bottom:${pos}%">🧗</div><div class="wtop"><span>⛰️ ${G.climb} / ${G.top}</span><span style="font-size:22px">${'❤️'.repeat(3)}</span><span><b id="gClock">${mm}</b></span></div><div class="wq">${esc(q.prompt || q.title)}</div><div class="holds">${holds}</div></div></div>`;
+  $('#app').innerHTML = `<div class="play"><div class="ptop"><button class="icon-btn sq" data-act="gQuit" title="Back">🏠</button><div class="track"></div><span class="coins">⭐ ${G.score}</span></div><div class="wall"><div class="rope"></div><div class="top">🏁</div><div class="climber" style="bottom:${pos}%">🧗</div><div class="wtop"><span>⛰️ ${G.climb} / ${G.top}</span><span style="font-size:22px">${'❤️'.repeat(Math.max(0, G.lives))}${'🖤'.repeat(Math.max(0, 3 - G.lives))}</span><span><b id="gClock">${mm}</b></span></div><div class="wq">${esc(q.prompt || q.title)}</div><div class="holds">${holds}</div></div></div>`;
 }
 function drawRing(q, s, ask) {
   if (!document.getElementById('bxCss')) {
@@ -760,7 +760,7 @@ ACT.gCheck = () => {
   if (!ok && G.miss) G.miss.push({ p: q.prompt.replace('____', '…'), a: q.answer, g: q.t === 'type' ? s.val : (q.opts ? q.opts[s.sel] : '') });
   if (!q.retry) { G.asked += q.total; if (ok) G.right += q.total; }
   if (G.mode === 'box' || G.mode === 'abox') { if (!ok) G.lives--; }
-  if (G.mode === 'climb') G.climb = ok ? G.climb + 1 : Math.max(0, G.climb - 1);
+  if (G.mode === 'climb') { G.climb = ok ? G.climb + 1 : Math.max(0, G.climb - 1); if (!ok) G.lives--; }
   bump(q);
   if (G.vmode === 'test') { G.qEnd = 0; return ACT.gNext(); }
   drawPlay();
@@ -769,7 +769,7 @@ ACT.gCheck = () => {
 };
 ACT.gNext = () => {
   if (G.fast) {
-    const over = (G.mode === 'climb' && (G.climb >= G.top || G.asked >= 30 || Date.now() >= G.endAt)) || ((G.mode === 'box' || G.mode === 'abox') && (G.lives <= 0 || Date.now() >= G.endAt));
+    const over = (G.mode === 'climb' && (G.climb >= G.top || G.lives <= 0 || G.asked >= 30 || Date.now() >= G.endAt)) || ((G.mode === 'box' || G.mode === 'abox') && (G.lives <= 0 || Date.now() >= G.endAt));
     if (over) return finishPlay();
     G.idx++;
     if (G.idx >= G.queue.length) { const more = G.refill(); if (!more.length) return finishPlay(); G.queue.push(...more); }
