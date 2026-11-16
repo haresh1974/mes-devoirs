@@ -280,3 +280,14 @@ body{background:linear-gradient(180deg,#eaf6ff 0,#f6f9ff 260px)}
 .abtn.on .w1{animation:wv 0.9s infinite}.abtn.on .w2{animation:wv 0.9s .25s infinite}
 @keyframes wv{0%,100%{opacity:.25}50%{opacity:1}}
 .stop .icon-btn .spk{width:22px;height:22px;display:block}
+
+.thome{max-width:1100px;margin:0 auto;padding:22px 22px 80px}
+.thead{display:flex;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:12px 16px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.ttile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-top:6px solid var(--c);border-radius:18px;padding:16px 16px 18px;min-height:128px;cursor:pointer;transition:transform .08s,box-shadow .12s}
+.ttile:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(22,33,62,.10)}
+.ttile:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.ttile .ic{font-size:30px;line-height:1;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:color-mix(in srgb,var(--c) 12%,#fff)}
+.ttile b{font-size:17px;overflow-wrap:anywhere}
+.ttile small{color:var(--mute);font-weight:600;font-size:13px;line-height:1.35}
+@media(max-width:560px){.thome{padding:14px 12px 60px}.tgrid{grid-template-columns:repeat(2,1fr);gap:10px}.ttile{min-height:112px;padding:12px}.ttile b{font-size:15px}}

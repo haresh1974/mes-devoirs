@@ -6,6 +6,25 @@ async function loadClasses() {
 }
 function shell(active, content) {
   const cls = T.classes.map((c) => `<button class="nav ${active === c.id ? 'on' : ''}" data-act="openClass" data-id="${esc(c.id)}"><span>${flagOf(c.language, 22)}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span></button>`).join('');
+  if (active === 'home') {
+    const tile = (act, ic, name, d, col, extra) => `<button class="ttile" data-act="${act}" ${extra || ''} style="--c:${col}"><span class="ic">${ic}</span><b>${name}</b><small>${d}</small></button>`;
+    const ctiles = T.classes.map((c) => `<button class="ttile cls" data-act="openClass" data-id="${esc(c.id)}" style="--c:#0f766e"><span class="ic">${flagOf(c.language, 34)}</span><b>${esc(c.name)}</b><small>Students, homework and results</small></button>`).join('');
+    $('#app').innerHTML = `<div class="thome">
+      <header class="thead"><img src="/logo.svg" alt="" style="width:44px;height:44px"><div style="flex:1;min-width:0"><b style="font-size:20px">French with Haresh</b><div class="mute small">Teacher home · ${esc(T.name || '')}</div></div><button class="btn ghost sm" data-act="logout">Sign out</button></header>
+      <div class="sidehead" style="margin-left:2px">MY CLASSES</div>
+      <div class="tgrid">${ctiles}${tile('newClass', '＋', 'Create class', 'Add a new class and its students', '#2f6bed')}</div>
+      <div class="sidehead" style="margin-left:2px">TOOLS</div>
+      <div class="tgrid">
+        ${tile('tLib', '📚', 'Library', 'Create homework and assign it', '#2563eb')}
+        ${tile('tPractice', '🎮', 'Practice games', 'Vocabulary, grammar, workouts and games', '#dc2626')}
+        ${tile('tRes', '📎', 'Resources', 'ICSE and IGCSE material to assign', '#9333ea')}
+        ${tile('tPres', '📈', 'Practice results', 'What students practised on their own', '#16a34a')}
+        ${tile('tTl', '🗓', 'Timeline', 'Open and scheduled homework', '#d97706')}
+        ${tile('tHelp', '❓', 'Help', 'How everything works', '#0891b2')}
+      </div>
+      <div style="margin-top:26px">${content}</div></div>`;
+    return;
+  }
   $('#app').innerHTML = `<button class="menubtn" data-act="menu">☰</button><div class="shell">
     <aside class="side" id="side">
       <div class="logo"><img src="/logo.svg" alt="" style="width:38px;height:38px;vertical-align:middle;margin-right:8px">French with Haresh <small>teachers</small></div>
@@ -39,7 +58,7 @@ ROUTES.push([/^\/t$/, async () => {
   const hasClass = T.classes.length > 0, hasStud = ov.some((o) => o.students.length), hasHw = ov.some((o) => o.homework.length);
   let shared = false; try { shared = localStorage.getItem('md_shared') === '1'; } catch (e) {}
   const steps = [
-    ['Create your first class', 'Your class gets a code and a home in the sidebar.', hasClass, hasClass ? '' : '<button class="btn sm" data-act="newClass">Create class</button>'],
+    ['Create your first class', 'Your class gets a code and its own tile on this page.', hasClass, hasClass ? '' : '<button class="btn sm" data-act="newClass">Create class</button>'],
     ['Add your students', 'Paste or type names and get a PIN for each child.', hasStud, hasClass && !hasStud ? '<button class="btn sm" data-act="firstClass">Add students</button>' : ''],
     ['Add homework to your library, then assign it', 'Paste or upload a vocab list, then assign it to the class from the Library.', hasHw, hasStud && !hasHw ? '<button class="btn sm" data-act="tLib">Open library</button>' : ''],
     ['Get students onto the website', 'Share the link, class code and PINs.', shared, '<label class="row small" style="font-weight:800;gap:6px"><input type="checkbox" id="sharedChk" ' + (shared ? 'checked' : '') + '> Done</label>']
@@ -60,7 +79,7 @@ ROUTES.push([/^\/t$/, async () => {
     return;
   }
   T.homeFeat = true;
-  shell('home', `<h1>Welcome back</h1><p class="sub">Pick a class in the sidebar to see how your students are doing.</p>
+  shell('home', `<h1>Welcome back</h1><p class="sub">Pick a class above to see how your students are doing.</p>
     <div class="card" style="padding:0"><div style="padding:18px 20px"><div class="spread"><div><h3>${n === 4 ? "You're all set!" : 'Get set up'}</h3><div class="mute small">${n === 4 ? 'Every step done. Your classes are live.' : 'Four quick steps.'}</div></div><b>${n} / 4</b></div>
       <div class="bars">${[0, 1, 2, 3].map((i) => '<i class="' + (i < n ? 'on' : '') + '"></i>').join('')}</div></div>
       ${steps.map((s, i) => `<div class="check ${s[2] ? 'done' : ''}"><div class="dot">${s[2] ? '✓' : i + 1}</div><div style="flex:1"><b>${s[0]}</b><div class="mute small">${s[1]}</div></div><div>${s[3]}</div></div>`).join('')}

@@ -296,6 +296,24 @@ function wkTone(ok) {
     seq.forEach(([f, d]) => { const o = WKAC.createOscillator(), g = WKAC.createGain(); o.type = ok ? 'sine' : 'sawtooth'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t0 + d); g.gain.exponentialRampToValueAtTime(ok ? 0.22 : 0.12, t0 + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + (ok ? 0.2 : 0.22)); o.connect(g); g.connect(WKAC.destination); o.start(t0 + d); o.stop(t0 + d + 0.25); });
   } catch (e) {}
 }
+function wkPunch(ok) {
+  try {
+    WKAC = WKAC || new (window.AudioContext || window.webkitAudioContext)(); if (WKAC.state === 'suspended') WKAC.resume();
+    const t0 = WKAC.currentTime;
+    if (ok) {
+      const n = Math.floor(WKAC.sampleRate * 0.12), buf = WKAC.createBuffer(1, n, WKAC.sampleRate), ch = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+      const src = WKAC.createBufferSource(), f = WKAC.createBiquadFilter(), g = WKAC.createGain(); src.buffer = buf; f.type = 'lowpass'; f.frequency.value = 1400; g.gain.value = 0.5; src.connect(f); f.connect(g); g.connect(WKAC.destination); src.start(t0);
+      const o = WKAC.createOscillator(), g2 = WKAC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(170, t0); o.frequency.exponentialRampToValueAtTime(45, t0 + 0.16); g2.gain.setValueAtTime(0.6, t0); g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2); o.connect(g2); g2.connect(WKAC.destination); o.start(t0); o.stop(t0 + 0.22);
+    } else wkTone(false);
+  } catch (e) {}
+}
+function wkBell() {
+  try {
+    WKAC = WKAC || new (window.AudioContext || window.webkitAudioContext)(); if (WKAC.state === 'suspended') WKAC.resume();
+    [0, 0.28, 0.56].forEach((d) => { const t0 = WKAC.currentTime + d; [880, 1320, 2640].forEach((f, k) => { const o = WKAC.createOscillator(), g = WKAC.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.18 / (k + 1), t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5); o.connect(g); g.connect(WKAC.destination); o.start(t0); o.stop(t0 + 0.55); }); });
+  } catch (e) {}
+}
 function wkEval(s, it) {
   const st = it.st; let r = 0;
   if (s.t === 'pick') r = st.sel != null && it.opts[st.sel] === it.ans ? 1 : 0;

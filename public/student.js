@@ -170,7 +170,7 @@ const GAMES = [
   { id: 'listen', ic: '👂', name: 'Listening Trainer', d: 'Train your ear', col: '#0E9F6E', src: ['vocab', 'sent'], kinds: [['listen', 10], ['tap', 8]] },
   { id: 'dict', ic: '✍️', name: 'Dictation Trainer', d: 'Hear it, then type it', col: '#D97706', src: ['vocab', 'sent'], kinds: [['dictation', 12], ['tap', 4]] },
   { id: 'work', ic: '🏋️', name: 'Workouts', d: 'One lesson, a dozen activities', col: '#0891B2', src: ['vocab', 'sent', 'verb', 'gram'], kinds: [['gappick', 3], ['flash', 3], ['translate', 4], ['typeit', 4], ['cloze', 4], ['conjpick', 3], ['listen', 3], ['dictation', 3]] },
-  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '2 minutes, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'box', kinds: [['meaning', 60]] },
+  { id: 'box', ic: '🥊', name: 'Boxing Game', d: '2 minutes, 3 lives, go fast!', col: '#DC2626', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'box', kinds: [['meaning', 60], ['conjpick', 40], ['gappick', 40]] },
   { id: 'abox', ic: '🎧', name: 'Audio Boxing', d: 'Fast game with sounds only', col: '#9333EA', src: ['vocab', 'sent'], fast: 'abox', kinds: [['audmean', 60]] },
   { id: 'climb', ic: '🧗', name: 'Rock Climbing', d: 'Right goes up, wrong slides down', col: '#65A30D', src: ['vocab', 'sent', 'verb', 'gram'], fast: 'climb', kinds: [['translate', 40], ['meaning', 40], ['cloze', 20], ['conjpick', 20], ['gappick', 20]] }
 ];
@@ -538,6 +538,7 @@ ROUTES.push([/^\/s\/play\/(\w+)\/(\w+)$/, async (id, kind) => {
 }]);
 const curQ = () => G.queue[G.idx];
 function nextQ() {
+  if (!G) return;
   const q = curQ();
   G.phase = 'ask'; G.st = {};
   if (q.t === 'tap' || q.t === 'odd') G.st = { chosen: [] };
@@ -757,6 +758,7 @@ ACT.mR = (t) => {
 };
 /* checking */
 ACT.gCheck = () => {
+  if (!G) return;
   const q = curQ(), s = G.st;
   if (G.phase !== 'ask' || !canCheck()) return;
   let ok = false, correct = '', almost = false;
@@ -769,6 +771,7 @@ ACT.gCheck = () => {
     correct = (almost ? 'Check the accents: ' : 'Correct answer: ') + q.answer;
   }
   G.ok = ok; G.correct = correct; G.almost = almost; G.phase = 'fb';
+  if (G.vmode !== 'test') { if ((G.mode === 'box' || G.mode === 'abox') && typeof wkPunch === 'function') wkPunch(ok); else if (typeof wkTone === 'function') wkTone(ok); }
   if (ok && !q.retry) G.score += q.total;
   if (!ok && !q.retry && !G.fast && !G.noRetry) retryLater(q);
   if (!ok && G.miss) G.miss.push({ p: q.prompt.replace('____', '…'), a: q.answer, g: q.t === 'type' ? s.val : (q.opts ? q.opts[s.sel] : '') });
@@ -782,6 +785,7 @@ ACT.gCheck = () => {
   if (after) say(after);
 };
 ACT.gNext = () => {
+  if (!G) return;
   if (G.fast) {
     const over = (G.mode === 'climb' && (G.climb >= G.top || G.lives <= 0 || G.asked >= 30 || Date.now() >= G.endAt)) || ((G.mode === 'box' || G.mode === 'abox') && (G.lives <= 0 || Date.now() >= G.endAt));
     if (over) return finishPlay();
@@ -793,6 +797,7 @@ ACT.gNext = () => {
 };
 
 async function finishPlay() {
+  if (G && (G.mode === 'box' || G.mode === 'abox') && typeof wkBell === 'function') wkBell();
   const secs = Math.round((Date.now() - G.t0) / 1000), g = G;
   if (g.practice) {
     if (g.fast) g.total = Math.max(1, g.asked);
