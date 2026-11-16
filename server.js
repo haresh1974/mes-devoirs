@@ -661,6 +661,13 @@ app.get('/api/student/practice', practiceUser(async (req, res) => {
   const rows = await db.all('SELECT id,kind,level,title,topic,items,verbs FROM lessons ORDER BY sort');
   res.json({ tts: ttsOn(), lessons: rows.map((r) => ({ id: r.id, kind: r.kind, level: r.level, title: r.title, topic: r.topic, n: JSON.parse(r.items).length + JSON.parse(r.verbs).length * 6 })) });
 }));
+app.get('/api/student/practice/verbs', practiceUser(async (req, res) => {
+  const rows = await db.all("SELECT verbs FROM lessons WHERE kind = 'verb' ORDER BY sort");
+  const TN = { 'présent': 'Present Indicative', 'futur proche': 'Immediate future', 'imparfait': 'Imperfect Indicative', 'passé composé': 'Perfect Indicative', 'futur simple': 'Future Indicative', 'present subjunctive': 'Present Subjunctive', 'subjonctif présent': 'Present Subjunctive', 'conditionnel': 'Present Conditional', 'conditionnel présent': 'Present Conditional', 'past conditional': 'Past Conditional', 'plus-que-parfait': 'Pluperfect Indicative' };
+  const seen = new Set(), out = [];
+  rows.forEach((r) => JSON.parse(r.verbs).forEach((v) => { const t = TN[v.tense] || v.tense, k = v.inf + '|' + t; if (seen.has(k) || !v.forms || v.forms.length !== 6) return; seen.add(k); out.push({ inf: v.inf, en: v.en, tense: t, forms: v.forms }); }));
+  res.json({ tts: ttsOn(), verbs: out });
+}));
 app.get('/api/student/practice/lessons', practiceUser(async (req, res) => {
   const ids = String(req.query.ids || '').split(',').map((x) => x.trim()).filter(Boolean).slice(0, 3);
   if (!ids.length) return res.json({ tts: ttsOn(), lessons: [] });

@@ -274,7 +274,7 @@ function drawHub() {
   $('#app').innerHTML = `<div class="sbody"><div class="stop"><button class="icon-btn" data-act="phBack" title="Back">←</button><div style="font-weight:800;font-size:18px">${esc(title)}</div><span style="width:40px"></span></div>${body}</div>`;
   const qi = $('#phQ'); if (qi) qi.addEventListener('input', (e) => { PH.q = e.target.value; const p = e.target.selectionStart; drawHub(); const i = $('#phQ'); i.focus(); i.setSelectionRange(p, p); });
 }
-ACT.phGame = (t) => { PH.game = t.dataset.id; PH.step = t.dataset.id === 'work' ? 'wmod' : 'level'; PH.sel = []; drawHub(); };
+ACT.phGame = (t) => { if (t.dataset.id === 'verb') { PH.game = 'verb'; PH.keep = null; return go('#/s/practice/verbs'); } PH.game = t.dataset.id; PH.step = t.dataset.id === 'work' ? 'wmod' : 'level'; PH.sel = []; drawHub(); };
 ACT.phLevel = (t) => { PH.level = t.dataset.id; PH.step = 'cat'; PH.cat = ''; PH.cats = []; PH.sel = []; PH.q = ''; drawHub(); };
 ACT.phTense = (t) => { const c = PH.cats || (PH.cats = []), i = c.indexOf(t.dataset.id); if (i >= 0) c.splice(i, 1); else c.push(t.dataset.id); drawHub(); };
 ACT.phTenseAll = () => { PH.cats = hubCats().map((c) => c[0]); drawHub(); };
@@ -295,6 +295,8 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
   const data = { items: [], verbs: [], grammar: [], N: 1, li: 0 };
   d.lessons.forEach((l) => { l.items.forEach((i) => (i.g ? data.grammar : data.items).push(i)); data.verbs.push(...l.verbs); });
+  let vt = null;
+  if (game === 'verb' && ids === 'vt') { try { vt = JSON.parse(sessionStorage.getItem('vtsel') || 'null'); } catch (e) { vt = null; } if (!vt) return go('#/s/practice/verbs'); const av = (await api('/student/practice/verbs')).verbs; data.verbs = av.filter((v) => vt.tenses.includes(v.tense) && vt.verbs.includes(v.inf)); }
   const build = () => {
     const out = [];
     g.kinds.forEach(([k, n]) => {
@@ -311,13 +313,14 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   }
   const buildVerb = () => {
     const out = [];
-    data.verbs.forEach((v) => vopt.pron.forEach((i) => {
-      const form = v.forms[i], pr = pronounFor(i, form), prompt = pr + ' ____  (' + v.inf + ')', sub = [v.en, v.tense].filter(Boolean).join(' · ');
+    const P8 = vt ? vt.pron : vopt.pron.map((i) => [0, 1, 2, 4, 5, 6][i]);
+    data.verbs.forEach((v) => P8.forEach((p) => {
+      const form = vtForm(v, p), pr = vtPron(p, form), prompt = pr + ' ____  (' + v.inf + ')', sub = [v.en, v.tense].filter(Boolean).join(' · ');
       const asPick = vopt.mode === 'practice' && Math.random() < 0.4;
-      if (asPick) { const wrong = shuffle([...new Set(v.forms.filter((f) => f !== form))]).slice(0, 3); out.push({ t: 'pick', title: 'Pick the correct form', prompt, sub, opts: shuffle([form].concat(wrong)), answer: form, afterSay: pr + ' ' + form, total: 1 }); }
+      if (asPick) { const wrong = shuffle([...new Set(v.forms.filter((f) => f !== form && f !== v.forms[VT_IDX[p]]))]).slice(0, 3); out.push({ t: 'pick', title: 'Pick the correct form', prompt, sub, opts: shuffle([form].concat(wrong)), answer: form, afterSay: pr + ' ' + form, total: 1 }); }
       else out.push({ t: 'type', title: 'Conjugate the verb', prompt, sub, answer: form, afterSay: pr + ' ' + form, total: 1 });
     }));
-    const lim = vopt.mode === 'test' ? +vopt.n || 20 : 72; return vopt.order === 'random' ? shuffle(out).slice(0, Math.min(lim, 60 + (vopt.mode === 'test' ? 10 : 0))) : out.slice(0, lim);
+    const lim = vopt.mode === 'test' ? +vopt.n || 20 : vopt.mode === 'normal' ? 400 : 72; return vopt.order === 'random' ? shuffle(out).slice(0, lim) : out.slice(0, lim);
   };
   let qs = vopt ? buildVerb() : build();
   if (!g.fast && !vopt) qs = qs.slice(0, 40);
@@ -699,7 +702,7 @@ function drawPlay() {
     inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') ACT.gCheck(); });
   }
 }
-ACT.gQuit = () => go(G && G.practice ? '#/s/practice' : '#/s/hw/' + G.id);
+ACT.gQuit = () => go(G && G.practice ? (G.practice.ids[0] === 'vt' ? '#/s/practice/verbs' : '#/s/practice') : '#/s/hw/' + G.id);
 ACT.gSay = (t) => { t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1800); say(t.dataset.t, !!t.dataset.slow); };
 ACT.gPick = (t) => {
   const q = curQ(); G.st.sel = +t.dataset.i; drawPlay(); if (q.speakOpts) say(q.opts[G.st.sel]);
