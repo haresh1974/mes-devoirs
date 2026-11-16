@@ -28,11 +28,22 @@ ROUTES.push([/^\/s$/, async () => {
   let seen = []; try { seen = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {}
   const notes = (d.notices || []).filter((n) => !seen.includes(n.id)).map((n) => `<div class="notice"><span>🔔</span><div style="flex:1"><b>Message from your teacher</b><div>${esc(n.message)}</div></div><button class="icon-btn" data-act="seeNote" data-id="${esc(n.id)}" style="width:30px;height:30px">✕</button></div>`).join('');
   $('#app').innerHTML = `<div class="sbody">${sTop(d.student.coins, false)}
-    <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><p class="mute" style="margin:0 0 20px">${esc(d.cls.name)}</p>${notes}
+    <h1 style="margin:6px 0 4px">Bonjour, ${esc(d.student.name)}! 👋</h1><div class="myc">${(d.classes || []).map((c) => `<button class="${c.current ? 'on' : ''}" data-act="sSwitch" data-id="${esc(c.id)}" ${c.current ? 'aria-current="true"' : ''}>${esc(c.name)}</button>`).join('')}<button class="add" data-act="sJoin">＋ Join another class</button></div>${notes}
     <button class="hcard" data-act="sPractice" style="background:linear-gradient(135deg,#1F4FBF,#6C4BDB);color:#fff"><div class="spread"><h3 style="color:#fff">🎮 Practice games</h3><span class="badge g">NEW</span></div><div style="opacity:.9">Vocab, sentences, verbs, listening, dictation and speed games</div></button>${d.tests && d.tests.total ? `<button class="hcard" data-act="sTests" style="background:linear-gradient(135deg,#0f766e,#14a39a);color:#fff"><div class="spread"><h3 style="color:#fff">📝 Class tests</h3>${d.tests.todo ? `<span class="badge g">${d.tests.todo} to do</span>` : ''}</div><div style="opacity:.9">Tests your teacher has set for your class</div></button>` : ''}<button class="hcard" data-act="sRes"><div class="spread"><h3>📎 Resources</h3></div><div class="mute small">Translation, speaking and reading for your class</div></button>
         ${list || '<div class="card mute" style="text-align:center">No homework yet. Check back soon!</div>'}</div>`;
 }]);
 ACT.sRes = () => { location.href = '/resources/'; };
+ACT.sSwitch = async (t) => { if (t.classList.contains('on')) return; try { await api('/student/switch', 'POST', { id: t.dataset.id }); PH = null; route(); } catch (e) { toast(e.message); } };
+ACT.sJoin = () => { modal(`<h2>Join another class</h2><p class="mute" style="margin-top:0">Type the class code your teacher gave you. Your other classes stay as they are.</p><label class="f">Class code</label><input id="jCode" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="e.g. ABCDEF" style="text-transform:uppercase;letter-spacing:4px;font-weight:800"><div class="err" id="jErr"></div><div class="foot"><button class="btn ghost" data-act="close">Cancel</button><button class="btn" data-act="sJoinGo">Join class</button></div>`); const i = $('#jCode'); if (i) { i.focus(); i.addEventListener('keydown', (e) => { if (e.key === 'Enter') ACT.sJoinGo(); }); } };
+ACT.sJoinGo = async () => {
+  const code = ($('#jCode').value || '').trim().toUpperCase(); if (!code) return;
+  try {
+    const r = await api('/student/join', 'POST', { code }); PH = null;
+    if (r.already) { closeModal(); toast('You are already in ' + r.name); return route(); }
+    modal(`<h2>You joined ${esc(r.name)} 🎉</h2><p>Use the class buttons on your home page to move between your classes.</p>${r.samePin ? '<div class="pbox">To sign in straight to this class, use its class code with your usual PIN.</div>' : `<div class="pbox">To sign in straight to this class, use its class code with this PIN: <b style="letter-spacing:3px;font-size:20px">${esc(r.pin)}</b><br>Your usual PIN still works with your first class code.</div>`}<div class="foot"><button class="btn" data-act="sJoined">OK</button></div>`);
+  } catch (e) { const el = $('#jErr'); if (el) el.textContent = e.message; }
+};
+ACT.sJoined = () => { closeModal(); route(); };
 ACT.sTests = () => go('#/s/tests');
 ACT.sPractice = () => { if (PH) PH.keep = null; go('#/s/practice'); };
 ACT.seeNote = (t) => { let a = []; try { a = JSON.parse(localStorage.getItem('md_seen') || '[]'); } catch (e) {} a.push(t.dataset.id); try { localStorage.setItem('md_seen', JSON.stringify(a.slice(-50))); } catch (e) {} route(); };

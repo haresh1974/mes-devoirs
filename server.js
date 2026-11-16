@@ -563,6 +563,43 @@ async function board(hw, student) {
   return students.filter((s) => covered.has(s.id)).map((s) => ({ id: s.id, name: s.name, coins: atts.filter((a) => a.student_id === s.id).reduce((n, a) => n + a.coins, 0) }))
     .sort((a, b) => b.coins - a.coins || a.name.localeCompare(b.name));
 }
+/* one child, several classes: each class has its own student record, linked by link_id */
+async function linkedStudents(s) {
+  const key = s.link_id || s.id;
+  return db.all('SELECT s.id, s.class_id, c.name AS cname, c.language FROM students s JOIN classes c ON c.id = s.class_id WHERE s.id = ? OR s.link_id = ? ORDER BY s.created', [key, key]);
+}
+async function switchStudent(req, id) {
+  const tok = parseCookies(req).sid;
+  await db.run('DELETE FROM sessions WHERE kind = ? AND user_id = ? AND token <> ?', ['student', id, tok]);
+  await db.run('UPDATE sessions SET user_id = ? WHERE token = ? AND kind = ?', [id, tok, 'student']);
+  await db.run('UPDATE students SET last_active = ? WHERE id = ?', [now(), id]);
+}
+app.get('/api/student/classes', studentOnly(async (req, res) => {
+  const rows = await linkedStudents(req.student);
+  res.json({ classes: rows.map((r) => ({ id: r.id, name: r.cname, language: r.language, current: r.id === req.student.id })) });
+}));
+app.post('/api/student/switch', studentOnly(async (req, res) => {
+  const rows = await linkedStudents(req.student), t = rows.find((r) => r.id === String(req.body.id || ''));
+  if (!t) return res.status(404).json({ error: 'Class not found.' });
+  await switchStudent(req, t.id);
+  res.json({ ok: true });
+}));
+app.post('/api/student/join', studentOnly(async (req, res) => {
+  const s = req.student, code = clean(req.body.code, 10).toUpperCase();
+  if (limited('sj:' + s.id, 10, 600000)) return res.status(429).json({ error: 'Too many tries. Please wait a few minutes.' });
+  const c = code && await db.get('SELECT * FROM classes WHERE code = ?', [code]);
+  if (!c) return res.status(400).json({ error: 'That class code is not right. Check it with your teacher.' });
+  const rows = await linkedStudents(s), have = rows.find((r) => r.class_id === c.id);
+  if (have) { await switchStudent(req, have.id); return res.json({ ok: true, already: true, name: c.name }); }
+  if (rows.length >= 6) return res.status(400).json({ error: 'You are already in 6 classes. Ask your teacher for help.' });
+  const key = s.link_id || s.id;
+  if (!s.link_id) await db.run('UPDATE students SET link_id = ? WHERE id = ?', [key, s.id]);
+  const taken = new Set((await db.all('SELECT pin FROM students WHERE class_id = ?', [c.id])).map((x) => x.pin));
+  const pin = taken.has(s.pin) ? newPin(taken) : s.pin, id = uid();
+  await db.run('INSERT INTO students (id,class_id,name,pin,created,last_active,link_id) VALUES (?,?,?,?,?,?,?)', [id, c.id, s.name, pin, now(), now(), key]);
+  await switchStudent(req, id);
+  res.json({ ok: true, name: c.name, pin, samePin: pin === s.pin });
+}));
 app.get('/api/student/home', studentOnly(async (req, res) => {
   const s = req.student;
   const c = await db.get('SELECT * FROM classes WHERE id = ?', [s.class_id]);
@@ -589,7 +626,8 @@ app.get('/api/student/home', studentOnly(async (req, res) => {
   const tAsg = await db.all('SELECT id,due_at FROM test_assignments WHERE class_id = ? AND start_at <= ?', [c.id, now()]);
   let tTodo = 0;
   for (const a of tAsg) { const r = await db.get('SELECT status FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, s.id]); if (!r && !(a.due_at && a.due_at < now())) tTodo++; }
-  res.json({ student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn(), tests: { total: tAsg.length, todo: tTodo } });
+  const linked = await linkedStudents(s);
+  res.json({ classes: linked.map((r) => ({ id: r.id, name: r.cname, current: r.id === s.id })), student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn(), tests: { total: tAsg.length, todo: tTodo } });
 }));
 app.get('/api/student/homework/:id', studentOnly(async (req, res) => {
   const hw = await studentHw(req, req.params.id);

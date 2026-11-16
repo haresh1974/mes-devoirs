@@ -96,6 +96,7 @@ async function upgrade(db) {
     try { await db.run('ALTER TABLE homework ADD COLUMN ' + col); } catch (e) { /* already there */ }
   }
   try { await db.run("ALTER TABLE classes ADD COLUMN board TEXT DEFAULT 'Both'"); } catch (e) { /* already there */ }
+  try { await db.run('ALTER TABLE students ADD COLUMN link_id TEXT'); } catch (e) { /* already there */ }
   // Homework that was already given to a class (it has a due date) becomes an assignment to the whole class, once.
   const done = await db.get("SELECT v FROM meta WHERE k = 'assign_migrated'");
   if (!done) {

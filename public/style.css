@@ -291,3 +291,8 @@ body{background:linear-gradient(180deg,#eaf6ff 0,#f6f9ff 260px)}
 .ttile b{font-size:17px;overflow-wrap:anywhere}
 .ttile small{color:var(--mute);font-weight:600;font-size:13px;line-height:1.35}
 @media(max-width:560px){.thome{padding:14px 12px 60px}.tgrid{grid-template-columns:repeat(2,1fr);gap:10px}.ttile{min-height:112px;padding:12px}.ttile b{font-size:15px}}
+
+.myc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+.myc button{font:inherit;font-weight:800;font-size:14px;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
+.myc button.on{background:var(--blue);border-color:var(--blue);color:#fff;cursor:default}
+.myc button.add{border-style:dashed;color:var(--blue)}
