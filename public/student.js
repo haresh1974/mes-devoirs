@@ -330,6 +330,18 @@ ROUTES.push([/^\/s\/practice\/play\/(\w+)\/(\w+)\/([\w,-]+)$/, async (game, leve
   d.lessons.forEach((l) => { l.items.forEach((i) => (i.g ? data.grammar : data.items).push(i)); data.verbs.push(...l.verbs); });
   let vt = null;
   if (game === 'verb' && ids === 'vt') { try { vt = JSON.parse(sessionStorage.getItem('vtsel') || 'null'); } catch (e) { vt = null; } if (!vt) return go('#/s/practice/verbs'); const av = (await api('/student/practice/verbs')).verbs; data.verbs = av.filter((v) => vt.tenses.includes(v.tense) && vt.verbs.includes(v.inf)); }
+  if (game !== 'verb' && d.lessons.length && data.items.length && data.items.length < 14) {
+    try {
+      const all = (PH && PH.all && PH.all.length ? PH.all : (await api('/student/practice')).lessons) || [];
+      const mine = d.lessons.map((l) => l.id), me = all.find((y) => y.id === mine[0]) || {};
+      const sib = all.filter((x) => x.kind === me.kind && x.level === me.level && x.topic === me.topic && !mine.includes(x.id)).slice(0, 6).map((x) => x.id);
+      const seen = new Set(data.items.map((i) => i.fr));
+      for (let i = 0; i < sib.length && data.items.length < 16; i += 3) {
+        const r = await api('/student/practice/lessons?ids=' + sib.slice(i, i + 3).join(','));
+        (r.lessons || []).forEach((l) => l.items.forEach((it) => { if (it.fr && it.en && !it.g && !it.q && !seen.has(it.fr) && data.items.length < 18) { seen.add(it.fr); data.items.push(it); } }));
+      }
+    } catch (e) { /* play with what we have */ }
+  }
   const build = () => {
     const out = [];
     g.kinds.forEach(([k, n]) => {

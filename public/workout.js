@@ -63,7 +63,7 @@ ROUTES.push([/^\/s\/practice\/workout\/(\w+)\/([\w,-]+)(?:\/(\w+))?$/, async (le
   VOICE.cloud = !!d.tts; ST.lang = 'fr-FR';
   const L = d.lessons[0];
   if (!L) return go('#/s/practice');
-  const need = L.kind === 'gram' ? 10 : (L.kind === 'vocab' || L.kind === 'sent' || L.kind === 'speak' || L.kind === 'lis') ? 6 : 0;
+  const need = L.kind === 'gram' ? 10 : (L.kind === 'vocab' || L.kind === 'sent' || L.kind === 'speak' || L.kind === 'lis') ? 10 : 0;
   if (need && (L.items || []).length < need) {
     try {
       const all = (PH.all && PH.all.length ? PH.all : (await api('/student/practice')).lessons) || [];
