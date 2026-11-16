@@ -47,6 +47,16 @@ ROUTES.push([/^\/s\/hw\/(\w+)$/, async (id) => {
   const me = board.find((b) => b.me);
   ST.study = d.study || 0; STUDY_SECS = d.need || STUDY_SECS;
   const studied = ST.study >= STUDY_SECS;
+  if (hw.extra && hw.extra.resource) {
+    const r = hw.extra.resource, fin = !!done.RES;
+    ST.resT0 = Date.now();
+    $('#app').innerHTML = `<div class="sbody">${sTop(null, true)}
+      <div class="hwhead"><div class="spread"><div class="t">${esc(r.skill || 'Resource')}</div><div class="small" style="font-weight:800">#${me.rank} of ${board.length} · ${me.coins} 🪙</div></div><h1>${esc(hw.title)}</h1><div>${esc(r.desc || hw.topic || '')}</div>
+      <div class="due"><span>⏰ ${esc(dueLeft(hw.due_at))}</span><span>${hw.due_at ? 'Due ' + esc(fmtDate(hw.due_at)) : ''}</span></div></div>
+      <div class="card" style="text-align:center"><div style="font-size:42px">📎</div><b style="font-size:18px">Step 1: open and do the task</b><div class="mute" style="margin:6px 0 14px">It opens in a new tab. Allow the microphone if it asks. Come back here when you have finished.</div><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">Open ${esc(hw.title)} ↗</a></div>
+      <div class="card" style="text-align:center">${fin ? '<div style="font-size:40px">🎉</div><b>Done! Well played.</b><div class="mute small">You can open it again any time.</div>' : '<b style="font-size:18px">Step 2: tell your teacher you have finished</b><div class="mute" style="margin:6px 0 14px">Tap the button once you have really done the task.</div><button class="btn green" data-act="sResDone">✓ I have finished this</button>'}</div></div>`;
+    return;
+  }
   let inner = '';
   if (ST.tab === 'path') {
     let nextSet = false;
@@ -68,6 +78,10 @@ ROUTES.push([/^\/s\/hw\/(\w+)$/, async (id) => {
       <div class="due"><span>⏰ ${esc(dueLeft(hw.due_at))}</span><span>${hw.due_at ? 'Due ' + esc(fmtDate(hw.due_at)) : ''}</span></div></div>
     <div class="stabs"><button class="${ST.tab === 'path' ? 'on' : ''}" data-act="sTab" data-k="path">Path</button><button class="${ST.tab === 'board' ? 'on' : ''}" data-act="sTab" data-k="board">Leaderboard</button></div>${inner}</div>`;
 }]);
+ACT.sResDone = async () => {
+  try { await api('/student/attempt', 'POST', { homework_id: ST.hw, lesson: 'RES', score: 1, total: 1, secs: Math.min(3600, Math.round((Date.now() - (ST.resT0 || Date.now())) / 1000)) }); toast('Well done! Marked as finished.'); route(); }
+  catch (e) { toast(e.message || 'Could not save. Try again.'); }
+};
 ACT.sBubble = () => {
   const ss = (ST.hwData.items || []).filter((i) => i.s);
   const it = (ss.length ? ss : ST.hwData.items || [])[Math.floor(Math.random() * Math.max(1, (ss.length ? ss : ST.hwData.items || []).length))];

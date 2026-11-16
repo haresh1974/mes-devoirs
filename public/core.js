@@ -188,10 +188,11 @@ async function route() {
 window.addEventListener('hashchange', route);
 document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-act]');
-  if (!t) return;
+  if (!t || t.tagName === 'SELECT') return;
   const fn = ACT[t.dataset.act];
   if (fn) { e.preventDefault(); fn(t, e); }
 });
+document.addEventListener('change', (e) => { const t = e.target.closest('select[data-act]'); const fn = t && ACT[t.dataset.act]; if (fn) fn(t, e); });
 ACT.home = () => go('#/');
 ACT.close = () => closeModal();
 ACT.logout = async () => { try { await api('/logout', 'POST', {}); } catch (e) {} go('#/'); };

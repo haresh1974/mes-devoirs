@@ -147,7 +147,7 @@ function newCode() {
   return c;
 }
 app.get('/api/classes', teacherOnly(async (req, res) => {
-  const rows = await db.all('SELECT id,name,language,tiers,code FROM classes WHERE teacher_id = ? ORDER BY created', [req.teacher.id]);
+  const rows = await db.all('SELECT id,name,language,tiers,code,board FROM classes WHERE teacher_id = ? ORDER BY created', [req.teacher.id]);
   res.json({ classes: rows.map((c) => ({ ...c, tiers: JSON.parse(c.tiers) })), teacher: { name: req.teacher.name }, tts: ttsOn() });
 }));
 
@@ -169,10 +169,18 @@ app.post('/api/classes', teacherOnly(async (req, res) => {
   if (!/^[A-Z]{4,8}$/.test(code)) return res.status(400).json({ error: 'Class code must be 4 to 8 letters.' });
   if (await db.get('SELECT id FROM classes WHERE code = ?', [code])) return res.status(400).json({ error: 'That class code is taken. Pick another.' });
   const id = uid();
-  await db.run('INSERT INTO classes (id,teacher_id,name,language,tiers,code,created) VALUES (?,?,?,?,?,?,?)', [id, req.teacher.id, name, language, JSON.stringify(tiers), code, now()]);
+  const board = ['ICSE', 'IGCSE', 'Both'].includes(req.body.board) ? req.body.board : 'Both';
+  await db.run('INSERT INTO classes (id,teacher_id,name,language,tiers,code,board,created) VALUES (?,?,?,?,?,?,?,?)', [id, req.teacher.id, name, language, JSON.stringify(tiers), code, board, now()]);
   res.json({ id, code });
 }));
 
+app.put('/api/classes/:id/board', teacherOnly(async (req, res) => {
+  const c = await ownClass(req, req.params.id);
+  if (!c) return res.status(404).json({ error: 'Not found.' });
+  const board = ['ICSE', 'IGCSE', 'Both'].includes(req.body.board) ? req.body.board : 'Both';
+  await db.run('UPDATE classes SET board = ? WHERE id = ?', [board, c.id]);
+  res.json({ ok: true, board });
+}));
 app.delete('/api/classes/:id', teacherOnly(async (req, res) => {
   const c = await ownClass(req, req.params.id);
   if (!c) return res.status(404).json({ error: 'Not found.' });
@@ -234,7 +242,7 @@ app.get('/api/classes/:id/overview', teacherOnly(async (req, res) => {
     return { id: h.id, aid: x.id, title: h.title, topic: h.topic, tier: h.tier, start_at: x.start_at, due_at: x.due_at, audience: x.audience, size: sm.size,
       lessons: JSON.parse(h.exercises).length, counts: sm.counts };
   });
-  res.json({ cls: { id: c.id, name: c.name, language: c.language, tiers: JSON.parse(c.tiers), code: c.code }, students: sOut, homework: hOut });
+  res.json({ cls: { id: c.id, name: c.name, language: c.language, tiers: JSON.parse(c.tiers), code: c.code, board: c.board || 'Both' }, students: sOut, homework: hOut });
 }));
 
 /* ---------- library, assigning and timeline ---------- */
@@ -250,6 +258,52 @@ async function teacherData(tid) {
   const summaries = asg.filter((a) => hwBy[a.homework_id] && clsBy[a.class_id]).map((a) => summarise(a, hwBy[a.homework_id], stByClass[a.class_id] || [], atts, clsBy[a.class_id].name));
   return { classes, hws, stByClass, summaries, hwBy, clsBy, atts };
 }
+/* ---------- resources: organised by board, assignable as homework ---------- */
+let RESOURCES = [];
+try { RESOURCES = JSON.parse(fs.readFileSync(path.join(__dirname, 'seed', 'resources.json'), 'utf8')); } catch (e) { /* none */ }
+const boardOk = (r, board) => !board || board === 'Both' || r.boards.includes(board);
+app.get('/api/resources', wrap(async (req, res) => {
+  const t = await auth(req, 'teacher');
+  if (t) {
+    const classes = await db.all('SELECT id,name,board FROM classes WHERE teacher_id = ? ORDER BY created', [t.id]);
+    return res.json({ role: 'teacher', classes, resources: RESOURCES });
+  }
+  const st = await auth(req, 'student');
+  if (!st) return res.status(401).json({ error: 'Please sign in.' });
+  const c = await db.get('SELECT board FROM classes WHERE id = ?', [st.class_id]);
+  res.json({ role: 'student', board: (c && c.board) || 'Both', resources: RESOURCES.filter((r) => r.access === 'open' && boardOk(r, c && c.board)) });
+}));
+app.post('/api/resources/assign', teacherOnly(async (req, res) => {
+  const b = req.body || {};
+  const rids = [...new Set((Array.isArray(b.resource_ids) ? b.resource_ids : []).map(String))].slice(0, 100);
+  const cids = [...new Set((Array.isArray(b.class_ids) ? b.class_ids : []).map(String))];
+  const picks = rids.map((id) => RESOURCES.find((r) => r.id === id)).filter(Boolean);
+  if (!picks.length) return res.status(400).json({ error: 'Choose at least one resource.' });
+  const classes = [];
+  for (const id of cids) { const c = await ownClass(req, id); if (c) classes.push(c); }
+  if (!classes.length) return res.status(400).json({ error: 'Choose at least one class.' });
+  const start = parseInt(b.start_at, 10) || now();
+  const due = b.due_at ? parseInt(b.due_at, 10) : null;
+  if (due && due <= start) return res.status(400).json({ error: 'The due date must be after the start date.' });
+  let made = 0;
+  for (const c of classes) {
+    const students = await db.all('SELECT id FROM students WHERE class_id = ?', [c.id]);
+    if (!students.length) continue;
+    for (const r of picks) {
+      let hw = await db.get('SELECT id FROM homework WHERE class_id = ? AND extra LIKE ?', [c.id, '%"rid":"' + r.id + '"%']);
+      if (!hw) {
+        const id = uid();
+        await db.run('INSERT INTO homework (id,class_id,title,topic,folder,tier,due_at,free_order,exercises,items,extra,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+          [id, c.id, r.title, r.group, 'Resources / ' + r.skill, 'Higher', null, 1, JSON.stringify(['RES']), '[]', JSON.stringify({ verbs: [], grammar: [], mixed: false, resource: { rid: r.id, url: r.url, title: r.title, desc: r.desc, skill: r.skill } }), now()]);
+        hw = { id };
+      }
+      await db.run('INSERT INTO assignments (id,homework_id,class_id,start_at,due_at,audience,student_ids,created) VALUES (?,?,?,?,?,?,?,?)', [uid(), hw.id, c.id, start, due, 'all', null, now()]);
+      made++;
+    }
+  }
+  if (!made) return res.status(400).json({ error: 'Those classes have no students yet.' });
+  res.json({ ok: true, made, classes: classes.length });
+}));
 app.get('/api/library', teacherOnly(async (req, res) => {
   const D = await teacherData(req.teacher.id);
   const by = {}; D.summaries.forEach((x) => { (by[x.homework_id] = by[x.homework_id] || []).push(x); });
@@ -717,8 +771,21 @@ app.post('/api/library/warm', wrap(async (req, res) => {
 
 /* ---------- static ---------- */
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
-// Teacher-only resources (private repos): only a signed-in teacher can open them.
-app.use('/resources/teacher', (req, res, next) => { auth(req, 'teacher').then((t) => { if (!t) return res.redirect('/#/t'); res.set('Cache-Control', 'private, no-cache'); next(); }).catch(next); }, express.static(path.join(__dirname, 'private')));
+// Private resources: a signed-in teacher, or a student whose class has been assigned that resource.
+app.use('/resources/teacher', (req, res, next) => {
+  (async () => {
+    if (await auth(req, 'teacher')) return true;
+    const st = await auth(req, 'student');
+    if (!st) return false;
+    const seg = req.path.split('/').filter(Boolean)[0];
+    if (!seg) return false;
+    const mine = await myAssignments(st);
+    if (!mine.length) return false;
+    const ids = [...new Set(mine.map((a) => a.homework_id))];
+    const hws = await db.all('SELECT extra FROM homework WHERE id IN (' + inList(ids) + ')', ids);
+    return hws.some((h) => (h.extra || '').includes('/resources/teacher/' + seg + '/'));
+  })().then((ok) => { if (!ok) return res.redirect('/'); res.set('Cache-Control', 'private, no-cache'); next(); }).catch(next);
+}, express.static(path.join(__dirname, 'private')));
 app.use(express.static(path.join(__dirname, 'public'), { etag: true, setHeaders: (res, f) => { if (/\.(js|css|html)$/.test(f)) res.set('Cache-Control', 'no-cache'); } }));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 

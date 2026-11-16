@@ -1,0 +1,2264 @@
+[
+{
+"id": "tr-fe-pantalon",
+"title": "Le pantalon bleu",
+"desc": "A shopper orders black trousers online but receives blue ones, and has to buy them anyway.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#pantalon-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-alimentation",
+"title": "L’alimentation équilibrée",
+"desc": "What a balanced diet is, and how a balanced plate is divided.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#alimentation-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-vedette",
+"title": "La vedette",
+"desc": "A girl dreamed of becoming a star, heard that stars are unhappy, and found another interest.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#vedette-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-avion",
+"title": "Voyager en avion",
+"desc": "More and more people fly, but some are afraid, and a famous actress explains why she fears it.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#avion-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-cousteau",
+"title": "Jacques Cousteau",
+"desc": "Jacques Cousteau was a navy officer and diver who became a famous film-maker and a campaigner for the environment.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#cousteau-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-cuisine",
+"title": "La cuisine en France",
+"desc": "French food changes from one region to another, but everywhere people eat a lot of cheese.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#cuisine-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-diplomatie",
+"title": "Le français et les Jeux Olympiques",
+"desc": "French is an important international language, and Pierre de Coubertin helped bring back the Olympic Games.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#diplomatie-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-elodie",
+"title": "Les feuilletons d’Elodie",
+"desc": "Elodie likes soap operas, while Antony prefers live sport.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#elodie-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-environnement",
+"title": "L’environnement",
+"desc": "The speaker cares about the environment, and worries about litter and about people using cars instead of public transport.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#environnement-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-maison",
+"title": "Notre nouvelle maison",
+"desc": "A family has moved from Paris to a very small town in the countryside and plans to save money.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#maison-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-roupies",
+"title": "Les roupies",
+"desc": "A woman has won 10 million rupees with a lottery ticket that she almost lost in the wash.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#roupies-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-sylvie",
+"title": "Sylvie Bertrand",
+"desc": "Sylvie Bertrand introduces herself, her interest in languages and cinema, and her wish to become a teacher.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#sylvie-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-valentin",
+"title": "Saint Valentin",
+"desc": "A priest called Valentine married soldiers in secret and was condemned to death, which is why we celebrate St Valentine’s Day.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#valentin-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-zebres",
+"title": "Pourquoi les zèbres sont-ils rayés ?",
+"desc": "Scientists have several theories about why zebras have stripes: camouflage, confusing lions and helping zebras recognise each other.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#zebres-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-kipling",
+"title": "Rudyard Kipling",
+"desc": "Rudyard Kipling grew up in India, was sent to England as a child, turned to writing and won the Nobel Prize at 42.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#kipling-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-voyages",
+"title": "Les jeunes et les voyages",
+"desc": "Young people under 25 still travel often, but cheap flights and social media are changing how and where they stay.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#voyages-translate",
+"access": "open"
+},
+{
+"id": "tr-fe-booklet",
+"title": "Studio GCSE booklet passages",
+"desc": "Read-only passages with word help and the English tense to use.",
+"group": "Translation: French to English",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-fr-en/#booklet",
+"access": "open"
+},
+{
+"id": "tr-ef-all",
+"title": "French Translation Lab (all texts)",
+"desc": "English to French: tap a phrase for its meaning and check your version.",
+"group": "Translation: English to French",
+"skill": "Translation",
+"boards": [
+"ICSE",
+"IGCSE"
+],
+"url": "/resources/translation-en-fr/",
+"access": "open"
+},
+{
+"id": "dlg-part1-1-vous-etes-chez-le-medecin-comme-",
+"title": "Dialogue 1: You are at the doctor's as you are unwell. Write the dialogue between",
+"desc": "You are at the doctor's as you are unwell. Write the dialogue between you and the doctor.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-1-vous-etes-chez-le-medecin-comme-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-2-vous-etes-malade-vous-allez-chez",
+"title": "Dialogue 2: You are ill, you go to the doctor's. Write the dialogue between you an",
+"desc": "You are ill, you go to the doctor's. Write the dialogue between you and the doctor.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-2-vous-etes-malade-vous-allez-chez",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-3-vous-etes-chez-le-medecin-avec-v",
+"title": "Dialogue 3: You are at the doctor's with your mother because she has a sore throat",
+"desc": "You are at the doctor's with your mother because she has a sore throat. Because of this, she cannot speak and you must speak to the doctor.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-3-vous-etes-chez-le-medecin-avec-v",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-4-vous-etes-a-la-pharmacie-pour-ac",
+"title": "Dialogue 4: You are at the pharmacy to buy medicine. Write a dialogue between you",
+"desc": "You are at the pharmacy to buy medicine. Write a dialogue between you and the pharmacist.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-4-vous-etes-a-la-pharmacie-pour-ac",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-5-ecrivez-un-dialogue-entre-vous-e",
+"title": "Dialogue 5: Write a dialogue between you and the shop assistant in a bookshop",
+"desc": "Write a dialogue between you and the shop assistant in a bookshop.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-5-ecrivez-un-dialogue-entre-vous-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-6-vous-entrez-dans-une-librairie-e",
+"title": "Dialogue 6: You enter a bookshop in France. You want to buy postcards. Write the d",
+"desc": "You enter a bookshop in France. You want to buy postcards. Write the dialogue between the shop assistant and the customer.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-6-vous-entrez-dans-une-librairie-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-7-ecrivez-un-dialogue-entre-un-ven",
+"title": "Dialogue 7: Write a dialogue between a shop assistant and his/her customer at the",
+"desc": "Write a dialogue between a shop assistant and his/her customer at the clothes shop.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-7-ecrivez-un-dialogue-entre-un-ven",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-8-ecrivez-un-dialogue-entre-vous-e",
+"title": "Dialogue 8: Write a dialogue between you and the shop assistant (about an item you",
+"desc": "Write a dialogue between you and the shop assistant (about an item you bought).",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-8-ecrivez-un-dialogue-entre-vous-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-9-ecrivez-un-dialogue-entre-vous-e",
+"title": "Dialogue 9: Write a dialogue between you and a hotel receptionist on the phone",
+"desc": "Write a dialogue between you and a hotel receptionist on the phone.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-9-ecrivez-un-dialogue-entre-vous-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-10-vous-avez-demenage-dans-une-vil",
+"title": "Dialogue 10: You have moved to a city where you are looking for a flat. Write a ten",
+"desc": "You have moved to a city where you are looking for a flat. Write a ten-line dialogue between you and the owner of the flat.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-10-vous-avez-demenage-dans-une-vil",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-11-vous-etes-a-la-gare-devant-le-g",
+"title": "Dialogue 11: You are at the station in front of the ticket window. Book tickets. Wr",
+"desc": "You are at the station in front of the ticket window. Book tickets. Write a dialogue between you and the clerk.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-11-vous-etes-a-la-gare-devant-le-g",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-12-ecrivez-un-dialogue-entre-un-cl",
+"title": "Dialogue 12: Write a dialogue between a customer and a waiter at the restaurant",
+"desc": "Write a dialogue between a customer and a waiter at the restaurant.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-12-ecrivez-un-dialogue-entre-un-cl",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-13-vous-etes-dans-un-restaurant-av",
+"title": "Dialogue 13: You are in a restaurant with your family. Write a dialogue",
+"desc": "You are in a restaurant with your family. Write a dialogue.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-13-vous-etes-dans-un-restaurant-av",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-14-vous-etes-au-cafe-avec-vos-amis",
+"title": "Dialogue 14: You are at the café with your friends. Write a dialogue between you, y",
+"desc": "You are at the café with your friends. Write a dialogue between you, your friends and the waiter.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-14-vous-etes-au-cafe-avec-vos-amis",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-15-il-y-a-une-soiree-chez-vous-vot",
+"title": "Dialogue 15: There is a party at your house. Your mother has already prepared some",
+"desc": "There is a party at your house. Your mother has already prepared some dishes and asks you to help her. Write a dialogue between you and your mother.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-15-il-y-a-une-soiree-chez-vous-vot",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-16-c-est-un-jour-de-conge-vous-ete",
+"title": "Dialogue 16: It is a holiday. You are at home and you want to watch your favourite",
+"desc": "It is a holiday. You are at home and you want to watch your favourite programme. Write a dialogue between you and your father.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-16-c-est-un-jour-de-conge-vous-ete",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-17-faites-un-dialogue-entre-vous-e",
+"title": "Dialogue 17: Write a dialogue between you and your father (10 exchanges)",
+"desc": "Write a dialogue between you and your father (10 exchanges).",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-17-faites-un-dialogue-entre-vous-e",
+"access": "open",
+"marks": "10"
+},
+{
+"id": "dlg-part1-18-vous-voulez-inviter-votre-ami-e",
+"title": "Dialogue 18: You want to invite your friend to spend the weekend at your place as i",
+"desc": "You want to invite your friend to spend the weekend at your place as it is your birthday, and you phone him/her. Write the dialogue.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-18-vous-voulez-inviter-votre-ami-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-19-faites-le-dialogue-entre-vous-e",
+"title": "Dialogue 19: Write the dialogue between you and your friend during recess",
+"desc": "Write the dialogue between you and your friend during recess.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-19-faites-le-dialogue-entre-vous-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-20-composez-un-dialogue-entre-votr",
+"title": "Dialogue 20: Write a dialogue between your friend and you describing a new hobby",
+"desc": "Write a dialogue between your friend and you describing a new hobby.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-20-composez-un-dialogue-entre-votr",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-21-ecrivez-un-dialogue-entre-vous-",
+"title": "Dialogue 21: Write a dialogue between you and your French friend discussing a festi",
+"desc": "Write a dialogue between you and your French friend discussing a festival you have just celebrated with your family.",
+"group": "ICSE dialogues: Festivals & Celebrations",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-21-ecrivez-un-dialogue-entre-vous-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-22-ecrivez-un-dialogue-entre-vous-",
+"title": "Dialogue 22: Write a dialogue between you and your friend discussing what you like",
+"desc": "Write a dialogue between you and your friend discussing what you like to do as hobbies.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-22-ecrivez-un-dialogue-entre-vous-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-23-c-est-dimanche-vous-vous-promen",
+"title": "Dialogue 23: It is Sunday. You are walking in the park near your house. You meet a",
+"desc": "It is Sunday. You are walking in the park near your house. You meet a French girl/boy in the park. You introduce yourselves. Write a dialogue.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-23-c-est-dimanche-vous-vous-promen",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-24-vous-voulez-emprunter-des-livre",
+"title": "Dialogue 24: You want to borrow books from the town library. You speak to the recep",
+"desc": "You want to borrow books from the town library. You speak to the receptionist. Write the dialogue.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-24-vous-voulez-emprunter-des-livre",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-26-vous-et-votre-ami-e-preparez-un",
+"title": "Dialogue 26: You and your friend are planning a visit to a historic city during the",
+"desc": "You and your friend are planning a visit to a historic city during the holidays. Discuss your plans and find solutions to possible difficulties.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-26-vous-et-votre-ami-e-preparez-un",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part1-27-vous-voulez-assister-a-un-conce",
+"title": "Dialogue 27: You want to attend a concert. Write a dialogue between you and your fr",
+"desc": "You want to attend a concert. Write a dialogue between you and your friend to invite him/her to accompany you.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part1-27-vous-voulez-assister-a-un-conce",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-1-vous-avez-mal-aux-dents-ecrivez-",
+"title": "Dialogue 1: You have a toothache. Write a dialogue between you and the dentist",
+"desc": "You have a toothache. Write a dialogue between you and the dentist.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-1-vous-avez-mal-aux-dents-ecrivez-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-2-vous-vous-etes-casse-le-bras-en-",
+"title": "Dialogue 2: You broke your arm while playing sport. Write a dialogue between you a",
+"desc": "You broke your arm while playing sport. Write a dialogue between you and the doctor at the hospital.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-2-vous-vous-etes-casse-le-bras-en-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-3-un-e-ami-e-est-malade-vous-lui-r",
+"title": "Dialogue 3: A friend is ill. You visit him/her and offer help. Write the dialogue",
+"desc": "A friend is ill. You visit him/her and offer help. Write the dialogue.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-3-un-e-ami-e-est-malade-vous-lui-r",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-4-vous-voulez-echanger-un-vetement",
+"title": "Dialogue 4: You want to exchange a piece of clothing that does not fit you. Write",
+"desc": "You want to exchange a piece of clothing that does not fit you. Write a dialogue between you and the shop assistant.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-4-vous-voulez-echanger-un-vetement",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-5-vous-etes-dans-une-patisserie-bo",
+"title": "Dialogue 5: You are at a cake shop/bakery and you order a cake for a birthday. Wri",
+"desc": "You are at a cake shop/bakery and you order a cake for a birthday. Write a dialogue.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-5-vous-etes-dans-une-patisserie-bo",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-6-vous-etes-dans-un-magasin-d-elec",
+"title": "Dialogue 6: You are at an electronics shop to buy a mobile phone/computer. Write a",
+"desc": "You are at an electronics shop to buy a mobile phone/computer. Write a dialogue between you and the shop assistant.",
+"group": "ICSE dialogues: Technology & Media",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-6-vous-etes-dans-un-magasin-d-elec",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-7-vous-etes-au-marche-pour-acheter",
+"title": "Dialogue 7: You are at the market to buy fruit and vegetables. Write a dialogue be",
+"desc": "You are at the market to buy fruit and vegetables. Write a dialogue between you and the seller.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-7-vous-etes-au-marche-pour-acheter",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-8-vous-etes-chez-le-tailleur-pour-",
+"title": "Dialogue 8: You are at the tailor's to have a piece of clothing made. Write a dial",
+"desc": "You are at the tailor's to have a piece of clothing made. Write a dialogue.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-8-vous-etes-chez-le-tailleur-pour-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-9-vous-etes-a-l-agence-de-voyages-",
+"title": "Dialogue 9: You are at the travel agency to book a family holiday. Write a dialogu",
+"desc": "You are at the travel agency to book a family holiday. Write a dialogue between you and the travel agent.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-9-vous-etes-a-l-agence-de-voyages-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-10-vous-etes-a-l-aeroport-et-vous-",
+"title": "Dialogue 10: You are at the airport and you have a problem with your luggage. Write",
+"desc": "You are at the airport and you have a problem with your luggage. Write a dialogue between you and the staff member.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-10-vous-etes-a-l-aeroport-et-vous-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-11-vous-etes-au-bureau-de-poste-po",
+"title": "Dialogue 11: You are at the post office to send a parcel/letters. Write a dialogue",
+"desc": "You are at the post office to send a parcel/letters. Write a dialogue between you and the clerk.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-11-vous-etes-au-bureau-de-poste-po",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-12-vous-cherchez-votre-chemin-dans",
+"title": "Dialogue 12: You are looking for your way in an unfamiliar town. Write a dialogue i",
+"desc": "You are looking for your way in an unfamiliar town. Write a dialogue in which you ask a passer-by for directions.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-12-vous-cherchez-votre-chemin-dans",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-13-vous-etes-dans-un-taxi-et-vous-",
+"title": "Dialogue 13: You are in a taxi and you chat with the driver on the way to the airpo",
+"desc": "You are in a taxi and you chat with the driver on the way to the airport/station.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-13-vous-etes-dans-un-taxi-et-vous-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-14-vous-appelez-un-e-ami-e-pour-an",
+"title": "Dialogue 14: You call a friend to cancel an appointment because of an emergency. Wr",
+"desc": "You call a friend to cancel an appointment because of an emergency. Write the telephone dialogue.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-14-vous-appelez-un-e-ami-e-pour-an",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-15-vous-commandez-un-repas-par-tel",
+"title": "Dialogue 15: You order a meal by phone for home delivery. Write a dialogue",
+"desc": "You order a meal by phone for home delivery. Write a dialogue.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-15-vous-commandez-un-repas-par-tel",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-16-c-est-l-anniversaire-de-votre-a",
+"title": "Dialogue 16: It is your friend's birthday. You are organising a surprise party with",
+"desc": "It is your friend's birthday. You are organising a surprise party with another friend. Write the planning dialogue.",
+"group": "ICSE dialogues: Festivals & Celebrations",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-16-c-est-l-anniversaire-de-votre-a",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-17-vous-etes-dans-un-cafe-et-vous-",
+"title": "Dialogue 17: You are in a café and you politely complain to the waiter about a mist",
+"desc": "You are in a café and you politely complain to the waiter about a mistake in the bill. Write a polite dialogue.",
+"group": "ICSE dialogues: Health, Food & Daily Life",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-17-vous-etes-dans-un-cafe-et-vous-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-18-vous-voulez-sortir-avec-des-ami",
+"title": "Dialogue 18: You want to go out with friends on Saturday evening, but your parents",
+"desc": "You want to go out with friends on Saturday evening, but your parents hesitate. Write a dialogue in which you convince them.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-18-vous-voulez-sortir-avec-des-ami",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-19-vous-aidez-votre-petit-frere-pe",
+"title": "Dialogue 19: You help your little brother/sister with homework. Write a dialogue",
+"desc": "You help your little brother/sister with homework. Write a dialogue.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-19-vous-aidez-votre-petit-frere-pe",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-20-il-y-a-un-probleme-a-la-maison-",
+"title": "Dialogue 20: There is a problem at home (for example, a power cut). You and a famil",
+"desc": "There is a problem at home (for example, a power cut). You and a family member discuss it and decide what to do.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-20-il-y-a-un-probleme-a-la-maison-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-21-vous-discutez-avec-un-e-ami-e-d",
+"title": "Dialogue 21: You discuss with a friend your exam results and your holiday plans. Wr",
+"desc": "You discuss with a friend your exam results and your holiday plans. Write a dialogue.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-21-vous-discutez-avec-un-e-ami-e-d",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-22-vous-voulez-rejoindre-un-club-s",
+"title": "Dialogue 22: You want to join a club (sport, music, drama) at school. Write a dialo",
+"desc": "You want to join a club (sport, music, drama) at school. Write a dialogue between you and the teacher in charge.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-22-vous-voulez-rejoindre-un-club-s",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-23-un-e-nouvel-le-eleve-arrive-dan",
+"title": "Dialogue 23: A new student arrives in your class. You introduce yourself and get to",
+"desc": "A new student arrives in your class. You introduce yourself and get to know each other. Write a dialogue.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-23-un-e-nouvel-le-eleve-arrive-dan",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-24-vous-discutez-avec-un-e-ami-e-d",
+"title": "Dialogue 24: You discuss with a friend the excessive use of mobile phones/social me",
+"desc": "You discuss with a friend the excessive use of mobile phones/social media. Write a dialogue giving your opinions.",
+"group": "ICSE dialogues: Technology & Media",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-24-vous-discutez-avec-un-e-ami-e-d",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-25-vous-demandez-a-votre-professeu",
+"title": "Dialogue 25: You ask your teacher for permission to miss a class for a family reaso",
+"desc": "You ask your teacher for permission to miss a class for a family reason. Write the dialogue.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-25-vous-demandez-a-votre-professeu",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-26-vous-etes-a-la-banque-pour-ouvr",
+"title": "Dialogue 26: You are at the bank to open an account or change money. Write a dialog",
+"desc": "You are at the bank to open an account or change money. Write a dialogue between you and the bank clerk.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-26-vous-etes-a-la-banque-pour-ouvr",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-27-vous-etes-chez-le-coiffeur-et-v",
+"title": "Dialogue 27: You are at the hairdresser's and you explain the haircut you want. Wri",
+"desc": "You are at the hairdresser's and you explain the haircut you want. Write a dialogue.",
+"group": "ICSE dialogues: Shopping & Everyday Services",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-27-vous-etes-chez-le-coiffeur-et-v",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-28-vous-etes-au-cybercafe-pour-imp",
+"title": "Dialogue 28: You are at the cyber café to print some documents and you need help. W",
+"desc": "You are at the cyber café to print some documents and you need help. Write a dialogue.",
+"group": "ICSE dialogues: Technology & Media",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-28-vous-etes-au-cybercafe-pour-imp",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-29-vous-rendez-visite-au-zoo-musee",
+"title": "Dialogue 29: You visit the zoo/museum and ask the guide questions. Write a dialogue",
+"desc": "You visit the zoo/museum and ask the guide questions. Write a dialogue.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-29-vous-rendez-visite-au-zoo-musee",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part2-30-vous-etes-au-cinema-et-vous-ach",
+"title": "Dialogue 30: You are at the cinema and you buy tickets at the counter. Write a dial",
+"desc": "You are at the cinema and you buy tickets at the counter. Write a dialogue.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part2-30-vous-etes-au-cinema-et-vous-ach",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-1-vous-vous-disputez-avec-votre-me",
+"title": "Dialogue 1: You quarrel with your best friend over a misunderstanding, then you ma",
+"desc": "You quarrel with your best friend over a misunderstanding, then you make peace.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-1-vous-vous-disputez-avec-votre-me",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-2-vous-appelez-votre-ami-e-pour-de",
+"title": "Dialogue 2: You call your friend to decide which film to watch this weekend",
+"desc": "You call your friend to decide which film to watch this weekend.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-2-vous-appelez-votre-ami-e-pour-de",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-3-votre-ami-e-a-rate-un-examen-et-",
+"title": "Dialogue 3: Your friend has failed an exam and is sad. You comfort him/her",
+"desc": "Your friend has failed an exam and is sad. You comfort him/her.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-3-votre-ami-e-a-rate-un-examen-et-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-4-vous-felicitez-votre-ami-e-qui-a",
+"title": "Dialogue 4: You congratulate your friend who has won a competition (sport/dance/si",
+"desc": "You congratulate your friend who has won a competition (sport/dance/singing).",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-4-vous-felicitez-votre-ami-e-qui-a",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-5-vous-discutez-avec-un-e-ami-e-de",
+"title": "Dialogue 5: You discuss with a friend your favourite singer/band and an upcoming c",
+"desc": "You discuss with a friend your favourite singer/band and an upcoming concert.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-5-vous-discutez-avec-un-e-ami-e-de",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-6-vous-demandez-a-un-e-ami-e-de-vo",
+"title": "Dialogue 6: You ask a friend to lend you his/her class notes because you were abse",
+"desc": "You ask a friend to lend you his/her class notes because you were absent.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-6-vous-demandez-a-un-e-ami-e-de-vo",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-7-vous-et-votre-ami-e-planifiez-un",
+"title": "Dialogue 7: You and your friend are planning a picnic for the weekend",
+"desc": "You and your friend are planning a picnic for the weekend.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-7-vous-et-votre-ami-e-planifiez-un",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-8-vous-discutez-avec-un-e-ami-e-d-",
+"title": "Dialogue 8: You discuss with a friend a new video game or app",
+"desc": "You discuss with a friend a new video game or app.",
+"group": "ICSE dialogues: Technology & Media",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-8-vous-discutez-avec-un-e-ami-e-d-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-9-vous-et-votre-ami-e-parlez-de-vo",
+"title": "Dialogue 9: You and your friend talk about your plans for the summer holidays",
+"desc": "You and your friend talk about your plans for the summer holidays.",
+"group": "ICSE dialogues: Travel & Tourism",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-9-vous-et-votre-ami-e-parlez-de-vo",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-10-vous-appelez-un-e-ami-e-que-vou",
+"title": "Dialogue 10: You call a friend you have not seen for a long time to catch up on his",
+"desc": "You call a friend you have not seen for a long time to catch up on his/her news.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-10-vous-appelez-un-e-ami-e-que-vou",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-11-vous-discutez-avec-votre-ami-e-",
+"title": "Dialogue 11: You discuss with your friend what you are going to give a classmate fo",
+"desc": "You discuss with your friend what you are going to give a classmate for his/her birthday.",
+"group": "ICSE dialogues: Festivals & Celebrations",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-11-vous-discutez-avec-votre-ami-e-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-12-un-e-ami-e-demenage-dans-une-au",
+"title": "Dialogue 12: A friend is moving to another city. You organise a small farewell part",
+"desc": "A friend is moving to another city. You organise a small farewell party with another friend.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-12-un-e-ami-e-demenage-dans-une-au",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-13-vous-convainquez-un-e-ami-e-tim",
+"title": "Dialogue 13: You convince a shy friend to take part in a school competition (singin",
+"desc": "You convince a shy friend to take part in a school competition (singing, debate, sport).",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-13-vous-convainquez-un-e-ami-e-tim",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-14-vous-et-votre-ami-e-discutez-d-",
+"title": "Dialogue 14: You and your friend discuss a cricket/football match that you watched",
+"desc": "You and your friend discuss a cricket/football match that you watched or are going to watch together.",
+"group": "ICSE dialogues: Leisure & Hobbies",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-14-vous-et-votre-ami-e-discutez-d-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-15-votre-ami-e-veut-apprendre-un-n",
+"title": "Dialogue 15: Your friend wants to learn a new instrument/a new language and asks yo",
+"desc": "Your friend wants to learn a new instrument/a new language and asks you for advice.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-15-votre-ami-e-veut-apprendre-un-n",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-16-vous-demandez-a-vos-parents-d-a",
+"title": "Dialogue 16: You ask your parents to increase your pocket money, explaining why",
+"desc": "You ask your parents to increase your pocket money, explaining why.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-16-vous-demandez-a-vos-parents-d-a",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-17-vos-parents-et-vous-decidez-ou-",
+"title": "Dialogue 17: You and your parents decide where to go for a family outing on Sunday",
+"desc": "You and your parents decide where to go for a family outing on Sunday.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-17-vos-parents-et-vous-decidez-ou-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-18-vous-vous-disputez-avec-votre-f",
+"title": "Dialogue 18: You quarrel with your brother/sister about the TV remote or a househol",
+"desc": "You quarrel with your brother/sister about the TV remote or a household chore, then you find an arrangement.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-18-vous-vous-disputez-avec-votre-f",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-19-votre-mere-pere-vous-demande-co",
+"title": "Dialogue 19: Your mother/father asks you how your school day went",
+"desc": "Your mother/father asks you how your school day went.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-19-votre-mere-pere-vous-demande-co",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-20-vous-et-votre-famille-discutez-",
+"title": "Dialogue 20: You and your family discuss what you are going to cook for dinner toni",
+"desc": "You and your family discuss what you are going to cook for dinner tonight.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-20-vous-et-votre-famille-discutez-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-21-vos-grands-parents-viennent-vou",
+"title": "Dialogue 21: Your grandparents are coming to visit you. You discuss the preparation",
+"desc": "Your grandparents are coming to visit you. You discuss the preparations with them.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-21-vos-grands-parents-viennent-vou",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-22-vous-demandez-a-vos-parents-la-",
+"title": "Dialogue 22: You ask your parents for permission to take part in a school excursion",
+"desc": "You ask your parents for permission to take part in a school excursion.",
+"group": "ICSE dialogues: School & Education",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-22-vous-demandez-a-vos-parents-la-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-23-votre-famille-planifie-la-decor",
+"title": "Dialogue 23: Your family is planning the house decorations for a festival (Diwali/C",
+"desc": "Your family is planning the house decorations for a festival (Diwali/Christmas). Write the planning dialogue.",
+"group": "ICSE dialogues: Festivals & Celebrations",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-23-votre-famille-planifie-la-decor",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-24-vous-parlez-avec-votre-grand-me",
+"title": "Dialogue 24: You talk with your grandmother/grandfather about his/her childhood and",
+"desc": "You talk with your grandmother/grandfather about his/her childhood and memories.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-24-vous-parlez-avec-votre-grand-me",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-25-vous-demandez-a-vos-parents-la-",
+"title": "Dialogue 25: You ask your parents for permission to take classes (dance, music, spo",
+"desc": "You ask your parents for permission to take classes (dance, music, sport) in addition to school.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-25-vous-demandez-a-vos-parents-la-",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-26-votre-frere-sur-cadet-te-vous-e",
+"title": "Dialogue 26: Your younger brother/sister bothers you while you are studying, and yo",
+"desc": "Your younger brother/sister bothers you while you are studying, and you discuss it calmly.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-26-votre-frere-sur-cadet-te-vous-e",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-27-votre-famille-discute-des-cadea",
+"title": "Dialogue 27: Your family discusses the gifts to buy for a family member's birthday",
+"desc": "Your family discusses the gifts to buy for a family member's birthday.",
+"group": "ICSE dialogues: Festivals & Celebrations",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-27-votre-famille-discute-des-cadea",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "dlg-part3-28-vous-annoncez-a-vos-parents-une",
+"title": "Dialogue 28: You announce good news to your parents (a good grade, selection for a",
+"desc": "You announce good news to your parents (a good grade, selection for a team) and they react.",
+"group": "ICSE dialogues: Family & Friends",
+"skill": "Speaking",
+"boards": [
+"ICSE"
+],
+"url": "/resources/icse-dialogues/#d/part3-28-vous-annoncez-a-vos-parents-une",
+"access": "open",
+"marks": "5"
+},
+{
+"id": "sp-box",
+"title": "Practice Box: role plays and themes",
+"desc": "117 Cambridge role plays, 16 themes, or a mini exam.",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/practice.html",
+"access": "open"
+},
+{
+"id": "sp-1",
+"title": "Speaking 1: Voyages et transports",
+"desc": "Voyages et transports: order, fill, listen, write",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking1.html",
+"access": "open"
+},
+{
+"id": "sp-2",
+"title": "Speaking 2: Practice and timed speaking test",
+"desc": "Practice and timed speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking2.html",
+"access": "open"
+},
+{
+"id": "sp-3",
+"title": "Speaking 3: Voyages et transports",
+"desc": "Voyages et transports: practice and timed speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking3.html",
+"access": "open"
+},
+{
+"id": "sp-4",
+"title": "Speaking 4: Les transports",
+"desc": "Les transports: practice and timed speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking4.html",
+"access": "open"
+},
+{
+"id": "sp-5",
+"title": "Speaking 5: La communication et la technologie",
+"desc": "La communication et la technologie: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking5.html",
+"access": "open"
+},
+{
+"id": "sp-6",
+"title": "Speaking 6: La communication et la technologie (2)",
+"desc": "La communication et la technologie (2): practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking6.html",
+"access": "open"
+},
+{
+"id": "sp-7",
+"title": "Speaking 7: La communication et la technologie (3)",
+"desc": "La communication et la technologie (3): practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking7.html",
+"access": "open"
+},
+{
+"id": "sp-8",
+"title": "Speaking 8: La communication et la technologie (4)",
+"desc": "La communication et la technologie (4): practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking8.html",
+"access": "open"
+},
+{
+"id": "sp-9",
+"title": "Speaking 9: Le monde naturel et l’environnement",
+"desc": "Le monde naturel et l’environnement: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking9.html",
+"access": "open"
+},
+{
+"id": "sp-10",
+"title": "Speaking 10: L’éducation",
+"desc": "L’éducation: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking10.html",
+"access": "open"
+},
+{
+"id": "sp-11",
+"title": "Speaking 11: Le monde naturel (2)",
+"desc": "Le monde naturel (2): practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking11.html",
+"access": "open"
+},
+{
+"id": "sp-12",
+"title": "Speaking 12: Environnement 1",
+"desc": "Environnement 1: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking12.html",
+"access": "open"
+},
+{
+"id": "sp-13",
+"title": "Speaking 13: Environnement 2",
+"desc": "Environnement 2: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking13.html",
+"access": "open"
+},
+{
+"id": "sp-14",
+"title": "Speaking 14: Environnement 3",
+"desc": "Environnement 3: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking14.html",
+"access": "open"
+},
+{
+"id": "sp-15",
+"title": "Speaking 15: Environnement 4",
+"desc": "Environnement 4: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking15.html",
+"access": "open"
+},
+{
+"id": "sp-16",
+"title": "Speaking 16: Environnement 5",
+"desc": "Environnement 5: practice, unjumble and speaking test",
+"group": "IGCSE speaking",
+"skill": "Speaking",
+"boards": [
+"IGCSE"
+],
+"url": "/resources/igcse-speaking/speaking16.html",
+"access": "open"
+},
+{
+"id": "gr-a",
+"title": "Set A: Slip test",
+"desc": "Tenses, pronouns, comparatives, relative pronouns, negation",
+"group": "Grammar tests: Slip tests",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setA.html",
+"access": "assigned"
+},
+{
+"id": "gr-b",
+"title": "Set B: Slip test",
+"desc": "Tenses, finding the question, prepositions, adjectives and adverbs, vocabulary",
+"group": "Grammar tests: Slip tests",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setB.html",
+"access": "assigned"
+},
+{
+"id": "gr-c",
+"title": "Set C: Slip test",
+"desc": "Tenses, pronouns, comparatives, relative pronouns, negation",
+"group": "Grammar tests: Slip tests",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setC.html",
+"access": "assigned"
+},
+{
+"id": "gr-d",
+"title": "Set D: Practice sheet",
+"desc": "Tenses, pronouns, comparatives, relative pronouns, negation",
+"group": "Grammar tests: Practice sheets",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setD.html",
+"access": "assigned"
+},
+{
+"id": "gr-e",
+"title": "Set E: Practice sheet",
+"desc": "Future tenses, pronouns, comparatives, relative pronouns, negation",
+"group": "Grammar tests: Practice sheets",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setE.html",
+"access": "assigned"
+},
+{
+"id": "gr-f",
+"title": "Set F: Practice sheet",
+"desc": "Tenses, pronouns, comparatives, relative pronouns, negation",
+"group": "Grammar tests: Practice sheets",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setF.html",
+"access": "assigned"
+},
+{
+"id": "gr-g",
+"title": "Set G: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setG.html",
+"access": "assigned"
+},
+{
+"id": "gr-h",
+"title": "Set H: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setH.html",
+"access": "assigned"
+},
+{
+"id": "gr-i",
+"title": "Set I: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setI.html",
+"access": "assigned"
+},
+{
+"id": "gr-j",
+"title": "Set J: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setJ.html",
+"access": "assigned"
+},
+{
+"id": "gr-k",
+"title": "Set K: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setK.html",
+"access": "assigned"
+},
+{
+"id": "gr-l",
+"title": "Set L: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setL.html",
+"access": "assigned"
+},
+{
+"id": "gr-m",
+"title": "Set M: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setM.html",
+"access": "assigned"
+},
+{
+"id": "gr-n",
+"title": "Set N: Full grammar test",
+"desc": "40 marks · tenses, pronouns, comparatives, relative pronouns, negation, questions, prepositions, demonstratives, possessives and imperative",
+"group": "Grammar tests: Full grammar tests (40 marks)",
+"skill": "Grammar",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/grammar-tests/setN.html",
+"access": "assigned"
+},
+{
+"id": "rc-01",
+"title": "Passage 1: L'alimentation du futur",
+"desc": "ICSE reading comprehension (2026).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-1",
+"access": "assigned"
+},
+{
+"id": "rc-02",
+"title": "Passage 2: Les villes nouvelles",
+"desc": "ICSE reading comprehension (1995).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-2",
+"access": "assigned"
+},
+{
+"id": "rc-03",
+"title": "Passage 3: Mali",
+"desc": "ICSE reading comprehension (1996).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-3",
+"access": "assigned"
+},
+{
+"id": "rc-04",
+"title": "Passage 4: Parc du Baoulé",
+"desc": "ICSE reading comprehension (1998).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-4",
+"access": "assigned"
+},
+{
+"id": "rc-05",
+"title": "Passage 5: Consignes de sécurité pour la circulation sur les pistes sahariennes",
+"desc": "ICSE reading comprehension (1999).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-5",
+"access": "assigned"
+},
+{
+"id": "rc-06",
+"title": "Passage 6: Vous ne buvez pas de vin, sortez ! (témoignage de M. Patrice Tripier de Villefranche)",
+"desc": "ICSE reading comprehension (2000).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-6",
+"access": "assigned"
+},
+{
+"id": "rc-07",
+"title": "Passage 7: Mon métier (Facteur)",
+"desc": "ICSE reading comprehension (2001).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-7",
+"access": "assigned"
+},
+{
+"id": "rc-08",
+"title": "Passage 8: Les familles françaises et le sport",
+"desc": "ICSE reading comprehension (2002).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-8",
+"access": "assigned"
+},
+{
+"id": "rc-09",
+"title": "Passage 9: Les jeunes Français",
+"desc": "ICSE reading comprehension (2003).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-9",
+"access": "assigned"
+},
+{
+"id": "rc-10",
+"title": "Passage 10: La construction de l'Europe : 1945–1995",
+"desc": "ICSE reading comprehension (2004).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-10",
+"access": "assigned"
+},
+{
+"id": "rc-11",
+"title": "Passage 11: On ne sait jamais ce qu'on va faire le lendemain",
+"desc": "ICSE reading comprehension (2005).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-11",
+"access": "assigned"
+},
+{
+"id": "rc-12",
+"title": "Passage 12: Les jeux d'argent",
+"desc": "ICSE reading comprehension (2006).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-12",
+"access": "assigned"
+},
+{
+"id": "rc-13",
+"title": "Passage 13: Pourquoi préfère-t-on aujourd'hui le pain blanc ?",
+"desc": "ICSE reading comprehension (2007).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-13",
+"access": "assigned"
+},
+{
+"id": "rc-14",
+"title": "Passage 14: Portraits (L'instituteur, Le sapeur-pompier, Le boulanger)",
+"desc": "ICSE reading comprehension (2008).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-14",
+"access": "assigned"
+},
+{
+"id": "rc-15",
+"title": "Passage 15: La francophonie",
+"desc": "ICSE reading comprehension (2009).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-15",
+"access": "assigned"
+},
+{
+"id": "rc-16",
+"title": "Passage 16: Le premier mai",
+"desc": "ICSE reading comprehension (2010).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-16",
+"access": "assigned"
+},
+{
+"id": "rc-17",
+"title": "Passage 17: Le métier d'un journaliste",
+"desc": "ICSE reading comprehension (2011).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-17",
+"access": "assigned"
+},
+{
+"id": "rc-18",
+"title": "Passage 18: Stéphane, reporteur-explorateur",
+"desc": "ICSE reading comprehension (2012).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-18",
+"access": "assigned"
+},
+{
+"id": "rc-19",
+"title": "Passage 19: Une grande fête pour 50 000 enfants",
+"desc": "ICSE reading comprehension (2013).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-19",
+"access": "assigned"
+},
+{
+"id": "rc-20",
+"title": "Passage 20: L'Abbé Pierre",
+"desc": "ICSE reading comprehension (2014).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-20",
+"access": "assigned"
+},
+{
+"id": "rc-21",
+"title": "Passage 21: Louis Braille",
+"desc": "ICSE reading comprehension (2015 (official)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-21",
+"access": "assigned"
+},
+{
+"id": "rc-22",
+"title": "Passage 22: Edith Piaf",
+"desc": "ICSE reading comprehension (2016).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-22",
+"access": "assigned"
+},
+{
+"id": "rc-23",
+"title": "Passage 23: Catherine : la vie en pension",
+"desc": "ICSE reading comprehension (2017).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-23",
+"access": "assigned"
+},
+{
+"id": "rc-24",
+"title": "Passage 24: Des journées pas chères",
+"desc": "ICSE reading comprehension (2018).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-24",
+"access": "assigned"
+},
+{
+"id": "rc-25",
+"title": "Passage 25: Être chirurgien en Afrique",
+"desc": "ICSE reading comprehension (2019).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-25",
+"access": "assigned"
+},
+{
+"id": "rc-26",
+"title": "Passage 26: Le Guide Michelin",
+"desc": "ICSE reading comprehension (Set 1).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-26",
+"access": "assigned"
+},
+{
+"id": "rc-27",
+"title": "Passage 27: Tom et Nana : les Jeux Olympiques de Paris",
+"desc": "ICSE reading comprehension (Set 2).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-27",
+"access": "assigned"
+},
+{
+"id": "rc-28",
+"title": "Passage 28: Être étudiant en France",
+"desc": "ICSE reading comprehension (Set 4).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-28",
+"access": "assigned"
+},
+{
+"id": "rc-29",
+"title": "Passage 29: Le cidre de glace du Québec",
+"desc": "ICSE reading comprehension (Set 5).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-29",
+"access": "assigned"
+},
+{
+"id": "rc-30",
+"title": "Passage 30: À quoi sert le prix Nobel ?",
+"desc": "ICSE reading comprehension (Set 6).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-30",
+"access": "assigned"
+},
+{
+"id": "rc-31",
+"title": "Passage 31: Le tailleur de Baghdad",
+"desc": "ICSE reading comprehension (Set 15).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-31",
+"access": "assigned"
+},
+{
+"id": "rc-32",
+"title": "Passage 32: Le papier recyclé et Harry Potter",
+"desc": "ICSE reading comprehension (2015-16 Std IX (Paper 1)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-32",
+"access": "assigned"
+},
+{
+"id": "rc-33",
+"title": "Passage 33: Un nouveau type d'école",
+"desc": "ICSE reading comprehension (Set 7).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-33",
+"access": "assigned"
+},
+{
+"id": "rc-34",
+"title": "Passage 34: La sécurité sociale en France",
+"desc": "ICSE reading comprehension (Set 16).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-34",
+"access": "assigned"
+},
+{
+"id": "rc-35",
+"title": "Passage 35: Le commerçant et le garçon honnête",
+"desc": "ICSE reading comprehension (Set 8).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-35",
+"access": "assigned"
+},
+{
+"id": "rc-36",
+"title": "Passage 36: La vie de Farid",
+"desc": "ICSE reading comprehension (Practice Paper (unlabelled)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-36",
+"access": "assigned"
+},
+{
+"id": "rc-37",
+"title": "Passage 37: L'automatisation et l'intelligence artificielle",
+"desc": "ICSE reading comprehension (2015-16 Std IX (Paper 2)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-37",
+"access": "assigned"
+},
+{
+"id": "rc-38",
+"title": "Passage 38: La tour Eiffel",
+"desc": "ICSE reading comprehension (Practice Paper (unlabelled)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-38",
+"access": "assigned"
+},
+{
+"id": "rc-39",
+"title": "Passage 39: Comment est née la langue française ?",
+"desc": "ICSE reading comprehension (2022-23 First Preliminary Examination).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-39",
+"access": "assigned"
+},
+{
+"id": "rc-40",
+"title": "Passage 40: Une vie de voyages",
+"desc": "ICSE reading comprehension (2024 St Germain Academy).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-40",
+"access": "assigned"
+},
+{
+"id": "rc-41",
+"title": "Passage 41: Astérix et Obélix",
+"desc": "ICSE reading comprehension (2024 St Germain Academy (duplicate)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-41",
+"access": "assigned"
+},
+{
+"id": "rc-42",
+"title": "Passage 42: Le Petit Chaperon Rouge",
+"desc": "ICSE reading comprehension (2015-16 Std IX (Paper 3)).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-42",
+"access": "assigned"
+},
+{
+"id": "rc-43",
+"title": "Passage 43: La télé tue la famille",
+"desc": "ICSE reading comprehension (2023 First Terminal Examination).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-43",
+"access": "assigned"
+},
+{
+"id": "rc-44",
+"title": "Passage 44: Ma nouvelle vie",
+"desc": "ICSE reading comprehension (Set 11).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-44",
+"access": "assigned"
+},
+{
+"id": "rc-45",
+"title": "Passage 45: Marcello et La Petite Auberge",
+"desc": "ICSE reading comprehension (2024 St Gregorios High School).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-45",
+"access": "assigned"
+},
+{
+"id": "rc-46",
+"title": "Passage 46: Les grands préparatifs des Jeux Olympiques 2024",
+"desc": "ICSE reading comprehension (Set 13).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-46",
+"access": "assigned"
+},
+{
+"id": "rc-47",
+"title": "Passage 47: Bénévolat et citoyenneté",
+"desc": "ICSE reading comprehension (Set 14).",
+"group": "Reading comprehension (ICSE)",
+"skill": "Reading",
+"boards": [
+"ICSE"
+],
+"url": "/resources/teacher/icse-comprehensions/#p-47",
+"access": "assigned"
+}
+]

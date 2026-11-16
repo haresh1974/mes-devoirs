@@ -48,6 +48,7 @@
   ];
   const EXERCISES = {}; CATALOG.forEach((c) => { EXERCISES[c.id] = c; });
   for (let n = 1; n <= 10; n++) EXERCISES['L' + n] = { id: 'L' + n, cat: 'lesson', ic: '📘', name: 'Lesson ' + n, desc: 'Mixed practice: words, sounds and sentences', lesson: true };
+  EXERCISES.RES = { id: 'RES', cat: 'resource', ic: '📎', name: 'Resource task', desc: 'Open the resource, do the task, then mark it done', resource: true };
   const isLesson = (k) => /^L\d+$/.test(k);
   /* a mixed homework gets one lesson per ~8 items (2 to 8 lessons) */
   const lessonCount = (items) => Math.max(2, Math.min(10, Math.ceil((items || []).length / 10)));

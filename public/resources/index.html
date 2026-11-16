@@ -1,38 +1,102 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Resources · French with Haresh</title>
 <style>
-:root{--bg:#f3f5fb;--ink:#18264a;--blue:#2e4fc4;--mute:#56627f;--line:#d6ddee}
-@media (prefers-color-scheme:dark){:root{--bg:#121a33;--ink:#eef1fb;--blue:#8aa4ff;--mute:#9aa6c4;--line:#2a3556}}
+:root{--bg:#f3f5fb;--card:#fff;--ink:#18264a;--blue:#2e4fc4;--mute:#56627f;--line:#d6ddee;--green:#17804f}
+@media (prefers-color-scheme:dark){:root{--bg:#121a33;--card:#172038;--ink:#eef1fb;--blue:#8aa4ff;--mute:#9aa6c4;--line:#2a3556;--green:#55d696}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-main{width:min(94vw,820px);margin:0 auto;padding:22px 0 60px}
-.top{display:flex;align-items:center;gap:10px;margin-bottom:6px}.top a.b{color:var(--blue);text-decoration:none;font-weight:800}
-h1{font-size:1.7rem;margin:6px 0 4px}p.lead{margin:0 0 22px;color:var(--mute)}
-h2{font-size:1.05rem;margin:26px 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-a.c{display:block;padding:16px;border-radius:16px;border:2px solid var(--line);background:rgba(127,127,127,.06);color:var(--ink);text-decoration:none}
-a.c:hover{border-color:var(--blue)}a.c b{display:block;font-size:1.05rem}a.c span{display:block;margin-top:4px;color:var(--mute);font-size:.9rem}
-a.c i{font-style:normal;font-size:1.6rem;display:block;margin-bottom:6px}.tag{display:inline-block;font-size:.7rem;font-weight:800;background:#e4ebff;color:#2e4fc4;border-radius:999px;padding:2px 8px;margin-top:8px}
-.t{display:none}.teacher .t{display:block}
+main{width:min(94vw,860px);margin:0 auto;padding:20px 0 120px}
+a.back{color:var(--blue);text-decoration:none;font-weight:800}
+h1{font-size:1.7rem;margin:8px 0 4px}p.lead{margin:0 0 16px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-weight:700;cursor:pointer}.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.sec{margin:28px 0 8px;display:flex;align-items:center;gap:10px}.sec h2{margin:0;font-size:1.15rem}.sec small{color:var(--mute)}
+.pill{display:inline-block;font-size:.72rem;font-weight:800;border-radius:999px;padding:2px 9px}.p-both{background:#e1f5ea;color:#17804f}.p-ICSE{background:#e4ebff;color:#2e4fc4}.p-IGCSE{background:#fde8d8;color:#b4570d}.p-priv{background:#f1e6ff;color:#6b3fc4}
+details{background:var(--card);border:2px solid var(--line);border-radius:16px;margin:10px 0;overflow:hidden}
+summary{cursor:pointer;padding:14px 16px;font-weight:800;display:flex;align-items:center;gap:10px;list-style:none}summary::-webkit-details-marker{display:none}
+summary .n{margin-left:auto;color:var(--mute);font-weight:600;font-size:.9rem}
+summary:before{content:"▸";transition:.15s}details[open] summary:before{transform:rotate(90deg)}
+.row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--line)}
+.row .t{flex:1;min-width:0}.row .t b{display:block}.row .t span{display:block;color:var(--mute);font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row a.go{font-weight:800;color:var(--blue);text-decoration:none;white-space:nowrap}.row input[type=checkbox]{width:20px;height:20px;accent-color:var(--blue)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);padding:12px;display:none;justify-content:center;gap:12px;align-items:center;z-index:5}.bar.on{display:flex}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:11px 18px;font:inherit;font-weight:800;cursor:pointer}.btn.ghost{background:transparent;color:var(--blue);border:2px solid var(--blue)}
+.modal{position:fixed;inset:0;background:rgba(10,15,35,.55);display:none;align-items:center;justify-content:center;z-index:9;padding:16px}.modal.on{display:flex}
+.box{background:var(--card);border-radius:18px;padding:22px;width:min(94vw,460px);max-height:90vh;overflow:auto}.box h2{margin:0 0 10px}
+.box label.l{display:block;font-weight:800;margin:14px 0 6px}.box input[type=datetime-local]{width:100%;padding:10px;border-radius:10px;border:2px solid var(--line);font:inherit;background:var(--bg);color:var(--ink)}
+.cls{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.cls input{width:20px;height:20px;accent-color:var(--blue)}
+.err{color:#c42f3f;font-weight:700;min-height:20px;margin-top:8px}.empty{color:var(--mute);padding:30px 0;text-align:center}
 </style></head><body><main>
-<div class="top"><a class="b" href="/">← French with Haresh</a></div>
-<h1>📎 Resources</h1><p class="lead">Extra practice tools from Haresh Sir, kept separate from the Practice games. Open them in Chrome or Safari; speaking pages need the microphone.</p>
-
-<h2>Translation</h2>
-<div class="grid">
-<a class="c" href="translation-fr-en/"><i>🇫🇷➜🇬🇧</i><b>Translation: French to English</b><span>Translate, build with tiles and learn the strategy. Includes the Studio GCSE booklet themes.</span></a>
-<a class="c" href="translation-en-fr/"><i>🇬🇧➜🇫🇷</i><b>Translation: English to French</b><span>The French Translation Lab: tap a phrase for its meaning and check your version.</span></a>
-</div>
-
-<h2>Speaking and dialogues</h2>
-<div class="grid">
-<a class="c" href="igcse-speaking/"><i>🎤</i><b>IGCSE speaking practice</b><span>Practice Box with 117 Cambridge role plays and 16 themes, plus 16 speaking pages and a mini exam.</span><em class="tag">IGCSE</em></a>
-<a class="c" href="icse-dialogues/"><i>💬</i><b>ICSE French dialogues</b><span>Dialogue practice for the ICSE oral.</span><em class="tag">ICSE</em></a>
-</div>
-
-<div class="t"><h2>Teacher only</h2>
-<div class="grid">
-<a class="c" href="teacher/grammar-tests/"><i>📝</i><b>Grammar tests (Sets A to N)</b><span>Slip tests, 25-mark practice sets and 40-mark tests with explained mistakes. Students send the result to you.</span><em class="tag">ICSE Grade 10</em></a>
-<a class="c" href="teacher/icse-comprehensions/"><i>📖</i><b>Compréhension: 46 past-paper passages</b><span>Marked reading comprehension with hints and a PDF report.</span><em class="tag">ICSE Grade 10</em></a>
-</div></div>
-<script>fetch('/api/me').then(r=>r.json()).then(m=>{if(m&&m.role==='teacher')document.body.classList.add('teacher')}).catch(()=>{})</script>
-</main></body></html>
+<a class="back" id="back" href="/">← French with Haresh</a>
+<h1>📎 Resources</h1>
+<p class="lead" id="lead">Loading…</p>
+<div class="chips" id="skills"></div><div class="chips" id="boards" style="display:none"></div>
+<div id="list"></div>
+</main>
+<div class="bar" id="bar"><b id="cnt"></b><button class="btn ghost" id="clr">Clear</button><button class="btn" id="asg">Assign as homework…</button></div>
+<div class="modal" id="mod"><div class="box"><h2>Assign as homework</h2><div id="mres" style="color:var(--mute)"></div>
+<label class="l">Classes</label><div id="mcls"></div>
+<label class="l">Start</label><input type="datetime-local" id="ms"><label class="l">Due (optional)</label><input type="datetime-local" id="md">
+<div class="err" id="merr"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn ghost" id="mx">Cancel</button><button class="btn" id="mok">Assign</button></div></div></div>
+<script>
+const $=(s)=>document.querySelector(s),esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let D=null,skill='All',board='All',sel=new Set();
+const SKILLS=['Translation','Speaking','Grammar','Reading'];
+const kind=(r)=>r.boards.length>1?'both':r.boards[0];
+const pill=(r)=>{const k=kind(r);return '<span class="pill p-'+(k==='both'?'both':k)+'">'+(k==='both'?'ICSE + IGCSE':k)+'</span>'+(r.access==='assigned'?' <span class="pill p-priv">given by teacher</span>':'')};
+function chips(){
+  $('#skills').innerHTML=['All'].concat(SKILLS).map((s)=>'<button class="chip '+(skill===s?'on':'')+'" data-s="'+s+'">'+s+'</button>').join('');
+  if(D.role==='teacher'){$('#boards').style.display='flex';$('#boards').innerHTML=[['All','All boards'],['both','Shared'],['ICSE','ICSE only'],['IGCSE','IGCSE only']].map(([v,l])=>'<button class="chip '+(board===v?'on':'')+'" data-b="'+v+'">'+l+'</button>').join('')}
+}
+function draw(){
+  chips();
+  let rs=D.resources.filter((r)=>(skill==='All'||r.skill===skill)&&(board==='All'||kind(r)===board));
+  if(!rs.length){$('#list').innerHTML='<div class="empty">Nothing here yet.</div>';return}
+  const secs=[['both','Shared: ICSE and IGCSE','Use with every class'],['ICSE','ICSE only','Grade 10 ICSE classes'],['IGCSE','IGCSE only','IGCSE classes']];
+  let h='';
+  secs.forEach(([k,t,sub])=>{
+    const rr=rs.filter((r)=>kind(r)===k); if(!rr.length)return;
+    const groups={};rr.forEach((r)=>{(groups[r.group]=groups[r.group]||[]).push(r)});
+    h+='<div class="sec"><h2>'+t+'</h2><small>'+sub+'</small></div>';
+    Object.keys(groups).forEach((g)=>{
+      const items=groups[g],ids=items.map((r)=>r.id),all=ids.every((i)=>sel.has(i));
+      h+='<details'+(rs.length<=24?' open':'')+'><summary>'+(D.role==='teacher'?'<input type="checkbox" data-g="'+esc(ids.join(','))+'" '+(all?'checked':'')+' title="Select all in this group">':'')+esc(g)+'<span class="n">'+items.length+'</span></summary>'+
+      items.map((r)=>'<div class="row">'+(D.role==='teacher'?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(k==='both'?'':'')+'<a class="go" href="'+esc(r.url)+'">Open ↗</a></div>').join('')+'</details>';
+    });
+  });
+  $('#list').innerHTML=h;
+  const n=sel.size;$('#bar').classList.toggle('on',n>0&&D.role==='teacher');$('#cnt').textContent=n+' selected';
+}
+document.addEventListener('click',(e)=>{
+  const s=e.target.closest('[data-s]'),b=e.target.closest('[data-b]');
+  if(s){skill=s.dataset.s;draw()}if(b){board=b.dataset.b;draw()}
+});
+document.addEventListener('change',(e)=>{
+  const g=e.target.dataset&&e.target.dataset.g,r=e.target.dataset&&e.target.dataset.r;
+  if(g){g.split(',').forEach((i)=>e.target.checked?sel.add(i):sel.delete(i));const keep=[...document.querySelectorAll('details')].map((d)=>d.open);draw();[...document.querySelectorAll('details')].forEach((d,i)=>{d.open=keep[i]})}
+  if(r){e.target.checked?sel.add(r):sel.delete(r);$('#bar').classList.toggle('on',sel.size>0);$('#cnt').textContent=sel.size+' selected'}
+});
+$('#clr').onclick=()=>{sel.clear();draw()};
+const loc=(ms)=>{const d=new Date(ms-new Date(ms).getTimezoneOffset()*60000);return d.toISOString().slice(0,16)};
+$('#asg').onclick=()=>{
+  const picks=D.resources.filter((r)=>sel.has(r.id));
+  const need=new Set();picks.forEach((r)=>r.boards.forEach((b)=>need.add(b)));
+  $('#mres').textContent=picks.length+' resource'+(picks.length>1?'s':'')+' selected';
+  $('#mcls').innerHTML=D.classes.length?D.classes.map((c)=>{const fits=(c.board||'Both')==='Both'||picks.every((r)=>r.boards.includes(c.board));return '<label class="cls"><input type="checkbox" value="'+esc(c.id)+'" '+(fits?'checked':'')+'><span><b>'+esc(c.name)+'</b> <span class="pill p-'+((c.board||'Both')==='Both'?'both':c.board)+'">'+esc(c.board||'Both')+'</span>'+(fits?'':' <small style="color:var(--mute)">board differs</small>')+'</span></label>'}).join(''):'<div class="empty">Create a class first.</div>';
+  $('#ms').value=loc(Date.now());$('#md').value='';$('#merr').textContent='';$('#mod').classList.add('on');
+};
+$('#mx').onclick=()=>$('#mod').classList.remove('on');
+$('#mok').onclick=async()=>{
+  const cls=[...document.querySelectorAll('#mcls input:checked')].map((i)=>i.value);
+  const st=$('#ms').value?new Date($('#ms').value).getTime():Date.now(),du=$('#md').value?new Date($('#md').value).getTime():null;
+  $('#merr').textContent='';
+  const r=await fetch('/api/resources/assign',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({resource_ids:[...sel],class_ids:cls,start_at:st,due_at:du})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){$('#merr').textContent=j.error||'Could not assign.';return}
+  $('#mod').classList.remove('on');sel.clear();draw();alert('Assigned: '+j.made+' homework task'+(j.made>1?'s':'')+' across '+j.classes+' class'+(j.classes>1?'es':'')+'. Students will see them on their home page.');
+};
+fetch('/api/resources').then((r)=>r.ok?r.json():Promise.reject()).then((d)=>{
+  D=d;
+  if(d.role==='teacher'){$('#back').href='/#/t';$('#lead').textContent='All your extra material, organised by board. Tick items (or a whole group) and assign them as homework to any class.'}
+  else{$('#back').href='/#/s';$('#lead').textContent=(d.board&&d.board!=='Both'?d.board+' class. ':'')+'Extra practice from Haresh Sir. Open in Chrome or Safari; speaking pages need the microphone.'}
+  draw();
+}).catch(()=>{$('#lead').innerHTML='Please <a href="/">sign in</a> to see the resources.';$('#skills').innerHTML=''});
+</script></body></html>

@@ -107,18 +107,19 @@ async function renderCC() {
   const bar = stepbar(['Name', 'Tiers', 'Class code', 'Confirm'], c.step);
   if (c.step === 0) body = `<label class="f">Class name</label><input id="ccn" type="text" maxlength="60" placeholder="e.g. 10A French 2026" value="${esc(c.name)}">
     <label class="f">Language</label>${['French', 'Spanish'].map((l) => `<button class="choice ${c.language === l ? 'on' : ''}" data-act="ccLang" data-v="${l}"><span style="font-size:22px">${LANG[l].flag}</span><b>${l}</b></button>`).join('')}`;
-  if (c.step === 1) body = `<p class="mute">Which tiers does this class cover?</p>${['Foundation', 'Higher'].map((t) => `<button class="choice ${c.tiers.includes(t) ? 'on' : ''}" data-act="ccTier" data-v="${t}"><b>${t}</b></button>`).join('')}`;
+  if (c.step === 1) body = `<p class="mute">Which board is this class studying?</p>${[['ICSE', 'ICSE'], ['IGCSE', 'IGCSE'], ['Both', 'Both (mixed class)']].map(([v, l]) => `<button class="choice ${(c.board || 'Both') === v ? 'on' : ''}" data-act="ccBoard" data-v="${v}"><b>${l}</b></button>`).join('')}<p class="mute" style="margin-top:14px">Which tiers does this class cover?</p>${['Foundation', 'Higher'].map((t) => `<button class="choice ${c.tiers.includes(t) ? 'on' : ''}" data-act="ccTier" data-v="${t}"><b>${t}</b></button>`).join('')}`;
   if (c.step === 2) {
     if (!c.code) { try { c.code = (await api('/classes/suggest-code')).code; } catch (e) {} }
     body = `<p class="mute">Students use this code with their PIN to sign in.</p><label class="f">Class code</label><div class="row"><input id="ccc" type="text" maxlength="8" value="${esc(c.code)}" style="flex:1;letter-spacing:6px;font-weight:800;font-size:22px;text-transform:uppercase"><button class="btn ghost sm" data-act="ccNew">New code</button></div>`;
   }
-  if (c.step === 3) body = `<div class="pbox"><b>${esc(c.name)}</b><br>${LANG[c.language].flag} ${c.language} · ${c.tiers.join(' and ')}<br>Class code: <b style="letter-spacing:3px">${esc(c.code)}</b></div>`;
+  if (c.step === 3) body = `<div class="pbox"><b>${esc(c.name)}</b><br>${LANG[c.language].flag} ${c.language} · ${c.tiers.join(' and ')} · ${c.board || 'Both'}<br>Class code: <b style="letter-spacing:3px">${esc(c.code)}</b></div>`;
   const m = modalEl ? modalEl.firstChild : modal('');
   m.innerHTML = `<h2>Create a class</h2>${bar}${body}<div class="err">${esc(c.err)}</div>
     <div class="foot"><button class="btn ghost" data-act="${c.step ? 'ccBack' : 'close'}">${c.step ? '← Back' : 'Cancel'}</button><button class="btn" data-act="ccNext">${c.step === 3 ? 'Create class' : 'Next →'}</button></div>`;
   const n = $('#ccn'); if (n) n.focus();
 }
 ACT.ccLang = (t) => { CC.name = $('#ccn').value; CC.language = t.dataset.v; renderCC(); };
+ACT.ccBoard = (t) => { CC.board = t.dataset.v; renderCC(); };
 ACT.ccTier = (t) => { const v = t.dataset.v, i = CC.tiers.indexOf(v); if (i >= 0) CC.tiers.splice(i, 1); else CC.tiers.push(v); renderCC(); };
 ACT.ccNew = async () => { CC.code = (await api('/classes/suggest-code')).code; renderCC(); };
 ACT.ccBack = () => { CC.err = ''; CC.step--; renderCC(); };
@@ -128,7 +129,7 @@ ACT.ccNext = async () => {
   if (c.step === 1 && !c.tiers.length) { c.err = 'Pick at least one tier.'; return renderCC(); }
   if (c.step === 2) { c.code = $('#ccc').value.toUpperCase().trim(); if (!/^[A-Z]{4,8}$/.test(c.code)) { c.err = 'Use 4 to 8 letters.'; return renderCC(); } }
   if (c.step === 3) {
-    try { const r = await api('/classes', 'POST', { name: c.name, language: c.language, tiers: c.tiers, code: c.code }); closeModal(); go('#/t/class/' + r.id); }
+    try { const r = await api('/classes', 'POST', { name: c.name, language: c.language, tiers: c.tiers, code: c.code, board: c.board || 'Both' }); closeModal(); go('#/t/class/' + r.id); }
     catch (e) { c.err = e.message; if (/code/i.test(e.message)) c.step = 2; renderCC(); }
     return;
   }
@@ -153,10 +154,11 @@ ROUTES.push([/^\/t\/class\/(\w+)$/, async (id) => {
       (o.students.length ? `<div class="card scroll" style="padding:6px 14px"><table><tr><th>Student</th><th>Time on app</th><th>Today</th><th>Yesterday</th><th>Last active</th><th>Done on time</th><th></th></tr>${o.students.map((s) => `<tr><td><b>${esc(s.name)}</b></td><td>${fmtDur(s.secsTotal)}</td><td>${fmtDur(s.secsToday)}</td><td>${fmtDur(s.secsYesterday)}</td><td>${esc(ago(s.lastActive))}</td><td>${s.onTime} / ${s.hwTotal}</td><td style="text-align:right;white-space:nowrap"><button class="btn ghost sm" data-act="pinCard" data-id="${esc(s.id)}">🖨 PIN card</button> <button class="btn ghost sm" data-act="newPin" data-id="${esc(s.id)}">New PIN</button> <button class="btn ghost sm" data-act="rmStudent" data-id="${esc(s.id)}">Remove</button></td></tr>`).join('')}</table></div>`
         : '<div class="card mute">No students yet. Add your class list to get a PIN for each child.</div>');
   }
-  shell(c.id, `<div class="spread"><div class="row"><span style="font-size:34px">${flagOf(c.language, 40)}</span><h1>${esc(c.name)}</h1><span class="mute">${o.students.length} students</span></div>
+  shell(c.id, `<div class="spread"><div class="row"><span style="font-size:34px">${flagOf(c.language, 40)}</span><h1>${esc(c.name)}</h1><span class="mute">${o.students.length} students</span><select data-act="setBoard" title="Board: decides which resources this class sees" style="padding:6px 10px;border-radius:10px;border:2px solid var(--line);font-weight:800">${['ICSE', 'IGCSE', 'Both'].map((b) => `<option ${((c.board || 'Both') === b) ? 'selected' : ''}>${b}</option>`).join('')}</select></div>
     <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode" title="Copy">⧉</button></div><button class="btn ghost" data-act="notify" data-id="${esc(c.id)}">🔔 Send notification</button><button class="btn ghost" data-act="classSettings">⚙ Class settings</button></div></div>
     <div class="tabs" style="margin-top:18px"><button class="${T.tab === 'hw' ? 'on' : ''}" data-act="tabHw">📝 Homework ${o.homework.length}</button><button class="${T.tab === 'st' ? 'on' : ''}" data-act="tabSt">👥 Students ${o.students.length}</button></div>${inner}`);
 }]);
+ACT.setBoard = async (t) => { try { await api('/classes/' + CLS.cls.id + '/board', 'PUT', { board: t.value }); toast('Board set to ' + t.value); } catch (e) { toast(e.message); } };
 ACT.tabHw = () => { T.tab = 'hw'; route(); };
 ACT.tabSt = () => { T.tab = 'st'; route(); };
 ACT.copyCode = () => copyText(CLS.cls.code);
