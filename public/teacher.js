@@ -7,23 +7,9 @@ async function loadClasses() {
 function shell(active, content) {
   const cls = T.classes.map((c) => `<button class="nav ${active === c.id ? 'on' : ''}" data-act="openClass" data-id="${esc(c.id)}"><span>${flagOf(c.language, 22)}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span></button>`).join('');
   if (active === 'home') {
-    const tile = (act, ic, name, d, col, extra) => `<button class="ttile" data-act="${act}" ${extra || ''} style="--c:${col}"><span class="ic">${ic}</span><b>${name}</b><small>${d}</small></button>`;
-    const ctiles = T.classes.map((c) => `<button class="ttile cls" data-act="openClass" data-id="${esc(c.id)}" style="--c:#0f766e"><span class="ic">${flagOf(c.language, 34)}</span><b>${esc(c.name)}</b><small>Students, homework and results</small></button>`).join('');
     $('#app').innerHTML = `<div class="thome">
-      <header class="thead"><img src="/logo.svg" alt="" style="width:44px;height:44px"><div style="flex:1;min-width:0"><b style="font-size:20px">French with Haresh</b><div class="mute small">Teacher home · ${esc(T.name || '')}</div></div><button class="btn ghost sm" data-act="logout">Sign out</button></header>
-      <div class="sidehead" style="margin-left:2px">MY CLASSES</div>
-      <div class="tgrid">${ctiles}${tile('newClass', '＋', 'Create class', 'Add a new class and its students', '#2f6bed')}</div>
-      <div class="sidehead" style="margin-left:2px">TOOLS</div>
-      <div class="tgrid">
-        ${tile('tLib', '📚', 'Library', 'Create homework and assign it', '#2563eb')}
-        ${tile('tPractice', '🎮', 'Practice games', 'Vocabulary, grammar, workouts and games', '#dc2626')}
-        ${tile('tTests', '📝', 'Class tests', 'Assign online tests to a class and see marks', '#0f766e')}
-        ${tile('tRes', '📎', 'Resources', 'ICSE and IGCSE material to assign', '#9333ea')}
-        ${tile('tPres', '📈', 'Practice results', 'What students practised on their own', '#16a34a')}
-        ${tile('tTl', '🗓', 'Timeline', 'Open and scheduled homework', '#d97706')}
-        ${tile('tHelp', '❓', 'Help', 'How everything works', '#0891b2')}
-      </div>
-      <div style="margin-top:26px">${content}</div></div>`;
+      <header class="thead"><img src="/logo.svg" alt="" width="46" height="46"><div class="th-t"><b>French with Haresh</b><span>Teacher home</span></div><button class="btn ghost sm" data-act="logout">Sign out</button></header>
+      ${content}</div>`;
     return;
   }
   $('#app').innerHTML = `<button class="menubtn" data-act="menu">☰</button><div class="shell">
@@ -61,37 +47,47 @@ ROUTES.push([/^\/t$/, async () => {
   const hasClass = T.classes.length > 0, hasStud = ov.some((o) => o.students.length), hasHw = ov.some((o) => o.homework.length);
   let shared = false; try { shared = localStorage.getItem('md_shared') === '1'; } catch (e) {}
   const steps = [
-    ['Create your first class', 'Your class gets a code and its own tile on this page.', hasClass, hasClass ? '' : '<button class="btn sm" data-act="newClass">Create class</button>'],
+    ['Create your first class', 'Your class gets a code and its own card on this page.', hasClass, hasClass ? '' : '<button class="btn sm" data-act="newClass">Create class</button>'],
     ['Add your students', 'Paste or type names and get a PIN for each child.', hasStud, hasClass && !hasStud ? '<button class="btn sm" data-act="firstClass">Add students</button>' : ''],
     ['Add homework to your library, then assign it', 'Paste or upload a vocab list, then assign it to the class from the Library.', hasHw, hasStud && !hasHw ? '<button class="btn sm" data-act="tLib">Open library</button>' : ''],
     ['Get students onto the website', 'Share the link, class code and PINs.', shared, '<label class="row small" style="font-weight:800;gap:6px"><input type="checkbox" id="sharedChk" ' + (shared ? 'checked' : '') + '> Done</label>']
   ];
-  const n = steps.filter((s) => s[2]).length;
-  const feat = ov.find((o) => o.homework.length);
-  if (feat && n === 4 || feat && T.homeFeat !== false) {
-    const hs = feat.homework.slice().sort((x, y) => (y.start_at <= Date.now()) - (x.start_at <= Date.now()) || y.start_at - x.start_at);
-    const pick = (T.homeHw && hs.find((h) => h.id === T.homeHw)) || hs[0];
-    const d = await api('/homework/' + pick.id), c = feat.cls;
-    const bar = `<div class="spread"><div class="row"><span style="font-size:34px">${flagOf(c.language, 40)}</span><h1>${esc(c.name)}</h1><span class="mute">${feat.students.length} students</span></div>
-      <div class="row"><div class="codechip"><span class="mute small" style="font-weight:800">CLASS CODE</span><b>${esc(c.code)}</b><button class="icon-btn" style="width:32px;height:32px" data-act="copyCode2" data-c="${esc(c.code)}" title="Copy">⧉</button></div><button class="btn ghost" data-act="notify" data-id="${esc(c.id)}">🔔 Send notification</button><button class="btn ghost" data-act="openClass" data-id="${esc(c.id)}">All homework &amp; students</button></div></div>
-      <div class="row" style="margin:16px 0 4px"><span class="mute small" style="font-weight:800">HOMEWORK</span><select id="homeHw" style="max-width:360px">${hs.map((h) => `<option value="${esc(h.id)}" ${h.id === pick.id ? 'selected' : ''}>${esc(h.title)}</option>`).join('')}</select>${n < 4 ? '<button class="btn ghost sm" data-act="hideSetup">Setup checklist</button>' : ''}</div>`;
-    shell('home', bar + '<div class="card" style="margin-top:10px">' + hwHtml(d, false) + '</div>');
-    $('#homeHw').addEventListener('change', (e) => { T.homeHw = e.target.value; route(); });
-    ACT.copyCode2 = (t) => copyText(t.dataset.c);
-    ACT.hideSetup = () => { T.homeFeat = false; route(); };
-    return;
-  }
-  T.homeFeat = true;
-  shell('home', `<h1>Welcome back</h1><p class="sub">Pick a class above to see how your students are doing.</p>
-    <div class="card" style="padding:0"><div style="padding:18px 20px"><div class="spread"><div><h3>${n === 4 ? "You're all set!" : 'Get set up'}</h3><div class="mute small">${n === 4 ? 'Every step done. Your classes are live.' : 'Four quick steps.'}</div></div><b>${n} / 4</b></div>
-      <div class="bars">${[0, 1, 2, 3].map((i) => '<i class="' + (i < n ? 'on' : '') + '"></i>').join('')}</div></div>
-      ${steps.map((s, i) => `<div class="check ${s[2] ? 'done' : ''}"><div class="dot">${s[2] ? '✓' : i + 1}</div><div style="flex:1"><b>${s[0]}</b><div class="mute small">${s[1]}</div></div><div>${s[3]}</div></div>`).join('')}
-    </div>
-    <div class="card hwcard" data-act="instr"><div><b>Instructions to send to students</b><div class="mute small">Website link, how to sign in, and a printable page</div></div><span>›</span></div>`);
+  const n = steps.filter((x) => x[2]).length, now = Date.now(), day0 = new Date().setHours(0, 0, 0, 0);
+  const nStud = ov.reduce((k, o) => k + o.students.length, 0);
+  const active = (o) => o.students.filter((x) => x.secsToday > 0 || (x.lastActive || 0) >= day0).length;
+  const nActive = ov.reduce((k, o) => k + active(o), 0);
+  const open = [], soon = [];
+  ov.forEach((o) => o.homework.forEach((h) => { if (h.start_at > now) soon.push({ h, c: o.cls }); else if (!h.due_at || h.due_at > now) open.push({ h, c: o.cls }); }));
+  open.sort((x, y) => (x.h.due_at || 9e15) - (y.h.due_at || 9e15));
+  const first = String(T.name || '').trim().split(/\s+/)[0] || '';
+  const hour = new Date().getHours(), hi = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+  const sum = !hasClass ? 'Start by creating your first class.' : `${nStud} student${nStud === 1 ? '' : 's'} in ${T.classes.length} class${T.classes.length === 1 ? '' : 'es'}. ${open.length ? open.length + ' homework open now' : 'No homework open right now'}${nStud ? ', ' + nActive + ' student' + (nActive === 1 ? '' : 's') + ' active today' : ''}.`;
+  const hwRow = ({ h, c }) => { const done = h.counts.complete, pct = h.size ? Math.round(done / h.size * 100) : 0, late = h.due_at && h.due_at - now < 2 * 86400000;
+    return `<button class="th-hw" data-act="tHw" data-id="${esc(h.id)}"><span class="th-hw-t"><b>${esc(h.title)}</b><small>${esc(c.name)}${h.topic ? ' · ' + esc(h.topic) : ''}</small></span><span class="th-due ${late ? 'soon' : ''}">${esc(dueLeft(h.due_at))}</span><span class="th-prog"><i><u style="width:${pct}%"></u></i><small>${done} of ${h.size} done${h.counts.progress ? ', ' + h.counts.progress + ' started' : ''}</small></span><span class="th-go" aria-hidden="true">›</span></button>`; };
+  const openHtml = open.length ? open.slice(0, 6).map(hwRow).join('') + (open.length > 6 || soon.length ? `<button class="linkbtn th-more" data-act="tTl">${open.length > 6 ? 'See all ' + open.length + ' on the timeline' : soon.length + ' more scheduled, see the timeline'}</button>` : '')
+    : `<div class="th-empty"><b>${hasStud ? 'Nothing is open right now' : 'No homework yet'}</b><p>${hasStud ? (soon.length ? soon.length + ' homework scheduled to open later. ' : '') + 'Pick homework from your library and assign it to a class.' : 'Add students to a class first, then assign homework from the library.'}</p>${hasClass ? '<button class="btn sm" data-act="tLib">Open library</button>' : ''}</div>`;
+  const clsCard = (o) => { const c = o.cls, nOpen = o.homework.filter((h) => h.start_at <= now && (!h.due_at || h.due_at > now)).length, a = active(o);
+    return `<div class="th-cls"><div class="th-cls-h"><span class="fl">${flagOf(c.language, 30)}</span><div class="th-cls-t"><b>${esc(c.name)}</b><small>${o.students.length} student${o.students.length === 1 ? '' : 's'} · ${nOpen} homework open${o.students.length ? ' · ' + a + ' active today' : ''}</small></div></div>
+      <div class="th-code"><span>Class code</span><b>${esc(c.code)}</b><button class="icon-btn" data-act="copyCode2" data-c="${esc(c.code)}" title="Copy class code" aria-label="Copy class code">⧉</button></div>
+      <div class="th-cls-b"><button class="btn sm" data-act="openClass" data-id="${esc(c.id)}">Open class</button><button class="btn ghost sm" data-act="notify" data-id="${esc(c.id)}">🔔 Message class</button></div></div>`; };
+  const tool = (act, ic, name, d, col) => `<button class="th-tool" data-act="${act}" style="--c:${col}"><span class="ic" aria-hidden="true">${ic}</span><span><b>${name}</b><small>${d}</small></span></button>`;
+  const setup = n < 4 ? `<section class="th-sec"><div class="card" style="padding:0;margin:0"><div style="padding:16px 18px"><div class="spread"><div><h3>Finish setting up</h3><div class="mute small">${4 - n} step${4 - n === 1 ? '' : 's'} left</div></div><b>${n} / 4</b></div><div class="bars">${[0, 1, 2, 3].map((i) => '<i class="' + (i < n ? 'on' : '') + '"></i>').join('')}</div></div>
+      ${steps.map((x, i) => (x[2] ? '' : `<div class="check"><div class="dot">${i + 1}</div><div style="flex:1"><b>${x[0]}</b><div class="mute small">${x[1]}</div></div><div>${x[3]}</div></div>`)).join('')}</div></section>` : '';
+  shell('home', `<section class="th-hello"><div><h1>${hi}${first ? ', ' + esc(first) : ''} !</h1><p>${sum}</p></div>
+      <div class="th-acts"><button class="btn" data-act="tLib">＋ Set homework</button><button class="btn ghost" data-act="newClass">＋ New class</button></div></section>
+    ${!hasClass ? setup : ''}
+    <div class="th-cols"><section class="th-sec"><h2>Homework open now</h2><div class="th-panel">${openHtml}</div></section>
+      <section class="th-sec"><h2>My classes</h2>${ov.map(clsCard).join('') || '<div class="th-empty"><b>No classes yet</b><p>A class gives your students a code to sign in with.</p><button class="btn sm" data-act="newClass">Create class</button></div>'}</section></div>
+    <section class="th-sec"><h2>Tools</h2><div class="th-tools">
+      ${tool('tLib', '📚', 'Library', 'Create and assign homework', '#2563eb')}${tool('tTl', '🗓', 'Timeline', 'Open and scheduled homework', '#d97706')}${tool('tTests', '📝', 'Class tests', 'Set tests and see marks', '#0f766e')}${tool('tRes', '📎', 'Resources', 'ICSE and IGCSE material', '#9333ea')}${tool('tPractice', '🎮', 'Practice games', 'Try what students play', '#dc2626')}${tool('tPres', '📈', 'Practice results', 'What students practised', '#16a34a')}${tool('instr', '✉️', 'Student instructions', 'Link, sign-in steps, printable page', '#475569')}${tool('tHelp', '❓', 'Help', 'How everything works', '#0891b2')}
+    </div></section>
+    ${hasClass ? setup : ''}`);
   const chk = $('#sharedChk');
   if (chk) chk.addEventListener('change', () => { try { localStorage.setItem('md_shared', chk.checked ? '1' : '0'); } catch (e) {} route(); });
   ACT.firstClass = () => go('#/t/class/' + T.classes[0].id);
+  ACT.copyCode2 = (t) => copyText(t.dataset.c);
 }]);
+ACT.tHw = (t) => go('#/t/hw/' + t.dataset.id);
 
 ACT.instr = () => {
   const url = location.origin;
