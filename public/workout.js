@@ -64,7 +64,7 @@ ROUTES.push([/^\/s\/practice\/workout\/(\w+)\/([\w,-]+)(?:\/(\w+))?$/, async (le
   const L = d.lessons[0];
   if (!L) return go('#/s/practice');
   await waitVoices();
-  const stages = wkBuild(L, mod || (L.kind === 'read' ? 'read' : 'vocab'));
+  const stages = wkBuild(L, mod || (L.kind === 'read' ? 'read' : L.kind === 'speak' ? 'speak' : L.kind === 'lis' ? 'listen' : 'vocab'));
   if (!stages.length) { toast('Not enough content in this lesson for a workout'); return go('#/s/practice'); }
   const total = stages.reduce((n, s) => n + s.items.length, 0);
   WK = { L, level, mod: mod || 'vocab', ids: ids.split(',')[0], stages, cur: 0, hints: 0, t0: Date.now(), total, sw: false };
@@ -306,9 +306,9 @@ async function wkFinish() {
     <button class="bigblue" data-act="phAgain">${W.board ? 'Play again' : 'Do this workout again'}</button>${W.board ? '<button class="btn ghost" style="width:100%;margin-top:10px" data-act="wkQuit">Back to activities</button>' : ''}<button class="btn ghost" style="width:100%;margin-top:10px" data-act="phHub">Back to games</button></div></div>`;
 }
 /* ---------- Workouts menu: Module Type > Level > Category > Lesson (as on Language Gym) ---------- */
-const WMODS = [['vocab', 'Vocabulary Modules', ['vocab', 'sent']], ['gram', 'Grammar Modules', ['gram', 'verb']], ['read', 'Reading Modules', ['read']], ['speak', 'Speaking Modules', ['vocab', 'sent']], ['listen', 'Listening Modules', ['vocab', 'sent']]];
+const WMODS = [['vocab', 'Vocabulary Modules', ['vocab', 'sent']], ['gram', 'Grammar Modules', ['gram', 'verb']], ['read', 'Reading Modules', ['read']], ['speak', 'Speaking Modules', ['speak']], ['listen', 'Listening Modules', ['lis']]];
 const wmName = (m) => (WMODS.find((x) => x[0] === m) || [0, ''])[1];
-const wmOf = (l) => (l.kind === 'read' ? 'read' : l.kind === 'gram' || l.kind === 'verb' ? 'gram' : 'vocab');
+const wmOf = (l) => (l.kind === 'read' ? 'read' : l.kind === 'speak' ? 'speak' : l.kind === 'lis' ? 'listen' : l.kind === 'gram' || l.kind === 'verb' ? 'gram' : 'vocab');
 const wmLessons = (m) => { const d = WMODS.find((x) => x[0] === m); return PH.all.filter((l) => d[2].includes(l.kind) && !l.id.startsWith('ps-')); };
 const wlvName = (id) => (LEVELS.find((x) => x[0] === id) || [0, id])[1];
 function wlgCss() {
