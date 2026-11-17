@@ -128,6 +128,9 @@ function wkBuild(L, mod) {
       sp('s3', 'Read aloud', 'Read each sentence aloud as clearly as you can.', base, (it) => ({ q: it.fr, ans: it.fr }));
       sp('s4', 'Complete and say it', 'Say the whole sentence, filling the gap.', base.map((it) => ({ it, k: keyWord(it) })).filter((x) => x.k && tk(x.it.fr).length >= 2), ({ it, k }) => ({ q: k.t.map((w, i) => (i === k.i ? '_____' : w)).join(' '), sub: it.en, ans: it.fr, audio: it.fr, noAudioFirst: true }));
       sp('s5', 'Translate aloud', 'Read the English, then say it in French.', base.slice().reverse(), (it) => ({ q: it.en, ans: it.fr, audio: it.fr, noAudioFirst: true }));
+      add('s6', 'Choose the French', 'Choose the correct French, then say it aloud.', 'pick', cap(base, N).map((it) => ({ q: it.en, ans: it.fr, opts: frOpts(it, items, 3), audio: it.fr })));
+      add('s7', 'Build the sentence', 'Put the words in the right order, then say it aloud.', 'order', cap(base.filter((it) => tk(it.fr).length >= 3 && tk(it.fr).length <= 12), 6).map((it) => { const t = tk(it.fr); return { q: it.en, ans: t, bank: shuffle(t.map((w, i) => ({ w, i }))).map((x) => x.w), say: it.fr }; }));
+      add('s8', 'Listen and understand', 'Listen to the French, then choose the English meaning.', 'pick', cap(base, 8).map((it) => ({ q: 'Listen 🔊', audio: it.fr, ans: it.en, opts: enOpts(it, items, 4) })));
     } else {
     add('mcq', 'Multiple choice quiz', 'Choose the correct English meaning.', 'pick', cap(base, N).map((it) => ({ q: it.fr, ans: it.en, opts: enOpts(it, items, 3), audio: it.fr })));
     add('dmatch', 'Drag and match', 'Match each French item to its English meaning.', 'match', uq(cap(base, 10).map((it) => ({ l: it.fr, r: it.en }))).slice(0, 8));
