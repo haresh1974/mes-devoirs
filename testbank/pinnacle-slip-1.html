@@ -108,6 +108,20 @@ video{width:100%;max-width:640px;border-radius:14px;background:#000;margin-top:1
 .opts li{padding:1px 0}
 .opts li.good{color:var(--mint);font-weight:800}
 .opts li.bad{color:var(--ink2)}
+.opts li{cursor:pointer;border-radius:8px;padding:3px 8px;margin:1px 0;border:2px solid transparent}
+.opts li:hover{background:var(--blue-soft)}
+.opts li.mine{background:var(--blue-soft);border-color:var(--blue);font-weight:700}
+.opts.frozen li{cursor:default}.opts.frozen li:hover{background:none}
+.opts li.mine.frozen2{background:none}
+.opts li.right::after{content:'  ✔ your answer is correct';color:var(--mint);font-weight:800;font-size:.85em}
+.opts li.wrong{background:#fde8ea;border-color:#c62f3a;color:#8f1f28;text-decoration:line-through}
+.opts li.wrong::after{content:'  ✖ your answer';font-weight:800;font-size:.85em;text-decoration:none;display:inline-block}
+textarea.myans{width:100%;box-sizing:border-box;margin:8px 0 0;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font:1.05rem var(--fr);background:var(--card);color:var(--ink);resize:vertical;min-height:78px}
+textarea.myans:focus{outline:none;border-color:var(--blue)}
+textarea.myans[readonly]{background:var(--blue-soft)}
+.subcard{border:2px solid var(--blue)}
+.subcard .sp{font-weight:700;margin:4px 0}
+.subcard .big{font-size:1.2rem;font-weight:900}
 .gh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
 .gh h3{margin:0;font:800 1.25rem var(--fr)}
 .sub-en{color:var(--ink2);font-size:15px;margin:0 0 4px}
@@ -148,6 +162,9 @@ u{text-underline-offset:3px;text-decoration-thickness:2px}
 <div class="qh"><h2>Question 3</h2><span class="m">15 marks</span></div>
 <p class="instr">Grammar. For each part, <b>read the rule first</b>, then answer on your paper.</p>
 <div id="gram"></div>
+<div class="card subcard" id="subcard"><h3 style="margin:0 0 6px;font:800 1.25rem var(--fr)">📤 Submit my answers</h3>
+<p class="sp" id="subprog"></p><p class="sp" id="substat"></p><p class="sp big" id="subscore" hidden></p>
+<div class="row"><button class="btn" id="subbtn" type="button">📤 Submit my answers</button></div></div>
 </section>
 <p class="foot">Learn French with Haresh Sir · For classroom use. Answers are shown only after your teacher unlocks them.</p>
 </main>
@@ -163,6 +180,10 @@ const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=nu
 const MODE=SITE?SITE.mode:'demo';
 const ASSET=SITE&&SITE.assetBase?SITE.assetBase:'assets/';
 let ANS=null;
+const MY={g:{},c:{}};let SUBAT=null,FROZEN=false,SAVED_TM=null;
+const DKEY='slip1-'+(SITE&&SITE.assignment||'demo')+'-'+(SITE&&SITE.student&&SITE.student.name||'');
+if(MODE!=='review'){try{const d=JSON.parse(localStorage.getItem(DKEY)||'null');if(d&&d.g&&d.c){MY.g=d.g;MY.c=d.c}}catch(e){}}
+const GOL={},CTA={};
 if(SITE&&SITE.title)document.title=SITE.title;
 /* ---------- meaning sheet ---------- */
 let selEl=null;
@@ -209,6 +230,7 @@ const tb=document.createElement('table');tb.className='plan';QW.forEach(r=>{cons
 const ansSlots=[];
 DATA.qs.forEach(q=>{
  const art=el('article','cq');const hd=el('div','qhead');hd.append(el('span','qlet','('+q.id+')'));const qt=el('div','qtext');nodes(q.nodes,qt);hd.append(qt,el('span','marks',q.marks+' marks'));art.append(hd);
+ const ta=document.createElement('textarea');ta.className='myans';ta.rows=3;ta.placeholder='✍️ Write your answer in French here…';ta.setAttribute('aria-label','Your answer to question '+q.id);ta.value=MY.c[q.id]||'';ta.oninput=()=>{MY.c[q.id]=ta.value;touch()};CTA[q.id]=ta;art.append(ta);
  const tools=el('div','tools');const P={};
  [['en','🇬🇧 Meaning'],['how','✍️ How to start'],['where','📍 Where in the text?'],['ans','✅ Model answer']].forEach(([k,l])=>{
   const b=el('button',k==='ans'?'ans':null,l);b.type='button';b.setAttribute('aria-expanded','false');tools.append(b);
@@ -233,7 +255,7 @@ DATA.gram.forEach(g=>{
   const w=el('div','item');const ih=el('div','ih');ih.append(el('span','n',it.n));const bd=el('div');bd.style.flex='1';
   if(it.prompt){const pr=el('div','fr');pr.innerHTML=it.prompt;bd.append(pr)}
   ih.append(bd);w.append(ih);
-  const ol=el('ul','opts');it.opts.forEach(o=>{const li=el('li');li.innerHTML=o;ol.append(li)});w.append(ol);
+  const ol=el('ul','opts');it.opts.forEach((o,oi)=>{const li=el('li');li.innerHTML=o;li.tabIndex=0;li.setAttribute('role','button');li.onclick=()=>pick(it.id,oi);li.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(it.id,oi)}};ol.append(li)});GOL[it.id]=ol;w.append(ol);
   const tools=el('div','tools');tools.style.marginLeft='38px';const b=el('button','ans','✅ Answer');b.type='button';b.setAttribute('aria-expanded','false');tools.append(b);w.append(tools);
   const p=el('div','panel ansp');p.hidden=true;p.style.marginLeft='38px';w.append(p);
   b.onclick=()=>{const open=p.hidden;p.hidden=!open;b.setAttribute('aria-expanded',String(open))};
@@ -245,22 +267,54 @@ function esc(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>
 function fillAnswers(){
  ansSlots.forEach(s=>{
   s.p.replaceChildren();
-  if(s.g){s.opts.querySelectorAll('li').forEach(li=>li.classList.remove('good','bad'))}
+  if(s.g){s.opts.querySelectorAll('li').forEach(li=>li.classList.remove('good','bad','right','wrong'))}
   if(!ANS){s.p.className='panel lockp';
    s.p.append(el('div',null,'🔒 Your teacher will unlock the answer for you after you finish your paper. Come back and press “Check for answers”.'));return}
   s.p.className='panel ansp';
   if(s.g){const a=ANS.g[s.item.id];if(!a)return;
    s.p.append(el('div','lab','✅ Correct answer'));const l=el('div','ansline');l.textContent=a.ans;s.p.append(l);
    s.p.append(el('div','lab','Why'));const w=el('div');w.innerHTML=a.why;s.p.append(w);
-   const idx=a.i;const lis=s.opts.querySelectorAll('li');lis.forEach((li,i)=>li.classList.add(i===idx?'good':'bad'));
-  }else{const a=ANS.c[s.q.id];if(!a)return;
+   const idx=a.i;const lis=s.opts.querySelectorAll('li');lis.forEach((li,i)=>li.classList.add(i===idx?'good':'bad'));const pk=MY.g[s.item.id];if(pk===idx)lis[pk].classList.add('right');else if(pk!=null&&lis[pk])lis[pk].classList.add('wrong');if(pk==null){s.p.append(el('div','lab','Your choice'));s.p.append(el('div',null,'You did not pick an answer for this one.'))}
+  }else{const a=ANS.c[s.q.id];if(!a)return;{const my=(MY.c[s.q.id]||'').trim();s.p.append(el('div','lab','📝 Your answer'));const m=el('div','ansline');m.textContent=my||'(you did not write anything)';s.p.append(m)}
    s.p.append(el('div','lab',a.ans.length>1?'✅ Model answers (one mark each)':'✅ Model answer'));
    a.ans.forEach((t,i)=>{const l=el('div','ansline');l.append(t);l.append(el('small',null,(a.en||[])[i]||''));s.p.append(l)});
    if(a.note){s.p.append(el('div','lab','Note'));s.p.append(el('div',null,a.note))}}});
- const st=$('stat');if(ANS){st.className='stat open';st.textContent='✅ Answers unlocked'}else{st.className='stat lock';st.textContent='🔒 Answers locked'}}
+ const st=$('stat');if(ANS){st.className='stat open';st.textContent='✅ Answers unlocked'}else{st.className='stat lock';st.textContent='🔒 Answers locked'}
+ FROZEN=(MODE==='student'||MODE==='review')&&!!ANS;paintG();Object.values(CTA).forEach(t=>t.readOnly=FROZEN);drawSub()}
+
+const nG=DATA.gram.reduce((n,g)=>n+g.items.length,0),nQ=DATA.qs.length;
+function paintG(){Object.keys(GOL).forEach(id=>{const ol=GOL[id];ol.classList.toggle('frozen',FROZEN);ol.querySelectorAll('li').forEach((li,i)=>li.classList.toggle('mine',MY.g[id]===i&&!(ANS&&ANS.g&&ANS.g[id])))})}
+function pick(id,i){if(FROZEN)return;MY.g[id]=i;paintG();touch()}
+function counts(){return{g:Object.keys(MY.g).length,c:DATA.qs.filter(q=>(MY.c[q.id]||'').trim()).length}}
+function drawSub(){const k=counts();$('subprog').textContent='Comprehension: '+k.c+' of '+nQ+' answered · Grammar: '+k.g+' of '+nG+' answered';
+ const sb=$('subbtn'),ss=$('substat'),sc=$('subscore');
+ if(MODE==='review'){sb.hidden=true;ss.textContent=SUBAT?'Submitted by the student on '+new Date(SUBAT).toLocaleString():'This student has not submitted yet (showing any saved draft).'}
+ else if(FROZEN){sb.hidden=true;ss.textContent=SUBAT?'You submitted on '+new Date(SUBAT).toLocaleString()+'. Your teacher has unlocked the answers, so your answers are now locked.':'Answers are unlocked. Your answers are locked now.'}
+ else{sb.hidden=false;sb.textContent=SUBAT?'🔁 Submit again':'📤 Submit my answers';ss.textContent=SUBAT?'✅ Submitted on '+new Date(SUBAT).toLocaleString()+'. You can still change your answers and submit again until your teacher unlocks the correct answers.':'Not submitted yet. Your work is saved on this device as you go. Press Submit when you finish.'}
+ if(ANS&&ANS.g){let ok=0;DATA.gram.forEach(g=>g.items.forEach(it=>{if(ANS.g[it.id]&&MY.g[it.id]===ANS.g[it.id].i)ok++}));sc.hidden=false;sc.textContent='Grammar: '+ok+' out of '+nG+' correct. Now read the model answers below each comprehension question and compare.'}else sc.hidden=true}
+function touch(){try{localStorage.setItem(DKEY,JSON.stringify(MY))}catch(e){}
+ clearTimeout(SAVED_TM);if(MODE==='student')SAVED_TM=setTimeout(()=>save(false),2500);drawSub()}
+async function save(final){
+ if(MODE!=='student'){if(final){SUBAT=Date.now();drawSub();flash('✅ Preview only: nothing is saved to the site.',true)}return}
+ try{const r=await fetch('/api/student/tests/'+SITE.assignment+'/mine',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:MY,submit:!!final})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){if(final)flash('⚠️ '+(j.error||'Could not submit. Try again.'),false);return}
+  if(final){SUBAT=j.submitted_at;drawSub();flash('✅ Submitted! Your teacher will unlock the correct answers later. Come back and press “Check for answers”.',true)}}
+ catch(e){if(final)flash('⚠️ No internet. Your answers are saved on this device; press Submit again when you are online.',false)}}
+$('subbtn').onclick=()=>save(true);
+function applyMine(){Object.keys(CTA).forEach(id=>{CTA[id].value=MY.c[id]||''});paintG()}
+async function loadMine(){
+ try{
+  if(MODE==='student'){const r=await fetch('/api/student/tests/'+SITE.assignment+'/mine',{credentials:'same-origin',cache:'no-store'});const j=await r.json();
+   if(j&&j.answers&&(Object.keys(j.answers.g||{}).length||Object.keys(j.answers.c||{}).length)){MY.g=j.answers.g||{};MY.c=j.answers.c||{}}SUBAT=j&&j.submitted_at||null}
+  else if(MODE==='review'){const r=await fetch('/api/tests/assignments/'+SITE.assignment+'/submission/'+SITE.sid,{credentials:'same-origin',cache:'no-store'});const j=await r.json();
+   MY.g=(j.answers&&j.answers.g)||{};MY.c=(j.answers&&j.answers.c)||{};SUBAT=j.submitted_at||null;ANS=j.key}
+ }catch(e){}
+ applyMine()}
 async function loadAnswers(){
  try{
   if(MODE==='student'){const r=await fetch('/api/student/tests/'+SITE.assignment+'/answers',{credentials:'same-origin',cache:'no-store'});const j=await r.json();ANS=j&&j.released?j.answers:null}
+  else if(MODE==='review'){/* key already loaded with the submission */}
   else if(MODE==='preview'){const r=await fetch('/api/tests/answers/'+SITE.test,{credentials:'same-origin',cache:'no-store'});const j=await r.json();ANS=j&&j.released?j.answers:null}
  }catch(e){}
  fillAnswers()}
@@ -274,7 +328,8 @@ $('chk').onclick=async()=>{const b=$('chk');b.textContent='Checking…';await lo
 if(MODE==='preview'){const n=$('previewnote');n.hidden=false;n.textContent='Teacher preview: you can see all the answers here. Students see them only after you press “Show answers” for them.'}
 if(MODE==='demo'){$('chk').hidden=true;const d=$('demo');d.hidden=false;d.onclick=()=>{ANS=ANS?null:DEMO_ANSWERS;d.textContent=ANS?'Demo: lock answers again':'Demo: unlock answers';fillAnswers()};
  const n=$('previewnote');n.hidden=false;n.textContent='Preview for the teacher. On the site, the “Demo” button is replaced by “Check for answers”: answers stay hidden until you press “Show answers” for each student.'}
-fillAnswers();loadAnswers();
+if(MODE==='review'){$('chk').hidden=true;const n=$('previewnote');n.hidden=false;n.textContent='Teacher review: '+(SITE.sname||'student')+'’s answers next to the correct ones.'}
+fillAnswers();loadMine().then(()=>{if(MODE==='review'){fillAnswers();openAll()}else loadAnswers()});
 })();
 </script>
 </body>

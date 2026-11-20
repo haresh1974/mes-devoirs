@@ -901,10 +901,11 @@ app.get('/api/tests/assignments/:id/results', teacherOnly(async (req, res) => {
   const rs = await db.all('SELECT id,student_id,status,started_at,finished_at,score,out_of,percent,secs,leaves,away_secs,auto,fix_done,fix_total FROM test_results WHERE assignment_id = ?', [o.a.id]);
   const by = {}; rs.forEach((r) => { by[r.student_id] = r; });
   const rel = new Set((await db.all('SELECT student_id FROM test_releases WHERE assignment_id = ?', [o.a.id])).map((x) => x.student_id));
+  const subs = {}; (await db.all('SELECT student_id, submitted_at FROM guided_subs WHERE assignment_id = ?', [o.a.id])).forEach((x) => { subs[x.student_id] = x.submitted_at ? Number(x.submitted_at) : 0; });
   res.json({
     assignment: { id: o.a.id, start_at: o.a.start_at, due_at: o.a.due_at, lock_on: !!o.a.lock_on, max_leaves: o.a.max_leaves },
     test: pubTest(t), cls: { id: o.c.id, name: o.c.name },
-    students: students.map((s) => { const r = by[s.id]; return { id: s.id, name: s.name, released: rel.has(s.id), result_id: r ? r.id : null, status: r ? r.status : 'none',
+    students: students.map((s) => { const r = by[s.id]; return { id: s.id, name: s.name, released: rel.has(s.id), has_draft: s.id in subs, submitted_at: subs[s.id] || null, result_id: r ? r.id : null, status: r ? r.status : 'none',
       score: r ? r.score : null, out_of: r ? r.out_of : null, percent: r ? r.percent : null, secs: r ? r.secs : null, leaves: r ? r.leaves : 0, away: r ? r.away_secs : 0, auto: r ? !!r.auto : false,
       fix_done: r ? r.fix_done : null, fix_total: r ? r.fix_total : null, finished_at: r ? r.finished_at : null, started_at: r ? r.started_at : null }; })
   });
@@ -950,6 +951,56 @@ app.get('/api/student/tests/:aid/answers', studentOnly(async (req, res) => {
   res.set('Cache-Control', 'no-store');
   if (!rel) return res.json({ released: false });
   res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+}));
+const cleanAnswers = (b) => {
+  const g = {}, c = {};
+  const src = b && typeof b === 'object' ? b : {};
+  Object.entries(src.g || {}).slice(0, 120).forEach(([k, v]) => { if (SAFE_FILE.test(k) && Number.isInteger(v) && v >= 0 && v < 12) g[k] = v; });
+  Object.entries(src.c || {}).slice(0, 40).forEach(([k, v]) => { if (SAFE_FILE.test(k) && typeof v === 'string') c[k] = v.slice(0, 2000); });
+  return { g, c };
+};
+app.get('/api/student/tests/:aid/mine', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!isGuided(a && testById(a.test_id))) return res.status(404).json({ error: 'Not found.' });
+  const r = await db.get('SELECT answers, submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  res.set('Cache-Control', 'no-store');
+  let answers = null; try { answers = r ? JSON.parse(r.answers) : null; } catch (e) { /* none */ }
+  res.json({ answers, submitted_at: r && r.submitted_at ? Number(r.submitted_at) : null });
+}));
+app.post('/api/student/tests/:aid/mine', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!isGuided(a && testById(a.test_id))) return res.status(404).json({ error: 'Not found.' });
+  const rel = await db.get('SELECT 1 AS x FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  if (rel) return res.status(403).json({ error: 'Your teacher has already unlocked the answers, so your answers are locked.' });
+  const ans = JSON.stringify(cleanAnswers((req.body || {}).answers));
+  const final = !!(req.body || {}).submit;
+  const old = await db.get('SELECT submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  const subAt = final ? now() : (old && old.submitted_at ? Number(old.submitted_at) : null);
+  await db.run('DELETE FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  await db.run('INSERT INTO guided_subs (assignment_id,student_id,answers,submitted_at,updated_at) VALUES (?,?,?,?,?)', [a.id, req.student.id, ans, subAt, now()]);
+  res.json({ ok: true, submitted_at: subAt });
+}));
+app.get('/api/tests/assignments/:id/submission/:sid', teacherOnly(async (req, res) => {
+  const o = await ownTestAsg(req, req.params.id);
+  const t = o && testById(o.a.test_id);
+  if (!isGuided(t)) return res.status(404).json({ error: 'Not found.' });
+  const st = await db.get('SELECT id,name FROM students WHERE id = ? AND class_id = ?', [req.params.sid, o.c.id]);
+  if (!st) return res.status(404).json({ error: 'Not found.' });
+  const r = await db.get('SELECT answers, submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [o.a.id, st.id]);
+  let answers = null; try { answers = r ? JSON.parse(r.answers) : null; } catch (e) { /* none */ }
+  res.set('Cache-Control', 'no-store');
+  res.json({ student: st.name, answers, submitted_at: r && r.submitted_at ? Number(r.submitted_at) : null, key: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+}));
+app.get('/tests/review/:aid/:sid', wrap(async (req, res) => {
+  const tc = await auth(req, 'teacher');
+  if (!tc) return res.redirect('/');
+  req.teacher = tc;
+  const o = await ownTestAsg(req, req.params.aid);
+  const t = o && testById(o.a.test_id);
+  if (!isGuided(t)) return res.redirect('/#/t/tests');
+  const st = await db.get('SELECT id,name FROM students WHERE id = ? AND class_id = ?', [req.params.sid, o.c.id]);
+  if (!st) return res.redirect('/#/t/tests');
+  await sendTest(res, t, { mode: 'review', assignment: o.a.id, sid: st.id, sname: st.name, kind: 'guided', title: t.title + ' · ' + st.name, assetBase: '/tests/asset-preview/' + t.id + '/' });
 }));
 app.get('/api/tests/answers/:tid', teacherOnly(async (req, res) => {
   const t = testById(req.params.tid);

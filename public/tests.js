@@ -78,12 +78,12 @@ ROUTES.push([/^\/t\/tests\/(\w+)$/, async (id) => {
   const d = TS.res = await api('/tests/assignments/' + id + '/results');
   if (d.test.kind === 'guided') {
     const n = d.students.filter((s) => s.released).length;
-    const rows = d.students.map((s) => `<tr><td><b>${esc(s.name)}</b></td><td>${s.released ? '<span class="badge g">Answers shown</span>' : '<span class="mute">Hidden</span>'}</td>
-      <td style="white-space:nowrap"><button class="btn ${s.released ? 'ghost' : 'green'} sm" data-act="tRel" data-id="${esc(d.assignment.id)}" data-s="${esc(s.id)}" data-on="${s.released ? 0 : 1}">${s.released ? '🔒 Hide answers' : '🔑 Show answers'}</button></td></tr>`).join('');
+    const rows = d.students.map((s) => `<tr><td><b>${esc(s.name)}</b></td><td>${s.submitted_at ? '<span class="badge g">Submitted</span> <span class="mute small">' + esc(fmtDate(s.submitted_at)) + '</span>' : s.has_draft ? '<span class="chip">Draft saved</span>' : '<span class="mute">Not started</span>'}</td><td>${s.released ? '<span class="badge g">Answers shown</span>' : '<span class="mute">Hidden</span>'}</td>
+      <td style="white-space:nowrap">${s.has_draft ? `<a class="btn ghost sm" target="_blank" rel="noopener" href="/tests/review/${esc(d.assignment.id)}/${esc(s.id)}">👁 View answers</a> ` : ''}<button class="btn ${s.released ? 'ghost' : 'green'} sm" data-act="tRel" data-id="${esc(d.assignment.id)}" data-s="${esc(s.id)}" data-on="${s.released ? 0 : 1}">${s.released ? '🔒 Hide answers' : '🔑 Show answers'}</button></td></tr>`).join('');
     shell('tests', `<button class="linkbtn" data-act="tBackTests">← Class tests</button>
       <h1 style="margin:6px 0 2px">${esc(d.test.title)}</h1><p class="mute" style="margin:0 0 14px">${esc(d.cls.name)} · ${d.test.folder ? esc(d.test.folder) + ' › ' : ''}${esc(d.test.sub || '')}</p>
       <div class="row" style="margin-bottom:12px"><button class="btn green sm" data-act="tRel" data-id="${esc(d.assignment.id)}" data-all="1" data-on="1">🔑 Show answers to everyone</button><button class="btn ghost sm" data-act="tRel" data-id="${esc(d.assignment.id)}" data-all="1" data-on="0">🔒 Hide from everyone</button><span class="mute small">${n} of ${d.students.length} students can see the answers</span></div>
-      <div class="card" style="overflow:auto;padding:6px 10px"><table><thead><tr><th>Student</th><th>Answers</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="3" class="mute">No students in this class yet.</td></tr>'}</tbody></table></div>
+      <div class="card" style="overflow:auto;padding:6px 10px"><table><thead><tr><th>Student</th><th>Their work</th><th>Correct answers</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="4" class="mute">No students in this class yet.</td></tr>'}</tbody></table></div>
       <p class="mute small">Students can open the paper, the idea maps and the videos at any time. The model answers stay locked until you press <b>Show answers</b> for that student, so you can unlock them child by child after you have collected their paper. A student who already has the page open sees the answers after pressing “Check for answers”.</p>`);
     return;
   }
