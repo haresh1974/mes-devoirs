@@ -264,7 +264,13 @@ async function loadAnswers(){
   else if(MODE==='preview'){const r=await fetch('/api/tests/answers/'+SITE.test,{credentials:'same-origin',cache:'no-store'});const j=await r.json();ANS=j&&j.released?j.answers:null}
  }catch(e){}
  fillAnswers()}
-$('chk').onclick=async()=>{const b=$('chk');b.textContent='Checking…';await loadAnswers();b.textContent=ANS?'✅ Unlocked':'🔄 Check for answers';setTimeout(()=>{b.textContent='🔄 Check for answers'},1800)};
+function flash(t,ok){let n=$('flashmsg');if(!n){n=document.createElement('div');n.id='flashmsg';n.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99;padding:12px 18px;border-radius:14px;font-weight:700;font-size:16px;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:90vw;text-align:center';document.body.append(n)}
+ n.style.background=ok?'#0f7a4f':'#8a5a00';n.style.color='#fff';n.textContent=t;n.hidden=false;clearTimeout(n._t);n._t=setTimeout(()=>{n.hidden=true},4500)}
+function openAll(){document.querySelectorAll('button.ans').forEach(b=>{if(b.getAttribute('aria-expanded')!=='true')b.click()})}
+$('chk').onclick=async()=>{const b=$('chk');b.textContent='Checking…';await loadAnswers();
+ if(ANS){openAll();flash('✅ Answers unlocked. They are now open under every question. Scroll down to read them.',true);const t=document.querySelector('#q2');if(t)t.scrollIntoView({behavior:'smooth'})}
+ else flash('🔒 Your teacher has not unlocked the answers for you yet. Ask your teacher, then press this button again.',false);
+ b.textContent='🔄 Check for answers'};
 if(MODE==='preview'){const n=$('previewnote');n.hidden=false;n.textContent='Teacher preview: you can see all the answers here. Students see them only after you press “Show answers” for them.'}
 if(MODE==='demo'){$('chk').hidden=true;const d=$('demo');d.hidden=false;d.onclick=()=>{ANS=ANS?null:DEMO_ANSWERS;d.textContent=ANS?'Demo: lock answers again':'Demo: unlock answers';fillAnswers()};
  const n=$('previewnote');n.hidden=false;n.textContent='Preview for the teacher. On the site, the “Demo” button is replaced by “Check for answers”: answers stay hidden until you press “Show answers” for each student.'}
