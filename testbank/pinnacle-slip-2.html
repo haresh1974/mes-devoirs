@@ -217,7 +217,7 @@ DATA.letters.forEach(L=>{
  L.plan.forEach((p,i)=>{const tr=el('tr');const td1=el('td',null,'Paragraph '+(i+1));const td2=el('td');td2.innerHTML='<b>'+p[0]+'</b> <span style="color:var(--ink2)">'+p[1]+'</span> '+p[2].map(t=>TAG[t]).join(' ');tr.append(td1,td2);tb.append(tr)});
  c.append(tb);
  const r=el('div','row');
- const a=el('a','btn');a.href=ASSET+L.map;a.target='_blank';a.rel='noopener';a.textContent='🗺 Open the idea map';r.append(a);
+ const a=el('a','btn');a.href=ASSET+L.map;a.target='_blank';a.rel='noopener';a.textContent='🗺 Open the idea map';r.append(a);const va=el('a','btn ghost');va.href=ASSET+'vocab.html#'+L.map.replace('letter_','').replace('.html','');va.target='_blank';va.rel='noopener';va.textContent='📚 Words in sentences';r.append(va);
  const vb=el('button','btn ghost');vb.type='button';vb.textContent='▶ Watch the video';r.append(vb);c.append(r);
  const vw=el('div');vw.hidden=true;c.append(vw);
  vb.onclick=()=>{if(vw.hidden){if(!vw.firstChild){const v=document.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=ASSET+L.video;vw.append(v)}vw.hidden=false;vb.textContent='✖ Close the video'}else{const v=vw.querySelector('video');if(v)v.pause();vw.hidden=true;vb.textContent='▶ Watch the video'}};
