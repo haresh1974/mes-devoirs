@@ -1,0 +1,485 @@
+{
+ "c": {
+  "t1a": {
+   "ans": [
+    "Parce qu’il adorait le football.",
+    "Il voulait entraîner les petits de son quartier."
+   ],
+   "en": [
+    "Because he loved football.",
+    "He wanted to coach the small children of his neighbourhood."
+   ],
+   "note": "1 mark for the reason (football), 1 for the wish to help the children. “pour les petits de son quartier” can also be used."
+  },
+  "t1b": {
+   "ans": [
+    "Il a lu une affiche en passant devant le stade.",
+    "Le club de la ville cherchait un volontaire pour entraîner des enfants de huit ans."
+   ],
+   "en": [
+    "He read a poster while walking past the stadium.",
+    "The town club was looking for a volunteer to coach eight-year-old children."
+   ],
+   "note": "1 mark for how (the poster), 1 mark for what the club needed. Put your own words: il a vu une affiche."
+  },
+  "t1c": {
+   "ans": [
+    "Il était trop timide et il n’osait jamais demander le ballon.",
+    "Il tombait souvent quand il courait."
+   ],
+   "en": [
+    "He was too shy and never dared to ask for the ball.",
+    "He often fell when he ran."
+   ],
+   "note": "The présent (il est trop timide … il tombe souvent) is also accepted when you quote Samir by changing je → il."
+  },
+  "t1d": {
+   "ans": [
+    "Il a joué avec lui avant l’entraînement.",
+    "Il a félicité chaque petit progrès."
+   ],
+   "en": [
+    "He played with him before training.",
+    "He congratulated every small step of progress."
+   ],
+   "note": "1 mark for each action. A third detail is also true: il a compris que Samir avait perdu confiance après une blessure."
+  },
+  "t1e": {
+   "ans": [
+    "Il a été très heureux de cette première saison.",
+    "Samir joue beaucoup mieux maintenant. / Il est comme un grand frère pour Samir."
+   ],
+   "en": [
+    "He was very happy with this first season.",
+    "Samir plays much better now. / He is like a big brother to Samir."
+   ],
+   "note": "1 mark for the opinion (très heureux), 1 mark for a reason. Say “il”, not “je”."
+  },
+  "t2a": {
+   "ans": [
+    "Parce qu’elle habitait dans un grand immeuble au centre de la ville."
+   ],
+   "en": [
+    "Because she lived in a large apartment building in the city centre."
+   ],
+   "note": "2 marks: the building and the city centre."
+  },
+  "t2b": {
+   "ans": [
+    "Les habitants du quartier étaient invités à planter des légumes ensemble."
+   ],
+   "en": [
+    "The people of the neighbourhood were invited to plant vegetables together."
+   ],
+   "note": "Mention both who was invited and what they were invited to do."
+  },
+  "t2c": {
+   "ans": [
+    "Les plus âgés donnaient des conseils.",
+    "Les jeunes arrosaient les plantes."
+   ],
+   "en": [
+    "The older people gave advice.",
+    "The young people watered the plants."
+   ],
+   "note": "1 mark for each group."
+  },
+  "t2d": {
+   "ans": [
+    "M. Durand, un voisin, l’a aidée.",
+    "Il lui a expliqué comment planter les tomates et quand les arroser."
+   ],
+   "en": [
+    "Mr Durand, a neighbour, helped her.",
+    "He explained how to plant the tomatoes and when to water them."
+   ],
+   "note": "1 mark for who, 1 mark for how."
+  },
+  "t2e": {
+   "ans": [
+    "Elle mange plus de légumes maintenant.",
+    "Elle a rencontré des voisins très sympathiques / elle a beaucoup appris."
+   ],
+   "en": [
+    "She eats more vegetables now.",
+    "She has met very nice neighbours / she has learnt a lot."
+   ],
+   "note": "Any two details earn the 2 marks."
+  }
+ },
+ "g": {
+  "i1": {
+   "i": 2,
+   "ans": "(c) prends",
+   "why": "“Tous les matins” = a habit → <b>présent</b>: je prends."
+  },
+  "i2": {
+   "i": 3,
+   "ans": "(d) sommes sortis",
+   "why": "“Hier soir” = a finished action → <b>passé composé</b>. <b>Sortir</b> without an object is a movement verb → <b>être</b>: nous <b>sommes sortis</b> (agreement: plural)."
+  },
+  "i3": {
+   "i": 3,
+   "ans": "(d) regardions",
+   "why": "“Quand nous étions petits … souvent” = a habit in the past → <b>imparfait</b>: nous regardions."
+  },
+  "i4": {
+   "i": 0,
+   "ans": "(a) révise",
+   "why": "“Maintenant” → <b>présent</b>: je révise."
+  },
+  "i5": {
+   "i": 2,
+   "ans": "(c) irons",
+   "why": "“L’année prochaine” → <b>futur simple</b>; irregular stem of aller: <b>ir-</b> → nous irons."
+  },
+  "ii1": {
+   "i": 0,
+   "ans": "(a) part",
+   "why": "“Chaque été” = a repeated habit → <b>présent</b>: ma famille <b>part</b> (partir: il part)."
+  },
+  "ii2": {
+   "i": 1,
+   "ans": "(b) avons visité",
+   "why": "“L’année dernière” = a finished action → <b>passé composé</b>. <b>Visiter</b> has an object (un village) → <b>avoir</b>: nous avons visité."
+  },
+  "ii3": {
+   "i": 0,
+   "ans": "(a) habitaient",
+   "why": "“Quand ils étaient jeunes” = a habit / description in the past → <b>imparfait</b>: ils habitaient."
+  },
+  "ii4": {
+   "i": 2,
+   "ans": "(c) a montré",
+   "why": "“Ce matin” = a finished action → <b>passé composé</b>. <b>Montrer</b> has an object (la photo) → <b>avoir</b>: il a montré."
+  },
+  "ii5": {
+   "i": 2,
+   "ans": "(c) retournerons",
+   "why": "“S’il fait beau” = <b>si + présent</b> → the result is in the <b>futur simple</b>: nous retournerons."
+  },
+  "iii1": {
+   "i": 2,
+   "ans": "(c) rêvais",
+   "why": "“Quand j’étais petit” = a habit / dream in the past → <b>imparfait</b>: je rêvais."
+  },
+  "iii2": {
+   "i": 0,
+   "ans": "(a) étudie",
+   "why": "“Maintenant” → <b>présent</b>: j’étudie."
+  },
+  "iii3": {
+   "i": 2,
+   "ans": "(c) sommes rentrés",
+   "why": "“Hier soir” = finished action → <b>passé composé</b>. <b>Rentrer</b> (= go home) is a movement verb without an object → <b>être</b>: nous <b>sommes rentrés</b>."
+  },
+  "iii4": {
+   "i": 1,
+   "ans": "(b) voyagerais",
+   "why": "“Si j’avais …” = <b>si + imparfait</b> → the result is in the <b>conditionnel présent</b>: je voyagerais."
+  },
+  "iii5": {
+   "i": 0,
+   "ans": "(a) finira",
+   "why": "“Demain” → <b>futur simple</b>: ma sœur finira."
+  },
+  "iv1": {
+   "i": 0,
+   "ans": "(a) plus âgé",
+   "why": "“<b>que moi</b>” + 18 vs 15 years: two people are compared → <b>comparative</b>: plus âgé (que moi)."
+  },
+  "iv2": {
+   "i": 0,
+   "ans": "(a) la plus célèbre",
+   "why": "“<b>du pays</b>” = a whole group → <b>superlative</b>: la plus célèbre (feminine, because chanteuse)."
+  },
+  "iv3": {
+   "i": 3,
+   "ans": "(d) plus rapide",
+   "why": "“<b>que l’autre</b>” + “dix minutes avant” → comparative: <b>plus rapide</b> (que l’autre)."
+  },
+  "iv4": {
+   "i": 2,
+   "ans": "(c) la meilleure",
+   "why": "“<b>de la classe</b>” = a group → superlative. Bon → <b>meilleur</b>: la meilleure (never “la plus bonne”)."
+  },
+  "iv5": {
+   "i": 2,
+   "ans": "(c) plus vite",
+   "why": "“<b>que moi</b>” with an adverb (il court) → <b>plus vite</b> (que moi). Adverbs do not agree."
+  },
+  "iv6": {
+   "i": 2,
+   "ans": "(c) moins d’",
+   "why": "“<b>que l’année dernière</b>” and “la classe est plus petite” → fewer pupils: <b>moins d’</b> + noun (que …)."
+  },
+  "iv7": {
+   "i": 3,
+   "ans": "(d) le meilleur",
+   "why": "“<b>de tous</b>” = a group → superlative. Bon → <b>meilleur</b>: <b>le meilleur</b> film (le plus bon is wrong)."
+  },
+  "iv8": {
+   "i": 0,
+   "ans": "(a) aussi âgé que",
+   "why": "“<b>ils ont tous les deux quinze ans</b>” = the same age → equality: <b>aussi âgé que</b>."
+  },
+  "v1": {
+   "i": 1,
+   "ans": "(b) que",
+   "why": "Gâteau = the <b>direct object</b> of “tu as préparé” (subject: tu) → <b>que</b>."
+  },
+  "v2": {
+   "i": 3,
+   "ans": "(d) dont",
+   "why": "“parler <b>de</b> quelque chose” → <b>dont</b> (replaces de + noun)."
+  },
+  "v3": {
+   "i": 3,
+   "ans": "(d) qui",
+   "why": "La fille = the <b>subject</b> of “parle” → <b>qui</b>."
+  },
+  "v4": {
+   "i": 1,
+   "ans": "(b) que",
+   "why": "“admirer quelqu’un” = direct object (nous admirons le professeur) → <b>que</b>."
+  },
+  "v5": {
+   "i": 2,
+   "ans": "(c) où",
+   "why": "“Le jour” = a <b>time</b> → <b>où</b>."
+  },
+  "v6": {
+   "i": 3,
+   "ans": "(d) dont",
+   "why": "“la voix <b>de</b> la chanteuse” = whose voice → <b>dont</b>."
+  },
+  "v7": {
+   "i": 3,
+   "ans": "(d) qui",
+   "why": "Le livre = the <b>subject</b> of “est sur la table” → <b>qui</b>."
+  },
+  "v8": {
+   "i": 1,
+   "ans": "(b) dont",
+   "why": "“parler <b>de</b> mes amis” → <b>dont</b>."
+  },
+  "vi1": {
+   "i": 0,
+   "ans": "(a) Il les leur a rendues.",
+   "why": "Les copies → <b>les</b>; aux élèves → <b>leur</b>. Order: le/la/les <b>before</b> lui/leur; before the auxiliary: <b>les leur a rendues</b> (rendu<b>es</b>: agreement with les)."
+  },
+  "vi2": {
+   "i": 1,
+   "ans": "(b) Tu les y as mises ?",
+   "why": "Les clés → <b>les</b>; dans le tiroir → <b>y</b>. Order: les before y: <b>les y as mises</b> (agreement with les: mises)."
+  },
+  "vi3": {
+   "i": 1,
+   "ans": "(b) Je le lui donne.",
+   "why": "Le cadeau → <b>le</b>; à mon frère → <b>lui</b>. Order: <b>le lui</b> donne (le/la/les before lui)."
+  },
+  "vi4": {
+   "i": 1,
+   "ans": "(b) Elle leur en parle.",
+   "why": "De ses vacances → <b>en</b>; à ses amis → <b>leur</b>. Order: lui/leur <b>before</b> en: <b>leur en</b> parle."
+  },
+  "vi5": {
+   "i": 0,
+   "ans": "(a) Nous y allons avec eux.",
+   "why": "Au cinéma → <b>y</b>; “avec nos cousins” stays with a stressed pronoun: <b>avec eux</b>. Nous <b>y</b> allons avec eux."
+  },
+  "vi6": {
+   "i": 1,
+   "ans": "(b) Il en a acheté trois.",
+   "why": "Trois livres → <b>en</b> (quantity), and the number <b>trois</b> stays. Il <b>en</b> a acheté trois (no agreement with en)."
+  },
+  "vi7": {
+   "i": 0,
+   "ans": "(a) Donne-le-lui !",
+   "why": "Affirmative imperative: pronouns <b>after</b> the verb with hyphens, order le/la/les then lui: <b>Donne-le-lui !</b>"
+  },
+  "vi8": {
+   "i": 2,
+   "ans": "(c) Tu l’y as rencontrée ?",
+   "why": "Marie → <b>l’</b>; chez le médecin → <b>y</b>. Order: <b>l’y</b> as rencontrée (agreement with Marie, feminine)."
+  },
+  "vii1": {
+   "i": 2,
+   "ans": "(c) Non, je n’ai pas encore visité ce musée.",
+   "why": "“déjà” → <b>ne … pas encore</b>: je n’ai pas encore visité (around the auxiliary)."
+  },
+  "vii2": {
+   "i": 1,
+   "ans": "(b) Non, je n’ai rien vu d’intéressant.",
+   "why": "“quelque chose” → <b>ne … rien</b>; rien comes before the participle: je n’ai <b>rien vu</b>."
+  },
+  "vii3": {
+   "i": 1,
+   "ans": "(b) Non, je ne vais jamais au théâtre.",
+   "why": "“souvent” → <b>ne … jamais</b>: je ne vais jamais."
+  },
+  "vii4": {
+   "i": 2,
+   "ans": "(c) Non, elle n’habite plus à Paris.",
+   "why": "“encore” (still) → <b>ne … plus</b>: elle n’habite plus."
+  },
+  "vii5": {
+   "i": 2,
+   "ans": "(c) Non, je n’ai parlé à personne.",
+   "why": "“quelqu’un” → <b>ne … personne</b>; personne goes <b>after</b> the participle: je n’ai parlé à personne."
+  },
+  "vii6": {
+   "i": 1,
+   "ans": "(b) Non, nous n’allons nulle part.",
+   "why": "“quelque part” → <b>ne … nulle part</b>: nous n’allons nulle part."
+  },
+  "vii7": {
+   "i": 2,
+   "ans": "(c) Non, il n’y a aucun problème.",
+   "why": "“un problème” → <b>ne … aucun</b>: il n’y a aucun problème (never “pas” with it)."
+  },
+  "vii8": {
+   "i": 1,
+   "ans": "(b) Non, je ne veux ni thé ni café.",
+   "why": "“thé <b>ou</b> café” → <b>ne … ni … ni …</b>: je ne veux ni thé ni café (no du / de la after ni)."
+  },
+  "viii1": {
+   "i": 1,
+   "ans": "(b) à",
+   "why": "A <b>clock time</b> takes <b>à</b>: à quinze heures."
+  },
+  "viii2": {
+   "i": 2,
+   "ans": "(c) par",
+   "why": "A passive sentence (a été construit) → the doer takes <b>par</b>: construit par un roi."
+  },
+  "viii3": {
+   "i": 2,
+   "ans": "(c) à",
+   "why": "A city takes <b>à</b>: à Paris."
+  },
+  "viii4": {
+   "i": 0,
+   "ans": "(a) au",
+   "why": "Japon is a <b>masculine country</b> → <b>au</b> Japon."
+  },
+  "viii5": {
+   "i": 1,
+   "ans": "(b) dans",
+   "why": "<b>dans</b> + a length of time = in ten minutes’ time (when it will leave)."
+  },
+  "viii6": {
+   "i": 0,
+   "ans": "(a) en",
+   "why": "Means of transport: <b>en</b> train."
+  },
+  "viii7": {
+   "i": 3,
+   "ans": "(d) avec",
+   "why": "An instrument or tool → <b>avec</b> un stylo bleu."
+  },
+  "viii8": {
+   "i": 3,
+   "ans": "(d) pour",
+   "why": "A gift <b>for</b> someone → <b>pour</b> ma mère."
+  }
+ },
+ "s": {
+  "i": [
+   [
+    "to take",
+    "tous les matins",
+    "présent",
+    "I take (every morning)"
+   ],
+   [
+    "to go out",
+    "hier soir",
+    "passé composé (with être)",
+    "we went out"
+   ],
+   [
+    "to watch",
+    "quand nous étions petits … souvent",
+    "imparfait",
+    "we used to watch"
+   ],
+   [
+    "to revise",
+    "maintenant",
+    "présent",
+    "I am revising"
+   ],
+   [
+    "to go",
+    "l’année prochaine",
+    "futur simple",
+    "we will go"
+   ]
+  ],
+  "ii": [
+   [
+    "to leave, to go away",
+    "chaque été",
+    "présent",
+    "my family goes away"
+   ],
+   [
+    "to visit",
+    "l’année dernière",
+    "passé composé (with avoir)",
+    "we visited"
+   ],
+   [
+    "to live",
+    "quand ils étaient jeunes",
+    "imparfait",
+    "they used to live"
+   ],
+   [
+    "to show",
+    "ce matin",
+    "passé composé (with avoir)",
+    "my grandfather showed me"
+   ],
+   [
+    "to go back",
+    "s’il fait beau l’été prochain (si + présent)",
+    "futur simple",
+    "we will go back"
+   ]
+  ],
+  "iii": [
+   [
+    "to dream",
+    "quand j’étais petit",
+    "imparfait",
+    "I used to dream"
+   ],
+   [
+    "to study",
+    "maintenant",
+    "présent",
+    "I study / I am studying"
+   ],
+   [
+    "to return home",
+    "hier soir",
+    "passé composé (with être)",
+    "we came home"
+   ],
+   [
+    "to travel",
+    "si j’avais plus d’argent (si + imparfait)",
+    "conditionnel présent",
+    "I would travel"
+   ],
+   [
+    "to finish",
+    "demain",
+    "futur simple",
+    "she will finish"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,135 @@
+<title>Eating Well and Sport Letter Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one big mind-map stage that scales to the screen; click an idea to burst its vocabulary out around it. */
+:root{--bg:#F4F7FB;--ink:#16254A;--soft:#5B6B8C;--card:#FFFFFF;--line:#D5DDEB;
+--p1:#FF5D73;--p2:#12B5A6;--p3:#8B5CF6;--verb:#F4511E;--noun:#1E88E5;--adj:#F6A800;--adv:#00A66C;--hub:#16254A;
+--disp:'Baloo 2','Nunito','Trebuchet MS',sans-serif;--body:'Nunito','Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-height:100vh;
+background-image:radial-gradient(#CBD5E6 1.2px,transparent 1.2px);background-size:26px 26px}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto 10px}
+.brand{font-family:var(--disp);font-weight:800;font-size:22px;line-height:1.1}
+.brand small{display:block;font-family:var(--body);font-weight:700;font-size:12px;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:700 14px var(--body);color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+button:hover{transform:translateY(-1px)}button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+button:focus-visible{outline:3px solid var(--p3);outline-offset:2px}
+button.on{background:var(--ink);color:#fff}
+#fit{max-width:1400px;margin:0 auto;position:relative;width:100%}
+#stage{position:absolute;left:0;top:0;width:1400px;height:880px;transform-origin:0 0}
+svg.lines{position:absolute;left:0;top:0;width:1400px;height:880px;pointer-events:none;overflow:visible}
+.node{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:0}
+.hub{background:var(--hub);color:#fff;border-radius:50%;box-shadow:0 10px 0 rgba(22,37,74,.18),0 0 0 10px rgba(22,37,74,.08)}
+.hub .em{font-size:64px;line-height:1}.hub .tt{font:800 24px/1.1 var(--disp);padding:0 24px;margin-top:6px}
+.hub .sub{font:700 12px var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-top:6px}
+.hub .tn{font:700 13px var(--body);margin-top:8px;background:rgba(255,255,255,.16);border-radius:999px;padding:3px 12px}
+.idea{width:176px;height:108px;border-radius:26px;color:#fff;cursor:pointer;padding:6px 10px;box-shadow:0 6px 0 rgba(0,0,0,.18);font-family:var(--body);animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+.idea:hover{transform:scale(1.07) rotate(-1deg)}.idea:focus-visible{outline:4px solid var(--ink)}
+.idea .em{font-size:36px;line-height:1.05}.idea .t{font:800 14px/1.15 var(--body);margin-top:3px}
+.idea .n{position:absolute;top:-10px;left:-8px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;font:800 12px var(--body);padding:1px 8px}
+.dim{opacity:.18;filter:grayscale(.6)}
+.cat{width:132px;height:132px;border-radius:50%;color:#fff;font:800 19px/1.05 var(--disp);box-shadow:0 6px 0 rgba(0,0,0,.2);animation:pop .45s cubic-bezier(.2,1.4,.4,1) both}
+.cat small{font:700 11px var(--body);opacity:.85;margin-top:3px;letter-spacing:.04em}
+.chip{position:absolute;width:290px;height:56px;background:var(--card);border-radius:16px;border:3px solid;padding:5px 12px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;text-align:left;font-family:var(--body);animation:slide .45s ease both;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.chip b{font:800 17px/1.15 var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip span{font:700 13px/1.2 var(--body);color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s}
+.hide .chip:not(.rev) span{opacity:0}.hide .chip:not(.rev) b::after{content:"  · tap";color:var(--soft);font-weight:700;font-size:12px}
+.crumb{position:absolute;left:0;right:0;top:6px;text-align:center;font:800 15px var(--body);letter-spacing:.05em;text-transform:uppercase}
+.nav{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:10px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:1400px;margin:10px auto 0}
+.lg{color:#fff;border-radius:18px;padding:8px 16px;font:800 14px/1.25 var(--body);cursor:pointer;border:0;box-shadow:0 4px 0 rgba(0,0,0,.2);text-align:left}
+.lg small{display:block;font-weight:700;opacity:.9;font-size:12px}
+@keyframes pop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+.ln{stroke-dasharray:1000;stroke-dashoffset:1000;animation:draw .8s .15s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.idea,.cat,.chip{animation:none}.ln{animation:none;stroke-dashoffset:0}}
+.sheet,.panel{max-width:1100px;margin:0 auto}
+.pcard{background:var(--card);border:3px solid var(--ink);border-radius:22px;padding:16px 18px;margin-bottom:18px}
+.pcard h2{font:800 22px var(--disp);margin:0 0 4px}.pcard .tn{font-weight:800;font-size:14px;margin-bottom:10px}
+.icard{border-top:2px dashed var(--line);padding:12px 0}.icard h3{font:800 18px var(--body);margin:0 0 8px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.cols h4{margin:0 0 4px;font:800 13px var(--body);letter-spacing:.05em;text-transform:uppercase}
+.cols p{margin:0;font-size:14px;line-height:1.55}.cols p i{font-style:normal;color:var(--soft)}
+table{border-collapse:collapse;width:100%;background:var(--card);border:3px solid var(--ink);border-radius:16px;overflow:hidden}
+td,th{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:2px solid var(--line);font-size:15px;line-height:1.5}
+th{background:var(--ink);color:#fff;font-weight:800}td:first-child{font-weight:800;white-space:nowrap}
+.tw{overflow-x:auto}
+.w{display:inline-block;margin:2px 10px 2px 0}.w i{font-style:normal;color:var(--soft)}
+</style>
+<div class="top">
+ <div class="brand">Letter idea map<small>Learn French with Haresh Sir · ICSE Grade 10 · Letter practice</small></div>
+ <div class="btns">
+  <button id="bMap" class="on">Map</button><button id="bSheet">Study sheet</button><button id="bConn">Connectives</button><button id="bBoost">Boosters</button>
+  <button id="bEng" title="Hide the English, tap a word to reveal it">English: shown</button>
+ </div>
+</div>
+<div id="app"></div>
+<script>
+const D={"ttl": "Eating Well and Sport Letter Map", "title": "Why eating well and sport are important", "emoji": "🥗", "sub": "Letter 2 · body only", "paras": [{"t": "Why eating well matters", "w": "≈ 50 words", "tense": "Présent (facts and advice) + il faut / il est important de", "ideas": [{"t": "A balanced diet", "tn": "présent", "e": "🥦", "w": [[["manger", "to eat"], ["choisir", "to choose"], ["éviter", "to avoid"], ["consommer", "to consume"], ["préférer", "to prefer"], ["remplacer", "to replace"]], [["les fruits (m)", "fruit"], ["les légumes (m)", "vegetables"], ["les protéines (f)", "proteins"], ["les produits laitiers", "dairy"], ["les céréales (f)", "cereals"], ["le repas", "meal"]], [["équilibré(e)", "balanced"], ["varié(e)", "varied"], ["frais / fraîche", "fresh"], ["naturel(le)", "natural"]], [["chaque jour", "every day"], ["au moins", "at least"], ["cinq fois par jour", "five times a day"], ["plutôt que", "rather than"], ["surtout", "above all"]]]}, {"t": "Junk food and sugar", "tn": "présent", "e": "🍔", "w": [[["grignoter", "to snack"], ["boire", "to drink"], ["acheter", "to buy"], ["abuser de", "to overdo"], ["être attiré(e) par", "to be drawn to"], ["résister", "to resist"]], [["la restauration rapide", "fast food"], ["le sucre", "sugar"], ["les bonbons (m)", "sweets"], ["les chips (f)", "crisps"], ["la boisson gazeuse", "fizzy drink"], ["le gras", "fat"]], [["gras(se)", "fatty"], ["sucré(e)", "sugary"], ["salé(e)", "salty"], ["mauvais(e) pour la santé", "bad for health"], ["dangereux / dangereuse", "dangerous"]], [["trop", "too much"], ["souvent", "often"], ["rarement", "rarely"], ["de temps en temps", "from time to time"], ["ne … jamais", "never"]]]}, {"t": "Breakfast, water, regular meals", "tn": "présent", "e": "🥛", "w": [[["prendre le petit-déjeuner", "to have breakfast"], ["boire de l’eau", "to drink water"], ["manger à heures fixes", "to eat at regular times"], ["se lever", "to get up"], ["avoir faim", "to be hungry"], ["se nourrir", "to feed oneself"]], [["le petit-déjeuner", "breakfast"], ["l’eau (f)", "water"], ["le déjeuner", "lunch"], ["le dîner", "dinner"], ["le goûter", "snack"], ["le lait", "milk"]], [["régulier / régulière", "regular"], ["complet / complète", "full"], ["léger / légère", "light"], ["hydraté(e)", "hydrated"]], [["le matin", "in the morning"], ["à midi", "at noon"], ["le soir", "in the evening"], ["tous les jours", "every day"], ["avant l’école", "before school"]]]}, {"t": "Energy and concentration", "tn": "présent", "e": "🧠", "w": [[["se concentrer", "to concentrate"], ["apprendre", "to learn"], ["réussir", "to succeed"], ["avoir de l’énergie", "to have energy"], ["rester en forme", "to stay fit"], ["se sentir bien", "to feel good"]], [["l’énergie (f)", "energy"], ["la concentration", "concentration"], ["la forme", "fitness"], ["la santé", "health"], ["les résultats (m)", "results"], ["la mémoire", "memory"]], [["en bonne santé", "healthy"], ["fatigué(e)", "tired"], ["concentré(e)", "focused"], ["fort(e)", "strong"], ["dynamique", "energetic"]], [["grâce à", "thanks to"], ["c’est pourquoi", "that is why"], ["donc", "so"], ["parce que", "because"], ["pour + infinitif", "in order to"]]]}]}, {"t": "Why sport matters", "w": "≈ 60 words", "tense": "Présent (benefits) – the heart of the letter", "ideas": [{"t": "A strong, healthy body", "tn": "présent", "e": "💪", "w": [[["faire du sport", "to do sport"], ["courir", "to run"], ["nager", "to swim"], ["s’entraîner", "to train"], ["se muscler", "to build muscle"], ["grandir", "to grow"]], [["le corps", "body"], ["le muscle", "muscle"], ["le cœur", "heart"], ["le poids", "weight"], ["la santé", "health"], ["le souffle", "breath"]], [["fort(e)", "strong"], ["en forme", "fit"], ["sportif / sportive", "sporty"], ["souple", "supple"], ["en bonne santé", "healthy"]], [["trois fois par semaine", "three times a week"], ["régulièrement", "regularly"], ["tous les jours", "every day"], ["au moins", "at least"], ["mieux", "better"]]]}, {"t": "A calm mind, less stress", "tn": "présent", "e": "😌", "w": [[["se détendre", "to relax"], ["oublier", "to forget"], ["se sentir bien", "to feel good"], ["diminuer", "to reduce"], ["respirer", "to breathe"], ["dormir", "to sleep"]], [["le stress", "stress"], ["l’humeur (f)", "mood"], ["le sommeil", "sleep"], ["la détente", "relaxation"], ["la fatigue", "tiredness"], ["le bien-être", "well-being"]], [["calme", "calm"], ["détendu(e)", "relaxed"], ["de bonne humeur", "in a good mood"], ["heureux / heureuse", "happy"], ["reposé(e)", "rested"]], [["après l’école", "after school"], ["le soir", "in the evening"], ["pendant", "during"], ["surtout", "especially"], ["grâce au sport", "thanks to sport"]]]}, {"t": "Team spirit and friends", "tn": "présent", "e": "🤝", "w": [[["jouer", "to play"], ["s’amuser", "to have fun"], ["faire équipe", "to team up"], ["se faire des amis", "to make friends"], ["gagner", "to win"], ["encourager", "to encourage"]], [["l’équipe (f)", "team"], ["le match", "match"], ["l’entraîneur (m)", "coach"], ["le terrain", "pitch"], ["le club", "club"], ["l’esprit d’équipe", "team spirit"]], [["solidaire", "supportive"], ["sympa", "nice"], ["motivé(e)", "motivated"], ["amusant(e)", "fun"], ["fier / fière", "proud"]], [["ensemble", "together"], ["avec mes copains", "with my mates"], ["après le match", "after the match"], ["le week-end", "at weekends"], ["tous les mercredis", "every Wednesday"]]]}, {"t": "Better sleep, better school results", "tn": "présent", "e": "🏫", "w": [[["bien dormir", "to sleep well"], ["se lever", "to get up"], ["travailler", "to work"], ["étudier", "to study"], ["réussir", "to succeed"], ["rester attentif", "to stay attentive"]], [["les notes (f)", "marks"], ["l’école (f)", "school"], ["les cours (m)", "lessons"], ["le sommeil", "sleep"], ["l’examen (m)", "exam"], ["le cerveau", "brain"]], [["attentif / attentive", "attentive"], ["efficace", "efficient"], ["meilleur(e)", "better"], ["reposé(e)", "rested"], ["motivé(e)", "motivated"]], [["plus … plus …", "the more … the more …"], ["mieux", "better"], ["aussi", "also"], ["de plus", "moreover"], ["donc", "so"]]]}, {"t": "Sport that is easy to do", "tn": "présent", "e": "🚲", "w": [[["marcher", "to walk"], ["faire du vélo", "to cycle"], ["jouer au football", "to play football"], ["faire du yoga", "to do yoga"], ["danser", "to dance"], ["monter les escaliers", "to take the stairs"]], [["le vélo", "bicycle"], ["le football", "football"], ["le basket", "basketball"], ["la danse", "dance"], ["le parc", "park"], ["la piscine", "swimming pool"]], [["facile", "easy"], ["gratuit(e)", "free"], ["agréable", "pleasant"], ["accessible", "accessible"]], [["en plein air", "outdoors"], ["à pied", "on foot"], ["tous les jours", "every day"], ["pas besoin de", "no need for"], ["même si", "even if"]]]}]}, {"t": "My advice, my routine and an invitation", "w": "≈ 40 words", "tense": "Impératif + futur + présent", "ideas": [{"t": "My advice to you", "tn": "impératif / il faut", "e": "📝", "w": [[["conseiller", "to advise"], ["il faut", "one must"], ["devoir", "to have to"], ["essayer", "to try"], ["commencer", "to start"], ["changer", "to change"]], [["le conseil", "advice"], ["l’habitude (f)", "habit"], ["le programme", "programme"], ["l’objectif (m)", "goal"], ["le menu", "menu"], ["la routine", "routine"]], [["simple", "simple"], ["utile", "useful"], ["petit(e)", "small"], ["important(e)", "important"], ["sain(e)", "healthy"]], [["mange", "eat!"], ["bois", "drink!"], ["bouge-toi", "get moving!"], ["n’oublie pas de", "don’t forget to"], ["par exemple", "for example"]]]}, {"t": "My own routine", "tn": "présent", "e": "⏰", "w": [[["se lever", "to get up"], ["prendre", "to take"], ["courir", "to run"], ["manger", "to eat"], ["se coucher", "to go to bed"], ["s’entraîner", "to train"]], [["le matin", "morning"], ["le soir", "evening"], ["l’entraînement (m)", "training session"], ["le petit-déjeuner", "breakfast"], ["le week-end", "weekend"], ["l’horaire (m)", "schedule"]], [["régulier / régulière", "regular"], ["tôt", "early"], ["tard", "late"], ["actif / active", "active"]], [["chaque matin", "every morning"], ["deux fois par semaine", "twice a week"], ["après les cours", "after lessons"], ["avant de me coucher", "before going to bed"], ["toujours", "always"]]]}, {"t": "Small steps, big results", "tn": "futur", "e": "🌱", "w": [[["changer", "to change"], ["remarquer", "to notice"], ["se sentir", "to feel"], ["progresser", "to progress"], ["avoir confiance", "to be confident"], ["réussir", "to succeed"]], [["le résultat", "result"], ["la différence", "difference"], ["l’effort (m)", "effort"], ["la confiance", "confidence"], ["le plaisir", "pleasure"], ["la santé", "health"]], [["mieux", "better"], ["plus fort(e)", "stronger"], ["fier / fière", "proud"], ["content(e)", "pleased"], ["motivé(e)", "motivated"]], [["bientôt", "soon"], ["dans quelques semaines", "in a few weeks"], ["peu à peu", "little by little"], ["tu verras", "you will see"], ["si + présent + futur", "if … will …"]]]}, {"t": "Let’s do sport together", "tn": "futur / présent", "e": "🏃", "w": [[["proposer", "to suggest"], ["inviter", "to invite"], ["venir", "to come"], ["jouer", "to play"], ["courir", "to run"], ["préparer", "to prepare"]], [["le parc", "park"], ["le stade", "stadium"], ["le samedi matin", "Saturday morning"], ["le sac de sport", "sports bag"], ["la bouteille d’eau", "water bottle"], ["le match", "match"]], [["libre", "free"], ["prêt(e)", "ready"], ["d’accord", "agreed"], ["motivé(e)", "motivated"]], [["si tu veux", "if you like"], ["on pourra", "we will be able to"], ["samedi prochain", "next Saturday"], ["ensemble", "together"], ["avec plaisir", "gladly"]]]}, {"t": "Ask for news", "tn": "présent / impératif", "e": "💬", "w": [[["répondre", "to reply"], ["écrire", "to write"], ["donner des nouvelles", "to give news"], ["raconter", "to tell"], ["dire", "to say"], ["embrasser", "to send love to"]], [["la réponse", "reply"], ["les nouvelles (f)", "news"], ["la famille", "family"], ["l’idée (f)", "idea"], ["l’amitié (f)", "friendship"], ["les vacances (f)", "holidays"]], [["cher / chère", "dear"], ["content(e)", "pleased"], ["impatient(e)", "eager"]], [["j’attends ta réponse", "I await your reply"], ["écris-moi vite", "write to me soon"], ["et toi ?", "and you?"], ["à bientôt", "see you soon"], ["amicalement", "yours"]]]}]}], "conn": [["Sequence", [["d’abord", "first"], ["ensuite", "then"], ["puis", "then"], ["après", "afterwards"], ["enfin", "finally"], ["pour finir", "to finish"]]], ["Adding", [["aussi", "also"], ["de plus", "moreover"], ["en plus", "in addition"], ["et", "and"], ["ainsi que", "as well as"]]], ["Contrast", [["mais", "but"], ["pourtant", "however"], ["cependant", "yet"], ["quand même", "all the same"], ["malgré", "despite"]]], ["Cause / result", [["parce que", "because"], ["car", "for"], ["donc", "so"], ["c’est pourquoi", "that is why"], ["grâce à", "thanks to"]]], ["Time", [["quand", "when"], ["pendant", "during"], ["depuis", "since"], ["dès que", "as soon as"], ["avant", "before"], ["en ce moment", "at the moment"]]], ["Opinion", [["à mon avis", "in my opinion"], ["je pense que", "I think that"], ["je trouve que", "I find that"], ["il me semble que", "it seems to me"]]]], "boost": [["il est important de + infinitif", "it is important to…", "il est important de + verb", "P1: your main idea", 1], ["il faut + infinitif", "one must…", "il faut + verb", "P1 and P3: advice", 1], ["pour + infinitif", "in order to…", "pour + verb", "P2: the aim of sport", 1], ["plus … plus …", "the more … the more …", "plus on dort, plus on réussit", "P2: sleep and results", 1], ["en + gérondif", "by doing…", "en mangeant bien, on reste en forme", "P1: how to stay healthy", 0], ["Si + présent + futur / impératif", "if … will / do …", "Si tu veux, on pourra jouer ensemble", "P3: invitation", 0]]};
+const PC=['var(--p1)','var(--p2)','var(--p3)'];
+const CC=['var(--verb)','var(--noun)','var(--adj)','var(--adv)'];
+const CN=['Verbs','Nouns','Adjectives','Adverbs & links'];
+const CS=['actions','things','describing','how · when · links'];
+const IDEAS=[];D.paras.forEach((p,pi)=>p.ideas.forEach((i,ii)=>IDEAS.push({...i,pi,ii,n:IDEAS.length+1})));
+let view='map',eng=true,focusP=-1;
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function fit(){const f=$('#fit');if(!f)return;const k=Math.min(1,f.clientWidth/1400);$('#stage').style.transform='scale('+k+')';f.style.height=(880*k)+'px'}
+window.addEventListener('resize',fit);
+function setBtns(){['Map','Sheet','Conn','Boost'].forEach(k=>$('#b'+k).classList.remove('on'));
+ const m=view==='map'||typeof view==='number'?'Map':view==='sheet'?'Sheet':view==='conn'?'Conn':'Boost';$('#b'+m).classList.add('on');
+ $('#bEng').textContent=eng?'English: shown':'English: tap to reveal'}
+function rectEdge(cx,cy,w,h,dx,dy){const s=Math.min(Math.abs(w/2/(dx||1e-9)),Math.abs(h/2/(dy||1e-9)));return[cx+dx*s,cy+dy*s]}
+function arrowSVG(x1,y1,x2,y2,col,bend){const mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy)||1;
+ const cx=mx-dy/l*bend,cy=my+dx/l*bend;return `<path class="ln" d="M${x1},${y1} Q${cx},${cy} ${x2},${y2}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>`}
+function defs(){return `<defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`}
+function renderMap(){
+ const cx=700,cy=430,R=125,n=IDEAS.length;let L='',N='';
+ IDEAS.forEach((it,k)=>{const a=(-90+(k+.5)*360/n)*Math.PI/180;const x=cx+Math.cos(a)*575,y=cy+Math.sin(a)*345;
+  const dx=Math.cos(a),dy=Math.sin(a);const [sx,sy]=[cx+dx*(R+8),cy+dy*(R+8)];
+  const ux=x-cx,uy=y-cy,ul=Math.hypot(ux,uy);const [ex,ey]=rectEdge(x,y,176+16,108+16,-ux/ul,-uy/ul);
+  const dim=focusP>=0&&focusP!==it.pi?' dim':'';
+  L+=`<g class="${dim}">`+arrowSVG(sx,sy,ex,ey,PC[it.pi],18)+`</g>`;
+  N+=`<button class="node idea${dim}" data-i="${k}" style="left:${x-88}px;top:${y-54}px;background:${PC[it.pi]};animation-delay:${k*50}ms" aria-label="${esc(it.t)}"><span class="n">${it.n}</span><span class="em">${it.e}</span><span class="t">${esc(it.t)}</span></button>`});
+ const hub=`<div class="node hub" style="left:${cx-R}px;top:${cy-R}px;width:${2*R}px;height:${2*R}px"><div class="em">${D.emoji}</div><div class="tt">${esc(D.title)}</div><div class="sub">${esc(D.sub)}</div></div>`;
+ const lg=D.paras.map((p,i)=>`<button class="lg" data-p="${i}" style="background:${PC[i]}">${i+1} · ${esc(p.t)} <small>⏱ ${esc(p.tense)} · ${esc(p.w)}</small></button>`).join('');
+ app.innerHTML=`<div id="fit"><div id="stage"><svg class="lines">${defs()}${L}</svg>${hub}${N}</div></div><div class="legend">${lg}<button class="lg" data-p="-1" style="background:var(--ink)">Show all <small>click a colour to focus</small></button></div>`;
+ fit();setTimeout(fit,50);
+ app.querySelectorAll('.idea').forEach(b=>b.onclick=()=>{view=+b.dataset.i;render()});
+ app.querySelectorAll('.lg').forEach(b=>b.onclick=()=>{focusP=+b.dataset.p===focusP?-1:+b.dataset.p;renderMap()});
+}
+function renderDetail(k){
+ const it=IDEAS[k],p=D.paras[it.pi],cx=700,cy=440,R=120;let L='',N='';
+ const cats=[[430,215,24,'left'],[970,215,1086,'right'],[430,665,24,'left'],[970,665,1086,'right']];
+ const baseY=[24,24,462,462];
+ it.w.forEach((words,c)=>{const [bx,by,chx,side]=cats[c];
+  const ux=bx-cx,uy=by-cy,ul=Math.hypot(ux,uy);
+  L+=arrowSVG(cx+ux/ul*(R+6),cy+uy/ul*(R+6),bx-ux/ul*72,by-uy/ul*72,CC[c],c%2?-24:24);
+  words.forEach((w,j)=>{const y=baseY[c]+j*63;const ex=side==='left'?chx+290:chx;const ey=y+28;const sx=side==='left'?bx-60:bx+60;
+   L+=`<line class="ln" x1="${sx}" y1="${by}" x2="${ex}" y2="${ey}" stroke="${CC[c]}" stroke-width="3" stroke-linecap="round" style="animation-delay:${.2+j*.05}s"/>`;
+   N+=`<div class="chip" tabindex="0" title="${esc(w[0]+' = '+w[1])}" style="left:${chx}px;top:${y}px;border-color:${CC[c]};animation-delay:${.15+j*.06}s"><b>${esc(w[0])}</b><span>${esc(w[1])}</span></div>`});
+  N+=`<div class="node cat" style="left:${bx-66}px;top:${by-66}px;background:${CC[c]};animation-delay:${c*70}ms">${CN[c]}<small>${CS[c]}</small></div>`});
+ const hub=`<div class="node hub" style="left:${cx-R}px;top:${cy-R}px;width:${2*R}px;height:${2*R}px"><div class="em">${it.e}</div><div class="tt" style="font-size:22px">${esc(it.t)}</div><div class="tn">⏱ ${esc(it.tn)}</div></div>`;
+ app.innerHTML=`<div id="fit" class="${eng?'':'hide'}"><div id="stage"><div class="crumb" style="color:${PC[it.pi]}">Paragraph ${it.pi+1} · ${esc(p.t)} · idea ${it.ii+1} of ${p.ideas.length}</div><svg class="lines">${defs()}${L}</svg>${hub}${N}
+ <div class="nav"><button id="pv">◀ Previous</button><button id="bk">All ideas</button><button id="nx">Next ▶</button></div></div></div>`;
+ fit();setTimeout(fit,50);
+ $('#pv').onclick=()=>{view=(k+IDEAS.length-1)%IDEAS.length;render()};$('#nx').onclick=()=>{view=(k+1)%IDEAS.length;render()};$('#bk').onclick=()=>{view='map';render()};
+ app.querySelectorAll('.chip').forEach(c=>{c.onclick=()=>c.classList.toggle('rev')});
+}
+function pairs(a){return a.map(w=>`<span class="w"><b>${esc(w[0])}</b> <i>= ${esc(w[1])}</i></span>`).join('')}
+function renderSheet(){
+ app.innerHTML='<div class="sheet">'+D.paras.map((p,pi)=>`<div class="pcard" style="border-color:${PC[pi]}"><h2 style="color:${PC[pi]}">Paragraph ${pi+1} · ${esc(p.t)} <small style="color:var(--soft);font-size:14px">${esc(p.w)}</small></h2><div class="tn">⏱ ${esc(p.tense)}</div>`+
+  p.ideas.map(i=>`<div class="icard"><h3>${i.e} ${esc(i.t)} <small style="color:var(--soft)">(${esc(i.tn)})</small></h3><div class="cols">`+i.w.map((w,c)=>`<div><h4 style="color:${CC[c]}">${CN[c]}</h4><p>${pairs(w)}</p></div>`).join('')+`</div></div>`).join('')+`</div>`).join('')+'</div>';
+}
+function renderConn(){app.innerHTML=`<div class="panel"><div class="pcard"><h2>Connectives toolkit</h2><div class="tw"><table><tr><th>Use for</th><th>French = English</th></tr>${D.conn.map(r=>`<tr><td>${esc(r[0])}</td><td>${pairs(r[1])}</td></tr>`).join('')}</table></div></div></div>`}
+function renderBoost(){app.innerHTML=`<div class="panel"><div class="pcard"><h2>Boosters: pick 2 or 3</h2><p style="margin:0 0 10px;color:var(--soft)">Build your own sentence from the pattern. ★ marks the easiest to start with.</p><div class="tw"><table><tr><th>Booster</th><th>Means</th><th>Pattern</th><th>Use it in</th></tr>${D.boost.map(b=>`<tr><td>${b[4]?'★ ':''}${esc(b[0])}</td><td>${esc(b[1])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td></tr>`).join('')}</table></div></div></div>`}
+function render(){setBtns();if(view==='map')renderMap();else if(typeof view==='number')renderDetail(view);else if(view==='sheet')renderSheet();else if(view==='conn')renderConn();else renderBoost()}
+$('#bMap').onclick=()=>{view='map';render()};$('#bSheet').onclick=()=>{view='sheet';render()};$('#bConn').onclick=()=>{view='conn';render()};$('#bBoost').onclick=()=>{view='boost';render()};
+$('#bEng').onclick=()=>{eng=!eng;render()};
+document.addEventListener('keydown',e=>{if(typeof view==='number'){if(e.key==='ArrowRight'){view=(view+1)%IDEAS.length;render()}if(e.key==='ArrowLeft'){view=(view+IDEAS.length-1)%IDEAS.length;render()}if(e.key==='Escape'){view='map';render()}}});
+render();
+</script>

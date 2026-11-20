@@ -18,5 +18,17 @@
     "folder": "Pinnacle folder",
     "sub": "Slip test 1",
     "assets": "pinnacle-slip-1"
+  },
+  {
+    "id": "pinnacle-slip-2",
+    "title": "Slip test 2 – Guided paper",
+    "marks": 90,
+    "skill": "Letters, comprehension, grammar",
+    "desc": "Second class paper with idea maps and narrated videos for both letters, two tap-for-meaning comprehension texts, three verb exercises with a Step 1 table, and every grammar rule explained. Model answers unlock student by student.",
+    "file": "pinnacle-slip-2.html",
+    "kind": "guided",
+    "folder": "Pinnacle folder",
+    "sub": "Slip test 2",
+    "assets": "pinnacle-slip-2"
   }
 ]

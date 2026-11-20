@@ -953,11 +953,12 @@ app.get('/api/student/tests/:aid/answers', studentOnly(async (req, res) => {
   res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
 }));
 const cleanAnswers = (b) => {
-  const g = {}, c = {};
+  const g = {}, c = {}, v = {};
   const src = b && typeof b === 'object' ? b : {};
   Object.entries(src.g || {}).slice(0, 120).forEach(([k, v]) => { if (SAFE_FILE.test(k) && Number.isInteger(v) && v >= 0 && v < 12) g[k] = v; });
-  Object.entries(src.c || {}).slice(0, 40).forEach(([k, v]) => { if (SAFE_FILE.test(k) && typeof v === 'string') c[k] = v.slice(0, 2000); });
-  return { g, c };
+  Object.entries(src.c || {}).slice(0, 40).forEach(([k, x]) => { if (SAFE_FILE.test(k) && typeof x === 'string') c[k] = x.slice(0, 2000); });
+  Object.entries(src.v || {}).slice(0, 120).forEach(([k, x]) => { if (SAFE_FILE.test(k) && typeof x === 'string') v[k] = x.slice(0, 300); });
+  return { g, c, v };
 };
 app.get('/api/student/tests/:aid/mine', studentOnly(async (req, res) => {
   const a = await studentTestAsg(req.student, req.params.aid);
