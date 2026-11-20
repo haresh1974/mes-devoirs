@@ -64,6 +64,8 @@ video{width:100%;max-width:640px;border-radius:14px;background:#000;margin-top:1
 .demo-c{border-bottom:2px dotted var(--orange);padding:0 2px}
 .grid2{display:grid;grid-template-columns:1fr;gap:18px}
 @media(min-width:980px){.grid2{grid-template-columns:1.05fr 1fr}.textcol{position:sticky;top:60px;align-self:start;max-height:calc(100vh - 80px);overflow:auto}}
+.txtog{display:none}
+@media(max-width:979px){.textcol{position:sticky;top:calc(var(--navh,56px) + 4px);z-index:15;max-height:38vh;overflow:auto;border-radius:14px;box-shadow:0 6px 18px rgba(11,42,111,.18)}.textcol .card{margin:0}.txtog{display:block;position:sticky;top:0;z-index:2;width:100%;margin:0 0 6px;padding:8px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:800;font-size:15px;cursor:pointer}.textcol.min{max-height:none;overflow:visible}.textcol.min .card{display:none}}
 .cq{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:12px 14px;margin:0 0 14px}
 .cq .qhead{display:flex;gap:10px;align-items:flex-start}
 .qlet{font-weight:800;background:var(--ink);color:var(--card);min-width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px}
@@ -152,7 +154,7 @@ u{text-underline-offset:3px;text-decoration-thickness:2px}
 <div class="qh"><h2>Question 2</h2><span class="m">10 marks</span></div>
 <p class="instr">Read the passage and answer in French the questions that follow. <i>Lisez l’extrait suivant et répondez aux questions qui suivent en français, sans répéter les phrases du texte.</i></p>
 <div class="grid2">
-<div class="textcol"><div class="card"><p class="legend">👆 Tap any word: <span class="demo-w">maison</span> · Orange dotted = a <b>phrase</b>: <span class="demo-c">tout le monde</span></p><div class="passage" id="passage"></div></div></div>
+<div class="textcol" id="textcol"><button class="txtog" id="txtog" type="button">📖 Text stays here while you answer · tap to hide</button><div class="card"><p class="legend">👆 Tap any word: <span class="demo-w">maison</span> · Orange dotted = a <b>phrase</b>: <span class="demo-c">tout le monde</span></p><div class="passage" id="passage"></div></div></div>
 <div id="cqs"></div>
 </div>
 <div class="card"><b>📝 Exam tips for written answers</b><ul style="margin:6px 0 0;padding-left:20px"><li>Answer in <b>French</b>, in your own words. Do not copy a whole sentence.</li><li>Change the person: <i>ton téléphone</i> → <i>leur téléphone</i>; <i>je</i> → <i>il / elle / ils</i>.</li><li>A 2-mark question needs <b>two different details</b>.</li><li>Keep the tense of the question (présent here).</li></ul></div>
@@ -302,6 +304,8 @@ async function save(final){
   if(final){SUBAT=j.submitted_at;drawSub();flash('✅ Submitted! Your teacher will unlock the correct answers later. Come back and press “Check for answers”.',true)}}
  catch(e){if(final)flash('⚠️ No internet. Your answers are saved on this device; press Submit again when you are online.',false)}}
 $('subbtn').onclick=()=>save(true);
+function placeText(){const n=document.querySelector('nav.tabs');if(n)$('textcol').style.setProperty('--navh',n.offsetHeight+'px')}placeText();addEventListener('resize',placeText);
+$('txtog').onclick=()=>{const m=$('textcol').classList.toggle('min');$('txtog').textContent=m?'📖 Show the text':'📖 Text stays here while you answer · tap to hide'};
 function applyMine(){Object.keys(CTA).forEach(id=>{CTA[id].value=MY.c[id]||''});paintG()}
 async function loadMine(){
  try{
