@@ -821,7 +821,9 @@ app.post('/api/library/warm', wrap(async (req, res) => {
 let TESTBANK = [];
 try { TESTBANK = JSON.parse(fs.readFileSync(path.join(__dirname, 'testbank', 'registry.json'), 'utf8')); } catch (e) { /* none */ }
 const testById = (id) => TESTBANK.find((t) => t.id === id);
-const pubTest = (t) => ({ id: t.id, title: t.title, marks: t.marks, skill: t.skill, desc: t.desc });
+const pubTest = (t) => ({ id: t.id, title: t.title, marks: t.marks, skill: t.skill, desc: t.desc, folder: t.folder || '', sub: t.sub || '', kind: t.kind || 'test' });
+const isGuided = (t) => !!t && t.kind === 'guided';
+const SAFE_FILE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$/;
 const ownTestAsg = async (req, id) => {
   const a = await db.get('SELECT * FROM test_assignments WHERE id = ?', [id]);
   if (!a) return null;
@@ -846,7 +848,7 @@ app.get('/api/tests', teacherOnly(async (req, res) => {
       const t = testById(a.test_id); if (!t) continue;
       const rs = await db.all('SELECT status, score FROM test_results WHERE assignment_id = ?', [a.id]);
       const done = rs.filter((r) => r.status === 'done');
-      out.push({ id: a.id, test_id: a.test_id, title: t.title, marks: t.marks, class_id: c.id, class_name: c.name, start_at: a.start_at, due_at: a.due_at, lock_on: !!a.lock_on, max_leaves: a.max_leaves,
+      out.push({ id: a.id, test_id: a.test_id, title: t.title, marks: t.marks, folder: t.folder || '', sub: t.sub || '', kind: t.kind || 'test', released: (await db.get('SELECT COUNT(*) AS n FROM test_releases WHERE assignment_id = ?', [a.id])).n, class_id: c.id, class_name: c.name, start_at: a.start_at, due_at: a.due_at, lock_on: !!a.lock_on, max_leaves: a.max_leaves,
         students: n, started: rs.length, done: done.length, avg: done.length ? Math.round(done.reduce((x, r) => x + r.score, 0) / done.length * 10) / 10 : null });
     }
   }
@@ -898,10 +900,11 @@ app.get('/api/tests/assignments/:id/results', teacherOnly(async (req, res) => {
   const students = await db.all('SELECT id,name FROM students WHERE class_id = ? ORDER BY name', [o.c.id]);
   const rs = await db.all('SELECT id,student_id,status,started_at,finished_at,score,out_of,percent,secs,leaves,away_secs,auto,fix_done,fix_total FROM test_results WHERE assignment_id = ?', [o.a.id]);
   const by = {}; rs.forEach((r) => { by[r.student_id] = r; });
+  const rel = new Set((await db.all('SELECT student_id FROM test_releases WHERE assignment_id = ?', [o.a.id])).map((x) => x.student_id));
   res.json({
     assignment: { id: o.a.id, start_at: o.a.start_at, due_at: o.a.due_at, lock_on: !!o.a.lock_on, max_leaves: o.a.max_leaves },
     test: pubTest(t), cls: { id: o.c.id, name: o.c.name },
-    students: students.map((s) => { const r = by[s.id]; return { id: s.id, name: s.name, result_id: r ? r.id : null, status: r ? r.status : 'none',
+    students: students.map((s) => { const r = by[s.id]; return { id: s.id, name: s.name, released: rel.has(s.id), result_id: r ? r.id : null, status: r ? r.status : 'none',
       score: r ? r.score : null, out_of: r ? r.out_of : null, percent: r ? r.percent : null, secs: r ? r.secs : null, leaves: r ? r.leaves : 0, away: r ? r.away_secs : 0, auto: r ? !!r.auto : false,
       fix_done: r ? r.fix_done : null, fix_total: r ? r.fix_total : null, finished_at: r ? r.finished_at : null, started_at: r ? r.started_at : null }; })
   });
@@ -922,6 +925,39 @@ app.post('/api/tests/results/:rid/reset', teacherOnly(async (req, res) => {
   res.json({ ok: true });
 }));
 
+
+/* ---------- guided papers: a study page whose answers the teacher releases student by student ---------- */
+app.post('/api/tests/assignments/:id/release', teacherOnly(async (req, res) => {
+  const o = await ownTestAsg(req, req.params.id);
+  if (!o) return res.status(404).json({ error: 'Not found.' });
+  if (!isGuided(testById(o.a.test_id))) return res.status(400).json({ error: 'This test has no answer release.' });
+  const b = req.body || {}, on = b.on !== false;
+  const mine = (await db.all('SELECT id FROM students WHERE class_id = ?', [o.c.id])).map((x) => x.id);
+  const ids = b.all ? mine : [String(b.student_id || '')].filter((x) => mine.includes(x));
+  if (!ids.length) return res.status(400).json({ error: 'Choose a student.' });
+  for (const sid of ids) {
+    await db.run('DELETE FROM test_releases WHERE assignment_id = ? AND student_id = ?', [o.a.id, sid]);
+    if (on) await db.run('INSERT INTO test_releases (assignment_id,student_id,released_at) VALUES (?,?,?)', [o.a.id, sid, now()]);
+  }
+  res.json({ ok: true, changed: ids.length });
+}));
+const answersFile = (t) => path.join(__dirname, 'testbank', t.id + '.answers.json');
+app.get('/api/student/tests/:aid/answers', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  const t = a && testById(a.test_id);
+  if (!isGuided(t)) return res.status(404).json({ error: 'Not found.' });
+  const rel = await db.get('SELECT 1 AS x FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  res.set('Cache-Control', 'no-store');
+  if (!rel) return res.json({ released: false });
+  res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+}));
+app.get('/api/tests/answers/:tid', teacherOnly(async (req, res) => {
+  const t = testById(req.params.tid);
+  if (!isGuided(t)) return res.status(404).json({ error: 'Not found.' });
+  res.set('Cache-Control', 'no-store');
+  res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+}));
+
 app.get('/api/student/tests', studentOnly(async (req, res) => {
   const asg = await db.all('SELECT * FROM test_assignments WHERE class_id = ? AND start_at <= ? ORDER BY start_at DESC', [req.student.class_id, now()]);
   const out = [];
@@ -929,7 +965,12 @@ app.get('/api/student/tests', studentOnly(async (req, res) => {
     const t = testById(a.test_id); if (!t) continue;
     const r = await db.get('SELECT status,score,out_of,percent FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
     const closed = !!(a.due_at && a.due_at < now());
-    out.push({ id: a.id, title: t.title, marks: t.marks, skill: t.skill, desc: t.desc, due_at: a.due_at, closed,
+    if (isGuided(t)) {
+      const rel = await db.get('SELECT 1 AS x FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+      out.push({ id: a.id, title: t.title, marks: t.marks, skill: t.skill, desc: t.desc, folder: t.folder || '', sub: t.sub || '', kind: 'guided', due_at: a.due_at, closed: false, status: 'open', released: !!rel });
+      continue;
+    }
+    out.push({ id: a.id, title: t.title, folder: t.folder || '', sub: t.sub || '', kind: 'test', marks: t.marks, skill: t.skill, desc: t.desc, due_at: a.due_at, closed,
       status: r ? r.status : (closed ? 'missed' : 'todo'), score: r && r.status === 'done' ? r.score : null, out_of: r ? r.out_of : null, percent: r ? r.percent : null });
   }
   res.json({ tests: out });
@@ -998,14 +1039,34 @@ app.get('/tests/run/:aid', wrap(async (req, res) => {
   const a = await studentTestAsg(st, req.params.aid);
   if (!a) return res.redirect('/#/s');
   const c = await db.get('SELECT name FROM classes WHERE id = ?', [st.class_id]);
-  await sendTest(res, testById(a.test_id), { mode: 'student', assignment: a.id, title: testById(a.test_id).title, student: { name: st.name, cls: c ? c.name : '' }, lock: { on: !!a.lock_on, max: a.max_leaves } });
+  const tt = testById(a.test_id);
+  await sendTest(res, tt, { mode: 'student', assignment: a.id, title: tt.title, kind: tt.kind || 'test', assetBase: '/tests/asset/' + a.id + '/', student: { name: st.name, cls: c ? c.name : '' }, lock: { on: !!a.lock_on, max: a.max_leaves } });
 }));
 app.get('/tests/preview/:tid', wrap(async (req, res) => {
   const t = await auth(req, 'teacher');
   if (!t) return res.redirect('/');
   const test = testById(req.params.tid);
   if (!test) return res.redirect('/#/t/tests');
-  await sendTest(res, test, { mode: 'preview' });
+  await sendTest(res, test, { mode: 'preview', test: test.id, kind: test.kind || 'test', title: test.title, assetBase: '/tests/asset-preview/' + test.id + '/' });
+}));
+// Files that belong to a guided paper (idea maps, videos). Only a signed-in teacher, or a student whose class was given that paper.
+const sendAsset = (res, t, file) => {
+  if (!isGuided(t) || !t.assets || !SAFE_FILE.test(file)) return res.status(404).end();
+  const fp = path.join(__dirname, 'testbank', 'assets', t.assets, file);
+  if (!fp.startsWith(path.join(__dirname, 'testbank', 'assets', t.assets) + path.sep) || !fs.existsSync(fp)) return res.status(404).end();
+  res.set({ 'Cache-Control': 'private, max-age=3600', 'X-Robots-Tag': 'noindex' });
+  res.sendFile(fp);
+};
+app.get('/tests/asset/:aid/:file', wrap(async (req, res) => {
+  const st = await auth(req, 'student');
+  if (!st) return res.status(403).end();
+  const a = await studentTestAsg(st, req.params.aid);
+  if (!a) return res.status(404).end();
+  sendAsset(res, testById(a.test_id), req.params.file);
+}));
+app.get('/tests/asset-preview/:tid/:file', wrap(async (req, res) => {
+  if (!(await auth(req, 'teacher'))) return res.status(403).end();
+  sendAsset(res, testById(req.params.tid), req.params.file);
 }));
 
 /* ---------- static ---------- */

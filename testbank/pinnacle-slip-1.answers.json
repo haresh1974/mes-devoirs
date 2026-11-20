@@ -1,0 +1,136 @@
+{
+ "c": {
+  "a": {
+   "ans": [
+    "Parce que les adolescents sont encore sur leur téléphone à minuit.",
+    "Parce qu’ils ne dorment pas assez."
+   ],
+   "en": [
+    "Because the teenagers are still on their phone at midnight.",
+    "Because they do not sleep enough."
+   ],
+   "note": "1 mark for each detail. Say “leur téléphone”, not “ton téléphone”."
+  },
+  "b": {
+   "ans": [
+    "Le corps se repose et il grandit.",
+    "Les muscles récupèrent (après le sport)."
+   ],
+   "en": [
+    "The body rests and grows.",
+    "The muscles recover (after sport)."
+   ],
+   "note": "One mark for the body, one for the muscles. Using your own words (sert à se reposer…) is also fine."
+  },
+  "c": {
+   "ans": [
+    "Il dit qu’un adolescent a besoin de neuf heures de sommeil par nuit.",
+    "Quand on dort moins, on devient nerveux et on oublie plus facilement."
+   ],
+   "en": [
+    "He says a teenager needs nine hours of sleep a night.",
+    "When you sleep less, you become nervous and forget more easily."
+   ],
+   "note": "1 mark for the advice (nine hours), 1 mark for the reason."
+  },
+  "d": {
+   "ans": [
+    "Ils sont plus attentifs en classe.",
+    "Ils comprennent mieux les leçons / Ils font moins d’erreurs."
+   ],
+   "en": [
+    "They are more attentive in class.",
+    "They understand the lessons better / They make fewer mistakes."
+   ],
+   "note": "Any two details earn the 2 marks."
+  },
+  "e": {
+   "ans": [
+    "Elle conseille d’éteindre le téléphone une heure avant de se coucher.",
+    "Elle conseille de lire un livre (à la place)."
+   ],
+   "en": [
+    "She advises switching off the phone an hour before bed.",
+    "She advises reading a book (instead)."
+   ],
+   "note": "A third piece of advice is also correct: ne pas se lever trop tard le week-end."
+  }
+ },
+ "g": {
+  "i1": {
+   "i": 3,
+   "ans": "d) prépare",
+   "why": "“En ce moment” = right now → <b>présent</b>."
+  },
+  "i2": {
+   "i": 1,
+   "ans": "b) est",
+   "why": "“depuis un mois” + an action still going on → <b>présent</b> (not passé composé)."
+  },
+  "i3": {
+   "i": 2,
+   "ans": "c) relit",
+   "why": "“Chaque soir” = a habit → <b>présent</b>."
+  },
+  "i4": {
+   "i": 0,
+   "ans": "a) ne comprend rien",
+   "why": "Présent, and <b>ne … rien</b> goes around the verb."
+  },
+  "i5": {
+   "i": 2,
+   "ans": "c) passera",
+   "why": "“Dans trois jours” = in three days → <b>futur simple</b>."
+  },
+  "ii1": {
+   "i": 2,
+   "ans": "(c) Ils les leur ont envoyées.",
+   "why": "Mes parents → <b>ils</b>; les photos → <b>les</b> (le/la/les before lui/leur); à mes cousins → <b>leur</b>. The pronouns go before the auxiliary: <b>les leur ont envoyées</b>; the participle agrees with les (photos): envoyé<b>es</b>."
+  },
+  "ii2": {
+   "i": 1,
+   "ans": "(b) Je les y ai posées.",
+   "why": "les clés → <b>les</b>; sur la table → <b>y</b>. Order: le/la/les <b>before</b> y. Before the auxiliary: <b>les y ai</b> posé<b>es</b> (agreement with les)."
+  },
+  "iii1": {
+   "i": 3,
+   "ans": "(d) dont",
+   "why": "“parler <b>de</b> la chanson” → the relative pronoun replaces <b>de + noun</b> → <b>dont</b>."
+  },
+  "iii2": {
+   "i": 2,
+   "ans": "(c) où",
+   "why": "“le village” is a <b>place</b> (habiter <u>dans</u> le village) → <b>où</b>."
+  },
+  "iv1": {
+   "i": 2,
+   "ans": "(c) Qu’est-ce que les enfants ont cassé ?",
+   "why": "“la fenêtre” is a <b>thing</b>, and it is the <b>object</b> (they broke what?) → <b>Qu’est-ce que</b> + subject + verb."
+  },
+  "iv2": {
+   "i": 1,
+   "ans": "(b) Est-ce que tu n’as pas fini tes devoirs ?",
+   "why": "“<b>Si</b>” is only used to answer a <b>negative</b> question, so the question is negative: <b>n’as pas</b>."
+  },
+  "v1": {
+   "i": 1,
+   "ans": "(b) Non, Léa n’invitera personne.",
+   "why": "quelqu’un → <b>ne … personne</b>. Never “pas” with another negative word."
+  },
+  "v2": {
+   "i": 2,
+   "ans": "(c) Non, il n’est ni drôle ni intéressant.",
+   "why": "“et” (both) → <b>ne … ni … ni …</b>. No “pas”, and no “et” between the two."
+  },
+  "vi1": {
+   "i": 2,
+   "ans": "(c) ce, celui",
+   "why": "First blank: a noun follows (pull) → <b>ce</b>. Second blank: followed by <b>de + noun</b> (de mon frère), so use the <b>simple form</b> <b>celui</b> (replaces “le pull”, masculine)."
+  },
+  "vi2": {
+   "i": 1,
+   "ans": "(b) celles – ci, celles – là",
+   "why": "Nothing follows the blanks and we compare two things → <b>composed form</b> with <b>-ci / -là</b>. “chaussures” is feminine plural → <b>celles</b>."
+  }
+ }
+}

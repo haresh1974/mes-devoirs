@@ -6,5 +6,17 @@
     "skill": "Grammar",
     "desc": "Forming and using the imperfect tense: nous-stem + endings, irregular verbs, être, perfect vs imperfect. 7 sections, auto-marked, with a Fix-it correction round.",
     "file": "imparfait-1.html"
+  },
+  {
+    "id": "pinnacle-slip-1",
+    "title": "Slip test 1 – Guided paper",
+    "marks": 40,
+    "skill": "Letters, comprehension, grammar",
+    "desc": "Class paper with the idea maps and videos for both letters, a tap-for-meaning comprehension with guidance on how to answer, and every grammar rule explained. Model answers unlock student by student.",
+    "file": "pinnacle-slip-1.html",
+    "kind": "guided",
+    "folder": "Pinnacle folder",
+    "sub": "Slip test 1",
+    "assets": "pinnacle-slip-1"
   }
 ]

@@ -1,0 +1,135 @@
+<title>Cycle Accident Letter Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one big mind-map stage that scales to the screen; click an idea to burst its vocabulary out around it. */
+:root{--bg:#F4F7FB;--ink:#16254A;--soft:#5B6B8C;--card:#FFFFFF;--line:#D5DDEB;
+--p1:#FF5D73;--p2:#12B5A6;--p3:#8B5CF6;--verb:#F4511E;--noun:#1E88E5;--adj:#F6A800;--adv:#00A66C;--hub:#16254A;
+--disp:'Baloo 2','Nunito','Trebuchet MS',sans-serif;--body:'Nunito','Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-height:100vh;
+background-image:radial-gradient(#CBD5E6 1.2px,transparent 1.2px);background-size:26px 26px}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto 10px}
+.brand{font-family:var(--disp);font-weight:800;font-size:22px;line-height:1.1}
+.brand small{display:block;font-family:var(--body);font-weight:700;font-size:12px;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:700 14px var(--body);color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+button:hover{transform:translateY(-1px)}button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+button:focus-visible{outline:3px solid var(--p3);outline-offset:2px}
+button.on{background:var(--ink);color:#fff}
+#fit{max-width:1400px;margin:0 auto;position:relative;width:100%}
+#stage{position:absolute;left:0;top:0;width:1400px;height:880px;transform-origin:0 0}
+svg.lines{position:absolute;left:0;top:0;width:1400px;height:880px;pointer-events:none;overflow:visible}
+.node{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:0}
+.hub{background:var(--hub);color:#fff;border-radius:50%;box-shadow:0 10px 0 rgba(22,37,74,.18),0 0 0 10px rgba(22,37,74,.08)}
+.hub .em{font-size:64px;line-height:1}.hub .tt{font:800 24px/1.1 var(--disp);padding:0 24px;margin-top:6px}
+.hub .sub{font:700 12px var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-top:6px}
+.hub .tn{font:700 13px var(--body);margin-top:8px;background:rgba(255,255,255,.16);border-radius:999px;padding:3px 12px}
+.idea{width:176px;height:108px;border-radius:26px;color:#fff;cursor:pointer;padding:6px 10px;box-shadow:0 6px 0 rgba(0,0,0,.18);font-family:var(--body);animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+.idea:hover{transform:scale(1.07) rotate(-1deg)}.idea:focus-visible{outline:4px solid var(--ink)}
+.idea .em{font-size:36px;line-height:1.05}.idea .t{font:800 14px/1.15 var(--body);margin-top:3px}
+.idea .n{position:absolute;top:-10px;left:-8px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;font:800 12px var(--body);padding:1px 8px}
+.dim{opacity:.18;filter:grayscale(.6)}
+.cat{width:132px;height:132px;border-radius:50%;color:#fff;font:800 19px/1.05 var(--disp);box-shadow:0 6px 0 rgba(0,0,0,.2);animation:pop .45s cubic-bezier(.2,1.4,.4,1) both}
+.cat small{font:700 11px var(--body);opacity:.85;margin-top:3px;letter-spacing:.04em}
+.chip{position:absolute;width:290px;height:56px;background:var(--card);border-radius:16px;border:3px solid;padding:5px 12px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;text-align:left;font-family:var(--body);animation:slide .45s ease both;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.chip b{font:800 17px/1.15 var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip span{font:700 13px/1.2 var(--body);color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .15s}
+.hide .chip:not(.rev) span{opacity:0}.hide .chip:not(.rev) b::after{content:"  · tap";color:var(--soft);font-weight:700;font-size:12px}
+.crumb{position:absolute;left:0;right:0;top:6px;text-align:center;font:800 15px var(--body);letter-spacing:.05em;text-transform:uppercase}
+.nav{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:10px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:1400px;margin:10px auto 0}
+.lg{color:#fff;border-radius:18px;padding:8px 16px;font:800 14px/1.25 var(--body);cursor:pointer;border:0;box-shadow:0 4px 0 rgba(0,0,0,.2);text-align:left}
+.lg small{display:block;font-weight:700;opacity:.9;font-size:12px}
+@keyframes pop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+.ln{stroke-dasharray:1000;stroke-dashoffset:1000;animation:draw .8s .15s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.idea,.cat,.chip{animation:none}.ln{animation:none;stroke-dashoffset:0}}
+.sheet,.panel{max-width:1100px;margin:0 auto}
+.pcard{background:var(--card);border:3px solid var(--ink);border-radius:22px;padding:16px 18px;margin-bottom:18px}
+.pcard h2{font:800 22px var(--disp);margin:0 0 4px}.pcard .tn{font-weight:800;font-size:14px;margin-bottom:10px}
+.icard{border-top:2px dashed var(--line);padding:12px 0}.icard h3{font:800 18px var(--body);margin:0 0 8px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.cols h4{margin:0 0 4px;font:800 13px var(--body);letter-spacing:.05em;text-transform:uppercase}
+.cols p{margin:0;font-size:14px;line-height:1.55}.cols p i{font-style:normal;color:var(--soft)}
+table{border-collapse:collapse;width:100%;background:var(--card);border:3px solid var(--ink);border-radius:16px;overflow:hidden}
+td,th{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:2px solid var(--line);font-size:15px;line-height:1.5}
+th{background:var(--ink);color:#fff;font-weight:800}td:first-child{font-weight:800;white-space:nowrap}
+.tw{overflow-x:auto}
+.w{display:inline-block;margin:2px 10px 2px 0}.w i{font-style:normal;color:var(--soft)}
+</style>
+<div class="top">
+ <div class="brand">Letter idea map<small>Learn French with Haresh Sir · ICSE Grade 10 · Letter practice</small></div>
+ <div class="btns">
+  <button id="bMap" class="on">Map</button><button id="bSheet">Study sheet</button><button id="bConn">Connectives</button><button id="bBoost">Boosters</button>
+  <button id="bEng" title="Hide the English, tap a word to reveal it">English: shown</button>
+ </div>
+</div>
+<div id="app"></div>
+<script>
+const D={"ttl": "Cycle Accident Letter Map", "title": "Cycle accident – a broken leg", "emoji": "🚲", "sub": "Letter 2 · body only", "paras": [{"t": "What happened", "w": "≈ 60 words", "tense": "Passé composé (events) + imparfait (background)", "ideas": [{"t": "Where and when", "tn": "passé composé + imparfait", "e": "🚲", "w": [[["rouler", "to ride along"], ["aller à l’école", "to go to school"], ["pédaler", "to pedal"], ["faire du vélo", "to cycle"], ["pleuvoir", "to rain"], ["être pressé(e)", "to be in a hurry"]], [["le vélo", "bicycle"], ["la route", "road"], ["le matin", "morning"], ["le carrefour", "crossroads"], ["la circulation", "traffic"], ["le casque", "helmet"]], [["mouillé(e)", "wet"], ["glissant(e)", "slippery"], ["encombré(e)", "crowded"], ["pressé(e)", "in a hurry"]], [["ce matin", "this morning"], ["hier", "yesterday"], ["il y a deux jours", "two days ago"], ["à huit heures", "at eight"], ["pendant que", "while"], ["quand", "when"]]]}, {"t": "How it happened", "tn": "passé composé", "e": "💥", "w": [[["tomber", "to fall"], ["glisser", "to slip"], ["freiner", "to brake"], ["heurter", "to hit"], ["traverser", "to cross"], ["crier", "to shout"], ["perdre l’équilibre", "to lose one’s balance"]], [["la voiture", "car"], ["le camion", "lorry"], ["le chien", "dog"], ["le trottoir", "pavement"], ["les freins (m)", "brakes"], ["l’accident (m)", "accident"]], [["brusque", "sudden"], ["surpris(e)", "surprised"], ["effrayé(e)", "frightened"], ["inattentif / inattentive", "careless"]], [["soudain", "suddenly"], ["tout à coup", "all of a sudden"], ["trop vite", "too fast"], ["malheureusement", "unfortunately"], ["heureusement", "fortunately"]]]}, {"t": "Hospital and doctor", "tn": "passé composé", "e": "🚑", "w": [[["se casser la jambe", "to break one’s leg"], ["se faire mal", "to hurt oneself"], ["appeler", "to call"], ["transporter", "to take"], ["faire une radio", "to take an X-ray"], ["mettre un plâtre", "to put on a cast"]], [["l’ambulance (f)", "ambulance"], ["l’hôpital (m)", "hospital"], ["la radio", "X-ray"], ["le plâtre", "plaster cast"], ["les béquilles (f)", "crutches"], ["le médecin", "doctor"]], [["cassé(e)", "broken"], ["blessé(e)", "injured"], ["douloureux / douloureuse", "painful"], ["grave", "serious"]], [["aussitôt", "at once"], ["ensuite", "then"], ["après", "afterwards"], ["à l’hôpital", "at the hospital"], ["heureusement", "fortunately"]]]}, {"t": "Who helped me", "tn": "passé composé", "e": "🤝", "w": [[["aider", "to help"], ["arriver", "to arrive"], ["accompagner", "to accompany"], ["prévenir", "to warn"], ["rassurer", "to reassure"], ["rester avec", "to stay with"]], [["le passant", "passer-by"], ["la police", "police"], ["mes parents", "my parents"], ["le voisin", "neighbour"], ["le professeur", "teacher"], ["l’ami(e)", "friend"]], [["gentil(le)", "kind"], ["rapide", "quick"], ["inquiet / inquiète", "worried"], ["calme", "calm"]], [["tout de suite", "immediately"], ["très vite", "very quickly"], ["par chance", "luckily"], ["avec moi", "with me"], ["finalement", "finally"]]]}]}, {"t": "How I feel now", "w": "≈ 45 words", "tense": "Présent (now)", "ideas": [{"t": "The pain", "tn": "présent", "e": "😣", "w": [[["avoir mal", "to hurt"], ["souffrir", "to suffer"], ["prendre des médicaments", "to take medicine"], ["se reposer", "to rest"], ["bouger", "to move"], ["marcher", "to walk"]], [["la douleur", "pain"], ["la jambe", "leg"], ["le genou", "knee"], ["le pied", "foot"], ["le plâtre", "cast"], ["les béquilles (f)", "crutches"]], [["douloureux / douloureuse", "painful"], ["lourd(e)", "heavy"], ["fatigué(e)", "tired"], ["difficile", "difficult"], ["immobile", "still"]], [["encore", "still"], ["toujours", "always"], ["surtout", "especially"], ["la nuit", "at night"], ["un peu", "a little"]]]}, {"t": "Stuck at home", "tn": "présent", "e": "🛋️", "w": [[["rester à la maison", "to stay at home"], ["s’ennuyer", "to get bored"], ["regarder la télé", "to watch TV"], ["lire", "to read"], ["jouer aux jeux vidéo", "to play video games"], ["attendre", "to wait"]], [["le canapé", "sofa"], ["la télévision", "television"], ["la chambre", "bedroom"], ["l’escalier (m)", "stairs"], ["l’ennui (m)", "boredom"], ["le temps", "time"]], [["ennuyeux / ennuyeuse", "boring"], ["long / longue", "long"], ["seul(e)", "alone"], ["impatient(e)", "impatient"]], [["toute la journée", "all day"], ["sans arrêt", "non-stop"], ["tellement", "so (much)"], ["de temps en temps", "from time to time"], ["pendant ce temps", "meanwhile"]]]}, {"t": "Missing school and friends", "tn": "présent", "e": "😔", "w": [[["manquer", "to miss"], ["regretter", "to regret"], ["rater", "to miss (an event)"], ["penser à", "to think of"], ["envoyer des messages", "to send messages"], ["téléphoner", "to phone"]], [["l’école (f)", "school"], ["les cours (m)", "lessons"], ["le match", "match"], ["la sortie", "outing"], ["les copains", "mates"], ["le sport", "sport"]], [["triste", "sad"], ["déçu(e)", "disappointed"], ["jaloux / jalouse", "jealous"], ["seul(e)", "alone"]], [["beaucoup", "a lot"], ["vraiment", "really"], ["malheureusement", "unfortunately"], ["surtout", "above all"], ["hélas", "alas"]]]}, {"t": "How my family cares for me", "tn": "présent", "e": "👨‍👩‍👧", "w": [[["s’occuper de", "to look after"], ["apporter", "to bring"], ["porter", "to carry"], ["aider", "to help"], ["rassurer", "to reassure"], ["encourager", "to encourage"]], [["la mère", "mother"], ["le père", "father"], ["le frère", "brother"], ["le repas", "meal"], ["l’aide (f)", "help"], ["le soutien", "support"]], [["gentil(le)", "kind"], ["attentionné(e)", "caring"], ["patient(e)", "patient"], ["reconnaissant(e)", "grateful"]], [["toujours", "always"], ["tous les jours", "every day"], ["avec patience", "patiently"], ["heureusement", "fortunately"], ["aussi", "also"]]]}]}, {"t": "Plans for the coming weeks", "w": "≈ 45 words", "tense": "Futur proche / futur simple", "ideas": [{"t": "Doctor’s visit, cast off", "tn": "futur", "e": "🩻", "w": [[["aller chez le médecin", "to go to the doctor"], ["enlever le plâtre", "to take off the cast"], ["faire de la rééducation", "to do physio"], ["guérir", "to recover"], ["marcher", "to walk"], ["reprendre", "to resume"]], [["le rendez-vous", "appointment"], ["la rééducation", "physiotherapy"], ["le kinésithérapeute", "physiotherapist"], ["la semaine", "week"], ["le mois", "month"], ["la radio", "X-ray"]], [["prêt(e)", "ready"], ["guéri(e)", "recovered"], ["prochain(e)", "next"], ["long / longue", "long"]], [["dans deux semaines", "in two weeks"], ["le mois prochain", "next month"], ["bientôt", "soon"], ["d’ici là", "until then"], ["enfin", "at last"]]]}, {"t": "Catching up on lessons", "tn": "futur", "e": "📖", "w": [[["rattraper", "to catch up"], ["réviser", "to revise"], ["faire les devoirs", "to do homework"], ["copier", "to copy"], ["demander", "to ask"], ["apprendre", "to learn"]], [["les cours (m)", "lessons"], ["les devoirs (m)", "homework"], ["le cahier", "notebook"], ["les examens (m)", "exams"], ["le professeur", "teacher"], ["les notes (f)", "marks"]], [["important(e)", "important"], ["en retard", "behind"], ["sérieux / sérieuse", "serious"], ["motivé(e)", "motivated"]], [["chaque jour", "every day"], ["en attendant", "in the meantime"], ["d’abord", "first"], ["demain", "tomorrow"], ["pendant les vacances", "during the holidays"]]]}, {"t": "What I will do for fun", "tn": "futur", "e": "🎨", "w": [[["lire", "to read"], ["regarder des films", "to watch films"], ["dessiner", "to draw"], ["écouter de la musique", "to listen to music"], ["jouer aux échecs", "to play chess"], ["recevoir des amis", "to have friends over"]], [["les livres (m)", "books"], ["la BD", "comic"], ["les échecs (m)", "chess"], ["le dessin", "drawing"], ["la musique", "music"], ["le jeu vidéo", "video game"]], [["amusant(e)", "fun"], ["passionnant(e)", "exciting"], ["créatif / créative", "creative"], ["agréable", "pleasant"]], [["pendant mon temps libre", "in my free time"], ["ensemble", "together"], ["pour passer le temps", "to pass the time"], ["aussi", "also"], ["sûrement", "surely"]]]}, {"t": "Back to school, cycling again", "tn": "futur", "e": "🚴", "w": [[["retourner à l’école", "to go back to school"], ["reprendre le vélo", "to cycle again"], ["faire attention", "to be careful"], ["porter un casque", "to wear a helmet"], ["rouler lentement", "to ride slowly"], ["respecter", "to respect"]], [["la sécurité", "safety"], ["le code de la route", "highway code"], ["le casque", "helmet"], ["la prudence", "caution"], ["la piste cyclable", "cycle lane"]], [["prudent(e)", "careful"], ["sûr(e)", "safe"], ["lent(e)", "slow"], ["attentif / attentive", "attentive"]], [["bientôt", "soon"], ["plus tard", "later"], ["à l’avenir", "in future"], ["toujours", "always"], ["jamais", "never"]]]}, {"t": "Invite my friend to visit", "tn": "futur / impératif", "e": "🎉", "w": [[["inviter", "to invite"], ["venir me voir", "to come and see me"], ["apporter", "to bring"], ["rire", "to laugh"], ["sortir", "to go out"], ["écrire", "to write"]], [["la visite", "visit"], ["le week-end", "weekend"], ["le goûter", "snack"], ["les nouvelles (f)", "news"], ["l’invitation (f)", "invitation"], ["l’ami(e)", "friend"]], [["content(e)", "pleased"], ["heureux / heureuse", "happy"], ["impatient(e)", "eager"], ["libre", "free"]], [["samedi prochain", "next Saturday"], ["dès que", "as soon as"], ["quand tu veux", "whenever you like"], ["j’espère que", "I hope that"], ["à bientôt", "see you soon"]]]}]}], "conn": [["Sequence", [["d’abord", "first"], ["ensuite", "then"], ["puis", "then"], ["après", "afterwards"], ["enfin", "finally"], ["pour finir", "to finish"]]], ["Adding", [["aussi", "also"], ["de plus", "moreover"], ["en plus", "in addition"], ["et", "and"], ["ainsi que", "as well as"]]], ["Contrast", [["mais", "but"], ["pourtant", "however"], ["cependant", "yet"], ["quand même", "all the same"], ["malgré", "despite"]]], ["Cause / result", [["parce que", "because"], ["car", "for"], ["donc", "so"], ["c’est pourquoi", "that is why"], ["grâce à", "thanks to"]]], ["Time", [["quand", "when"], ["pendant", "during"], ["depuis", "since"], ["dès que", "as soon as"], ["avant", "before"], ["en ce moment", "at the moment"]]], ["Opinion", [["à mon avis", "in my opinion"], ["je pense que", "I think that"], ["je trouve que", "I find that"], ["il me semble que", "it seems to me"]]]], "boost": [["il y a + durée", "… ago", "il y a + time + passé composé", "P1: when it happened", 1], ["pendant que + imparfait", "while I was …", "pendant que + imparfait, passé composé", "P1: the background", 1], ["quand + futur", "when … will …", "quand + futur simple", "P3: plans", 1], ["avoir mal à", "to have a pain in", "j’ai mal à la jambe", "P2: the pain", 0], ["depuis + présent", "since / for – still true", "depuis + time + présent", "P2: how long at home", 0], ["Si + présent + futur", "if … will …", "Si + présent, … futur", "P3: hopes", 0]]};
+const PC=['var(--p1)','var(--p2)','var(--p3)'];
+const CC=['var(--verb)','var(--noun)','var(--adj)','var(--adv)'];
+const CN=['Verbs','Nouns','Adjectives','Adverbs & links'];
+const CS=['actions','things','describing','how · when · links'];
+const IDEAS=[];D.paras.forEach((p,pi)=>p.ideas.forEach((i,ii)=>IDEAS.push({...i,pi,ii,n:IDEAS.length+1})));
+let view='map',eng=true,focusP=-1;
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function fit(){const f=$('#fit');if(!f)return;const k=Math.min(1,f.clientWidth/1400);$('#stage').style.transform='scale('+k+')';f.style.height=(880*k)+'px'}
+window.addEventListener('resize',fit);
+function setBtns(){['Map','Sheet','Conn','Boost'].forEach(k=>$('#b'+k).classList.remove('on'));
+ const m=view==='map'||typeof view==='number'?'Map':view==='sheet'?'Sheet':view==='conn'?'Conn':'Boost';$('#b'+m).classList.add('on');
+ $('#bEng').textContent=eng?'English: shown':'English: tap to reveal'}
+function rectEdge(cx,cy,w,h,dx,dy){const s=Math.min(Math.abs(w/2/(dx||1e-9)),Math.abs(h/2/(dy||1e-9)));return[cx+dx*s,cy+dy*s]}
+function arrowSVG(x1,y1,x2,y2,col,bend){const mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy)||1;
+ const cx=mx-dy/l*bend,cy=my+dx/l*bend;return `<path class="ln" d="M${x1},${y1} Q${cx},${cy} ${x2},${y2}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" marker-end="url(#ah)"/>`}
+function defs(){return `<defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`}
+function renderMap(){
+ const cx=700,cy=430,R=125,n=IDEAS.length;let L='',N='';
+ IDEAS.forEach((it,k)=>{const a=(-90+(k+.5)*360/n)*Math.PI/180;const x=cx+Math.cos(a)*575,y=cy+Math.sin(a)*345;
+  const dx=Math.cos(a),dy=Math.sin(a);const [sx,sy]=[cx+dx*(R+8),cy+dy*(R+8)];
+  const ux=x-cx,uy=y-cy,ul=Math.hypot(ux,uy);const [ex,ey]=rectEdge(x,y,176+16,108+16,-ux/ul,-uy/ul);
+  const dim=focusP>=0&&focusP!==it.pi?' dim':'';
+  L+=`<g class="${dim}">`+arrowSVG(sx,sy,ex,ey,PC[it.pi],18)+`</g>`;
+  N+=`<button class="node idea${dim}" data-i="${k}" style="left:${x-88}px;top:${y-54}px;background:${PC[it.pi]};animation-delay:${k*50}ms" aria-label="${esc(it.t)}"><span class="n">${it.n}</span><span class="em">${it.e}</span><span class="t">${esc(it.t)}</span></button>`});
+ const hub=`<div class="node hub" style="left:${cx-R}px;top:${cy-R}px;width:${2*R}px;height:${2*R}px"><div class="em">${D.emoji}</div><div class="tt">${esc(D.title)}</div><div class="sub">${esc(D.sub)}</div></div>`;
+ const lg=D.paras.map((p,i)=>`<button class="lg" data-p="${i}" style="background:${PC[i]}">${i+1} · ${esc(p.t)} <small>⏱ ${esc(p.tense)} · ${esc(p.w)}</small></button>`).join('');
+ app.innerHTML=`<div id="fit"><div id="stage"><svg class="lines">${defs()}${L}</svg>${hub}${N}</div></div><div class="legend">${lg}<button class="lg" data-p="-1" style="background:var(--ink)">Show all <small>click a colour to focus</small></button></div>`;
+ fit();setTimeout(fit,50);
+ app.querySelectorAll('.idea').forEach(b=>b.onclick=()=>{view=+b.dataset.i;render()});
+ app.querySelectorAll('.lg').forEach(b=>b.onclick=()=>{focusP=+b.dataset.p===focusP?-1:+b.dataset.p;renderMap()});
+}
+function renderDetail(k){
+ const it=IDEAS[k],p=D.paras[it.pi],cx=700,cy=440,R=120;let L='',N='';
+ const cats=[[430,215,24,'left'],[970,215,1086,'right'],[430,665,24,'left'],[970,665,1086,'right']];
+ const baseY=[24,24,462,462];
+ it.w.forEach((words,c)=>{const [bx,by,chx,side]=cats[c];
+  const ux=bx-cx,uy=by-cy,ul=Math.hypot(ux,uy);
+  L+=arrowSVG(cx+ux/ul*(R+6),cy+uy/ul*(R+6),bx-ux/ul*72,by-uy/ul*72,CC[c],c%2?-24:24);
+  words.forEach((w,j)=>{const y=baseY[c]+j*63;const ex=side==='left'?chx+290:chx;const ey=y+28;const sx=side==='left'?bx-60:bx+60;
+   L+=`<line class="ln" x1="${sx}" y1="${by}" x2="${ex}" y2="${ey}" stroke="${CC[c]}" stroke-width="3" stroke-linecap="round" style="animation-delay:${.2+j*.05}s"/>`;
+   N+=`<div class="chip" tabindex="0" title="${esc(w[0]+' = '+w[1])}" style="left:${chx}px;top:${y}px;border-color:${CC[c]};animation-delay:${.15+j*.06}s"><b>${esc(w[0])}</b><span>${esc(w[1])}</span></div>`});
+  N+=`<div class="node cat" style="left:${bx-66}px;top:${by-66}px;background:${CC[c]};animation-delay:${c*70}ms">${CN[c]}<small>${CS[c]}</small></div>`});
+ const hub=`<div class="node hub" style="left:${cx-R}px;top:${cy-R}px;width:${2*R}px;height:${2*R}px"><div class="em">${it.e}</div><div class="tt" style="font-size:22px">${esc(it.t)}</div><div class="tn">⏱ ${esc(it.tn)}</div></div>`;
+ app.innerHTML=`<div id="fit" class="${eng?'':'hide'}"><div id="stage"><div class="crumb" style="color:${PC[it.pi]}">Paragraph ${it.pi+1} · ${esc(p.t)} · idea ${it.ii+1} of ${p.ideas.length}</div><svg class="lines">${defs()}${L}</svg>${hub}${N}
+ <div class="nav"><button id="pv">◀ Previous</button><button id="bk">All ideas</button><button id="nx">Next ▶</button></div></div></div>`;
+ fit();setTimeout(fit,50);
+ $('#pv').onclick=()=>{view=(k+IDEAS.length-1)%IDEAS.length;render()};$('#nx').onclick=()=>{view=(k+1)%IDEAS.length;render()};$('#bk').onclick=()=>{view='map';render()};
+ app.querySelectorAll('.chip').forEach(c=>{c.onclick=()=>c.classList.toggle('rev')});
+}
+function pairs(a){return a.map(w=>`<span class="w"><b>${esc(w[0])}</b> <i>= ${esc(w[1])}</i></span>`).join('')}
+function renderSheet(){
+ app.innerHTML='<div class="sheet">'+D.paras.map((p,pi)=>`<div class="pcard" style="border-color:${PC[pi]}"><h2 style="color:${PC[pi]}">Paragraph ${pi+1} · ${esc(p.t)} <small style="color:var(--soft);font-size:14px">${esc(p.w)}</small></h2><div class="tn">⏱ ${esc(p.tense)}</div>`+
+  p.ideas.map(i=>`<div class="icard"><h3>${i.e} ${esc(i.t)} <small style="color:var(--soft)">(${esc(i.tn)})</small></h3><div class="cols">`+i.w.map((w,c)=>`<div><h4 style="color:${CC[c]}">${CN[c]}</h4><p>${pairs(w)}</p></div>`).join('')+`</div></div>`).join('')+`</div>`).join('')+'</div>';
+}
+function renderConn(){app.innerHTML=`<div class="panel"><div class="pcard"><h2>Connectives toolkit</h2><div class="tw"><table><tr><th>Use for</th><th>French = English</th></tr>${D.conn.map(r=>`<tr><td>${esc(r[0])}</td><td>${pairs(r[1])}</td></tr>`).join('')}</table></div></div></div>`}
+function renderBoost(){app.innerHTML=`<div class="panel"><div class="pcard"><h2>Boosters: pick 2 or 3</h2><p style="margin:0 0 10px;color:var(--soft)">Build your own sentence from the pattern. ★ marks the easiest to start with.</p><div class="tw"><table><tr><th>Booster</th><th>Means</th><th>Pattern</th><th>Use it in</th></tr>${D.boost.map(b=>`<tr><td>${b[4]?'★ ':''}${esc(b[0])}</td><td>${esc(b[1])}</td><td>${esc(b[2])}</td><td>${esc(b[3])}</td></tr>`).join('')}</table></div></div></div>`}
+function render(){setBtns();if(view==='map')renderMap();else if(typeof view==='number')renderDetail(view);else if(view==='sheet')renderSheet();else if(view==='conn')renderConn();else renderBoost()}
+$('#bMap').onclick=()=>{view='map';render()};$('#bSheet').onclick=()=>{view='sheet';render()};$('#bConn').onclick=()=>{view='conn';render()};$('#bBoost').onclick=()=>{view='boost';render()};
+$('#bEng').onclick=()=>{eng=!eng;render()};
+document.addEventListener('keydown',e=>{if(typeof view==='number'){if(e.key==='ArrowRight'){view=(view+1)%IDEAS.length;render()}if(e.key==='ArrowLeft'){view=(view+IDEAS.length-1)%IDEAS.length;render()}if(e.key==='Escape'){view='map';render()}}});
+render();
+</script>
