@@ -1,23 +1,28 @@
 {
  "g": {
-  "q1b1": {
-   "ans": "était",
+  "q1i1": {
+   "i": 3,
+   "ans": "(d) était",
    "why": "quand + habit in the past → imparfait"
   },
-  "q1b2": {
-   "ans": "passait",
+  "q1i2": {
+   "i": 1,
+   "ans": "(b) passait",
    "why": "tous ses étés → habit → imparfait"
   },
-  "q1b3": {
-   "ans": "est retournée",
+  "q1i3": {
+   "i": 0,
+   "ans": "(a) est retournée",
    "why": "l’année dernière → passé composé; retourner takes être → agreement (elle)"
   },
-  "q1b4": {
-   "ans": "resterait",
+  "q1i4": {
+   "i": 2,
+   "ans": "(c) resterait",
    "why": "si + imparfait → conditionnel"
   },
-  "q1b5": {
-   "ans": "prendra",
+  "q1i5": {
+   "i": 3,
+   "ans": "(d) prendra",
    "why": "demain → futur simple (prendre → prendra)"
   },
   "q2i1": {
