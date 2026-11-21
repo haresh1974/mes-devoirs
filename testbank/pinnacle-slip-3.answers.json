@@ -1,0 +1,195 @@
+{
+ "g": {
+  "q1b1": {
+   "ans": "était",
+   "why": "quand + habit in the past → imparfait"
+  },
+  "q1b2": {
+   "ans": "passait",
+   "why": "tous ses étés → habit → imparfait"
+  },
+  "q1b3": {
+   "ans": "est retournée",
+   "why": "l’année dernière → passé composé; retourner takes être → agreement (elle)"
+  },
+  "q1b4": {
+   "ans": "resterait",
+   "why": "si + imparfait → conditionnel"
+  },
+  "q1b5": {
+   "ans": "prendra",
+   "why": "demain → futur simple (prendre → prendra)"
+  },
+  "q2i1": {
+   "i": 1,
+   "ans": "(b) Il la leur a montrée.",
+   "why": "la carte (fem. sg. DOP) + aux touristes (IOP) → la leur, participle agrees: montrée"
+  },
+  "q2i2": {
+   "i": 0,
+   "ans": "(a) Elles vont y passer leurs vacances.",
+   "why": "y replaces en Italie; goes before the infinitive"
+  },
+  "q2i3": {
+   "i": 3,
+   "ans": "(d) J’en ai acheté trois.",
+   "why": "en + the number trois stays"
+  },
+  "q2i4": {
+   "i": 1,
+   "ans": "(b) C’est lui qui a gagné le match.",
+   "why": "tonic pronoun after c’est qui → lui (a boy)"
+  },
+  "q2i5": {
+   "i": 1,
+   "ans": "(b) Je le lui donnerai demain.",
+   "why": "DOP le + IOP lui, before the verb (futur simple)"
+  },
+  "q3i1": {
+   "i": 3,
+   "ans": "(d) Montre-les-lui !",
+   "why": "les photos → les, à ta cousine → lui; order le-lui; tu montres → montre"
+  },
+  "q3i2": {
+   "i": 2,
+   "ans": "(c) Ne leur en parlez pas !",
+   "why": "de cette histoire → en, à vos parents → leur; negative: ne leur en … pas"
+  },
+  "q3i3": {
+   "i": 2,
+   "ans": "(c) Allons-y !",
+   "why": "y replaces à la plage"
+  },
+  "q3i4": {
+   "i": 3,
+   "ans": "(d) Ne te dépêche pas !",
+   "why": "negative imperative: ne te … pas; -s dropped"
+  },
+  "q4i1": {
+   "i": 0,
+   "ans": "(a) que",
+   "why": "object of porter → que"
+  },
+  "q4i2": {
+   "i": 1,
+   "ans": "(b) qui",
+   "why": "place → où"
+  },
+  "q4i3": {
+   "i": 2,
+   "ans": "(c) que",
+   "why": "avoir peur de → dont"
+  },
+  "q4i4": {
+   "i": 2,
+   "ans": "(c) La clé avec laquelle j’ouvrais la porte est perdue.",
+   "why": "avec + clé (fem. sg.) → avec laquelle"
+  },
+  "q4i5": {
+   "i": 1,
+   "ans": "(b) Voilà les raisons pour lesquelles je suis parti.",
+   "why": "pour + raisons (fem. pl.) → pour lesquelles"
+  },
+  "q5i1": {
+   "i": 3,
+   "ans": "(d) la meilleure",
+   "why": "superlative of bon (adjective, fem.) → la meilleure"
+  },
+  "q5i2": {
+   "i": 2,
+   "ans": "(c) moins",
+   "why": "je préfère le livre → the film is less interesting → moins"
+  },
+  "q5i3": {
+   "i": 3,
+   "ans": "(d) plus de",
+   "why": "quantity + noun → plus de"
+  },
+  "q5i4": {
+   "i": 0,
+   "ans": "(a) mieux",
+   "why": "bien (adverb) → mieux"
+  },
+  "q6i1": {
+   "i": 0,
+   "ans": "(a) ces, celles",
+   "why": "chaussures (fem. pl.): ces + celles"
+  },
+  "q6i2": {
+   "i": 2,
+   "ans": "(c) Ceux, ceux",
+   "why": "livres (masc. pl.): ceux de …"
+  },
+  "q6i3": {
+   "i": 3,
+   "ans": "(d) les vôtres",
+   "why": "billets (masc. pl.) of vous → les vôtres"
+  },
+  "q6i4": {
+   "i": 1,
+   "ans": "(b) les tiens",
+   "why": "cahiers (masc. pl.) of tu → les tiens"
+  },
+  "q7i1": {
+   "i": 0,
+   "ans": "(a) Non, elle n’a pas encore lu ce roman.",
+   "why": "déjà → pas encore"
+  },
+  "q7i2": {
+   "i": 2,
+   "ans": "(c) Il n’a pris aucune photo.",
+   "why": "plusieurs → aucun(e) (singular noun, after the participle)"
+  },
+  "q7i3": {
+   "i": 0,
+   "ans": "(a) Non, il n’a vu personne au marché.",
+   "why": "quelqu’un → personne, after the participle"
+  },
+  "q7i4": {
+   "i": 0,
+   "ans": "(a) Je ne veux rien dire.",
+   "why": "rien goes before the infinitive"
+  },
+  "q8i1": {
+   "i": 2,
+   "ans": "(c) À qui téléphone-t-elle ?",
+   "why": "à + person → À qui"
+  },
+  "q8i2": {
+   "i": 1,
+   "ans": "(b) Comment voyagent tes cousins ?",
+   "why": "en train = how → Comment"
+  },
+  "q8i3": {
+   "i": 0,
+   "ans": "(a) Quel âge as-tu ?",
+   "why": "age → Quel âge"
+  },
+  "q8i4": {
+   "i": 1,
+   "ans": "(b) Qu’est-ce qui a réveillé les enfants ?",
+   "why": "thing as subject → Qu’est-ce qui"
+  },
+  "q9b1": {
+   "ans": "aux",
+   "why": "États-Unis = plural → aux"
+  },
+  "q9b2": {
+   "ans": "à",
+   "why": "city → à"
+  },
+  "q9b3": {
+   "ans": "en",
+   "why": "Inde = feminine country → en"
+  },
+  "q9b4": {
+   "ans": "en",
+   "why": "transport → en avion"
+  },
+  "q9b5": {
+   "ans": "de",
+   "why": "after ne … jamais → de"
+  }
+ },
+ "s": {}
+}
