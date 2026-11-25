@@ -69,7 +69,7 @@ function draw(){
 document.addEventListener('click',(e)=>{
   const kb=e.target.closest('[data-k]');
   if(kb){const l=(D.guided||{})[kb.dataset.k]||[];const r=D.resources.find((x)=>x.id===kb.dataset.k);
-    $('#mod2t').textContent=r?r.group.replace('IGCSE Reading: ','')+' · '+r.title:'';
+    $('#mod2t').textContent=r?r.title:'';
     $('#mod2l').innerHTML=l.length?l.map((c)=>'<a class="btn" style="display:block;text-decoration:none;text-align:center;margin:8px 0" href="/#/t/tests/'+esc(c.aid)+'">🔑 '+esc(c.class_name)+': students &amp; answers</a>').join(''):'<p style="color:var(--mute)">Not assigned to any class yet. Tick this paper, press “Assign as homework…”, and it will appear here with a switch in front of each student’s name.</p>';
     $('#mod2').classList.add('on');return}
   const s=e.target.closest('[data-s]'),b=e.target.closest('[data-b]');
