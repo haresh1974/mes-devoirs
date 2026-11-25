@@ -1097,6 +1097,15 @@ async function sendTest(res, t, site) {
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Content-Type': 'text/html; charset=utf-8' });
   res.send(html);
 }
+app.get('/resources/go/:rid', wrap(async (req, res) => {
+  const st = await auth(req, 'student');
+  if (!st) return res.redirect('/');
+  const r = RESOURCES.find((x) => x.id === req.params.rid && x.guided);
+  if (!r) return res.redirect('/resources/');
+  let ta = await db.get('SELECT id FROM test_assignments WHERE test_id = ? AND class_id = ?', [r.guided, st.class_id]);
+  if (!ta) { ta = { id: uid() }; await db.run('INSERT INTO test_assignments (id,test_id,class_id,start_at,due_at,lock_on,max_leaves,created) VALUES (?,?,?,?,?,?,?,?)', [ta.id, r.guided, st.class_id, now() - 1000, null, 0, 3, now()]); }
+  res.redirect('/tests/run/' + ta.id);
+}));
 app.get('/tests/run/:aid', wrap(async (req, res) => {
   const st = await auth(req, 'student');
   if (!st) return res.redirect('/');

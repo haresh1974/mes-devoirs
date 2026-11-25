@@ -60,7 +60,7 @@ function draw(){
     Object.keys(groups).forEach((g)=>{
       const items=groups[g],ids=items.map((r)=>r.id),all=ids.every((i)=>sel.has(i));
       h+='<details'+(rs.length<=24?' open':'')+'><summary>'+(D.role==='teacher'?'<input type="checkbox" data-g="'+esc(ids.join(','))+'" '+(all?'checked':'')+' title="Select all in this group">':'')+esc(g)+'<span class="n">'+items.length+'</span></summary>'+
-      items.map((r)=>'<div class="row">'+(D.role==='teacher'?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.guided?(D.role==='teacher'?'<button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':''):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>')+'</div>').join('')+'</details>';
+      items.map((r)=>'<div class="row">'+(D.role==='teacher'?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.guided?(D.role==='teacher'?'<button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>')+'</div>').join('')+'</details>';
     });
   });
   $('#list').innerHTML=h;
