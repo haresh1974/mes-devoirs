@@ -1,10 +1,161 @@
-/* IGCSE French Reading — interactive papers · Learn French with Haresh Sir */
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex"><title>IGCSE French Reading</title><style>:root{--ink:#1d2433;--mut:#667085;--bg:#f4f6fb;--card:#fff;--blue:#2457d6;--blue2:#e6edff;--gold:#ffd54a;--green:#1a9b5a;--red:#d6372b;--line:#dfe4ee;--sheetH:68px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.view{height:100%}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer}
+
+/* ---------- home ---------- */
+#home{overflow:auto;padding:0 0 40px}
+.hero{background:linear-gradient(135deg,#2457d6,#5b7df0);color:#fff;padding:34px 20px 30px;text-align:center}
+.hero .logo{font-size:44px}.hero h1{margin:6px 0 2px;font-size:24px}.hero p{margin:0;opacity:.9}
+.yr{max-width:760px;margin:18px auto 0;padding:0 14px}
+.yr h2{font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin:20px 4px 8px}
+.pc{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;box-shadow:0 1px 2px rgba(20,30,60,.05);width:100%;text-align:left}
+.pc .badge{background:var(--blue2);color:var(--blue);font-weight:700;border-radius:10px;padding:8px 10px;min-width:56px;text-align:center}
+.pc b{display:block}.pc small{color:var(--mut)}
+.pc.soon{opacity:.55;cursor:default}.pc.soon .badge{background:#eef0f4;color:var(--mut)}
+.pc .go{margin-left:auto;color:var(--blue);font-weight:700}
+.foot{max-width:760px;margin:20px auto;padding:0 18px;color:var(--mut);font-size:13px;text-align:center}
+
+/* ---------- reader ---------- */
+#reader{display:flex;flex-direction:column;height:100dvh;height:100svh}
+#reader[hidden]{display:none}
+#top{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#fff;border-bottom:1px solid var(--line);padding-top:max(6px,env(safe-area-inset-top))}
+#top .ttl{flex:1;min-width:0;line-height:1.15}#top .ttl b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#top .ttl small{color:var(--mut);font-size:12px}
+.ib{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1}
+.tg{height:38px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:14px;color:var(--mut)}
+.tg.on{background:var(--gold);border-color:#e6b800;color:#4a3800;font-weight:600}
+#chips{display:flex;gap:6px;overflow-x:auto;padding:6px 8px;background:#fff;border-bottom:1px solid var(--line);scrollbar-width:none}
+#chips button{flex:0 0 auto;border:1px solid var(--line);background:#f7f8fb;border-radius:999px;padding:5px 13px;font-weight:600;color:var(--ink)}
+#chips button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+#panes{flex:1;min-height:0;display:flex;flex-direction:column}
+.pane{position:relative;min-height:0;flex:1 1 50%;background:#cfd5e2;overflow:hidden}
+#panes.single #paneA,#panes.single #gap{display:none}
+#panes.split-a #paneA{flex-basis:62%}#panes.split-a #paneB{flex-basis:38%}
+#panes.split-b #paneA{flex-basis:38%}#panes.split-b #paneB{flex-basis:62%}
+#gap{height:5px;background:var(--blue);flex:0 0 5px}
+@media (min-width:900px) and (orientation:landscape),(min-aspect-ratio:13/10){#panes{flex-direction:row}#gap{width:5px;height:auto;flex:0 0 5px}}
+.scroller{position:absolute;inset:0;overflow:auto;-webkit-overflow-scrolling:touch}
+.zoom{position:absolute;right:8px;bottom:8px;display:flex;gap:4px;z-index:5}
+.zoom button{width:30px;height:30px;opacity:.82;border-radius:50%;border:1px solid #bcc4d6;background:rgba(255,255,255,.94);font-size:20px;line-height:1;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.page{position:relative;margin:8px auto;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.25);--u:calc(var(--pw)/595)}
+.page>img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+.page .ov{position:absolute;inset:0}
+.ov i,.ov b,.ov u,.ov em,.ov button,.ov input{position:absolute}
+.w{font-style:normal;border-radius:3px}
+body.aids .w{cursor:pointer}
+body.aids .w:hover{background:rgba(36,87,214,.14)}
+body:not(.aids) .w,body:not(.aids) .pin,body:not(.aids) .pic,body:not(.aids) .ph,body:not(.aids) .ev{display:none}
+.ph{border-bottom:2.5px dotted #d9650d;background:rgba(217,101,13,.10);mix-blend-mode:multiply;border-radius:3px;pointer-events:none}
+.sel{background:rgba(36,87,214,.22);border-radius:3px;outline:1.5px solid rgba(36,87,214,.7);pointer-events:none}
+.ev{background:rgba(255,213,74,.62);mix-blend-mode:multiply;border-radius:3px;pointer-events:none;display:none!important;outline:2px solid rgba(240,170,0,.9)}
+.ev.on{display:block!important;animation:pulse 1.2s ease-out 2}
+@keyframes pulse{0%{outline-width:7px;outline-color:rgba(240,150,0,.0)}100%{outline-width:2px}}
+.pin{width:calc(var(--u)*16);height:calc(var(--u)*16);min-width:19px;min-height:19px;transform:translate(-2px,-2px);border-radius:50%;border:none;background:var(--gold);box-shadow:0 1px 3px rgba(0,0,0,.35);font-size:calc(var(--u)*9);padding:0;line-height:1;z-index:3}
+.pin.on{background:var(--blue);color:#fff}
+.pic{background:rgba(255,213,74,0);border:2px solid transparent;border-radius:6px;padding:0;z-index:2}
+.pic:hover,.pic.on{background:rgba(255,213,74,.28);border-color:#e0a800}
+.fl,.fb{font-family:"Segoe Print","Comic Sans MS","Bradley Hand",cursive,system-ui;color:#0b2a8a;background:rgba(255,255,255,0);border:0;outline:0;padding:0 calc(var(--u)*3);z-index:4;text-overflow:clip}
+.fl{font-size:calc(var(--u)*11.5);border-bottom:0}
+.fl:focus,.fb:focus{background:rgba(214,230,255,.55);box-shadow:0 0 0 2px rgba(36,87,214,.5);border-radius:3px}
+.fb{text-align:center;font-size:calc(var(--u)*17);font-weight:700;text-transform:uppercase;border-radius:3px}
+.tk{background:transparent;border:0;padding:0;z-index:4;border-radius:2px}
+.tk::after{content:"";}
+.tk.on::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#0b2a8a;font-weight:700;font-size:calc(var(--u)*20)}
+.tk:focus-visible{outline:2px solid var(--blue)}
+.ansl{position:absolute;color:var(--green);font:italic 600 calc(var(--u)*10.5)/1.15 system-ui;z-index:4;display:none;pointer-events:none;white-space:nowrap}
+body.reveal .ansl{display:block}
+body.reveal .ok{box-shadow:0 0 0 2px var(--green)!important;background:rgba(26,155,90,.12)}
+body.reveal .bad{box-shadow:0 0 0 2px var(--red)!important;background:rgba(214,55,43,.1)}
+body.reveal .tk.right:not(.on){box-shadow:0 0 0 2px var(--green);background:rgba(26,155,90,.18)}
+body.reveal .tk.right:not(.on)::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700;font-size:calc(var(--u)*20)}
+
+/* ---------- bottom sheet ---------- */
+#sheet{background:#fff;border-top:2px solid var(--blue);padding:8px 10px calc(8px + env(safe-area-inset-bottom));min-height:var(--sheetH);max-height:46vh;overflow:auto;box-shadow:0 -4px 14px rgba(20,30,60,.12)}
+.idle{color:var(--mut);font-size:13.5px}
+.wd{display:flex;align-items:flex-start;gap:8px}
+.wd .t{flex:1;min-width:0}
+.wd .fr{font-size:18px;font-weight:700;color:var(--blue)}
+.wd .en{font-size:16px}
+.wd .nt{color:var(--mut);font-size:12.5px}
+.part{margin-top:2px}
+.pbox{margin:0 0 5px;background:#fff1e3;border-left:4px solid #d9650d;border-radius:8px;padding:5px 9px;font-size:15px}
+.pbox b{color:#d9650d}
+.mini{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:16px;flex:0 0 auto;padding:0}
+.mini.on{background:var(--gold);border-color:#e6b800}
+.hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}.hd b{flex:1}
+.tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:#f7f8fb;border-radius:999px;padding:5px 12px;font-weight:600;font-size:13.5px}
+.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.hint p{margin:4px 0}
+.starter{background:#fff7d6;border:1px dashed #e2b400;border-radius:10px;padding:7px 10px;font-size:16px;font-weight:600}
+.chips2{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0}
+.cv{background:#eef2ff;border:1px solid #d3dcff;border-radius:8px;padding:4px 8px;font-size:14px}
+.cv i{font-style:normal;color:var(--mut)}
+.cv b{color:var(--green)}
+.warn{background:#fff0ee;border-left:4px solid var(--red);border-radius:8px;padding:6px 10px}
+.ansbox{background:#e9f8f0;border:1px solid #a9dfc3;border-radius:10px;padding:8px 10px}
+.ansbox .a{font-size:17px;font-weight:700;color:#0f6b3e}
+.ansbox .n{color:#2b5a45;font-size:13px;margin-top:3px}
+.keys{display:flex;flex-wrap:wrap;gap:5px}
+.keys button{min-width:34px;height:36px;border-radius:9px;border:1px solid #c7d1ea;background:#f2f5fc;font-size:18px;padding:0 6px}
+.primary{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600}
+.ghost{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+
+/* ---------- modal ---------- */
+#modal{position:fixed;inset:0;background:rgba(20,28,50,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.card{background:#fff;border-radius:16px;padding:18px;max-width:440px;width:100%;max-height:86vh;overflow:auto}
+.card h3{margin:0 0 8px}
+.card input[type=password],.card input[type=text]{width:100%;font:inherit;padding:10px;border:1px solid #c7d1ea;border-radius:10px;margin:8px 0}
+.card .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
+.err{color:var(--red);font-size:13px;min-height:18px}
+.legend{font-size:13px;color:var(--mut)}
+.sw{display:flex;align-items:center;gap:10px;margin:10px 0}
+.nl{border-bottom:1px solid var(--line);padding:6px 0;display:flex;gap:8px;align-items:center}.nl b{color:var(--blue)}.nl span{flex:1}
+
+body.locked .tk{pointer-events:none}
+</style></head><body>
+<div id="home" class="view">
+  <div class="hero">
+    <div class="logo">🇫🇷</div>
+    <h1>IGCSE French · Reading papers</h1>
+    <p>Learn French with Haresh Sir</p>
+  </div>
+  <div id="paperlist"></div>
+  <p class="foot">Tap a paper to open it. Write your answers right on the paper. Tap any word for its meaning, tap 💡 for help.</p>
+</div>
+
+<div id="reader" class="view" hidden>
+  <header id="top">
+    <button id="back" class="ib" title="All papers" aria-label="All papers">‹</button>
+    <div class="ttl"><b id="ptitle"></b><small id="psub"></small></div>
+    <button id="btnAids" class="tg on" title="Show or hide the learning aids">💡 Aides</button>
+    <button id="btnSplit" class="ib" title="Pin the text above the questions">⇅</button>
+    <button id="btnNotes" class="ib" title="My saved words">⭐</button>
+    <button id="btnLock" class="ib" title="Teacher">🔒</button>
+  </header>
+  <nav id="chips"></nav>
+  <main id="panes">
+    <section class="pane" id="paneA"><div class="scroller"></div><div class="zoom"><button data-z="-1">−</button><button data-z="1">+</button></div></section>
+    <div id="gap"></div>
+    <section class="pane" id="paneB"><div class="scroller"></div><div class="zoom"><button data-z="-1">−</button><button data-z="1">+</button></div></section>
+  </main>
+  <footer id="sheet"><div id="sheetBody"></div></footer>
+</div>
+
+<div id="modal" hidden><div class="card" id="modalCard"></div></div>
+
+<script>window.__SITE=/*__SITE__*/null;</script><script>/* IGCSE French Reading — interactive papers · Learn French with Haresh Sir */
 (function () {
 'use strict';
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 const G = window.GLOSS || {};
-const INDEX = window.PAPER_INDEX || [];
+const SITE = window.__SITE || null;          // set when served inside the French with Haresh site (student / review / preview)
+const INDEX = SITE ? [{ id: SITE.paper, ready: true }] : (window.PAPER_INDEX || []);
+const imgUrl = s => SITE ? SITE.assetBase + s.replace(/^img\//, '').replace('/', '_') : s;
 const MASTER_HINT = '';
 
 /* ---------- tiny storage helpers (may be blocked in some frames) ---------- */
@@ -45,7 +196,7 @@ function route() {
 function loadPaper(p) {
   const go = () => openPaper(window.PAPERS[p.id]);
   if (window.PAPERS && window.PAPERS[p.id]) return go();
-  const s = document.createElement('script'); s.src = `data/${p.id}.js`; s.onload = go;
+  const s = document.createElement('script'); s.src = SITE ? SITE.assetBase + p.id + '.js' : `data/${p.id}.js`; s.onload = go;
   s.onerror = () => alert('Could not load this paper.');
   document.head.appendChild(s);
 }
@@ -54,7 +205,7 @@ function loadPaper(p) {
 function openPaper(P) {
   state.paper = P; state.active = null; state.sec = 0; state.reveal = false;
   document.body.classList.remove('reveal');
-  state.answers = sget('fh-ans-' + P.id, {});
+  state.answers = sget((SITE ? 'fh-s-' + (SITE.assignment || SITE.test || '') + '-' : 'fh-ans-') + P.id, {});
   $('#home').hidden = true; $('#reader').hidden = false;
   $('#ptitle').textContent = 'Reading · Paper ' + P.code.split('/')[1]; $('#psub').textContent = P.session;
   document.body.classList.toggle('aids', state.aids);
@@ -74,13 +225,14 @@ function openPaper(P) {
   applyUnlock();
   gotoSection(0, true);
   setSheet('idle');
+  if (SITE) window.dispatchEvent(new Event('fh-open'));
 }
 
 function pageEl(k, pi) { return panes[k].pages[pi]; }
 
 function buildPage(P, pg, pi, k, sc) {
   const d = document.createElement('div'); d.className = 'page'; d.dataset.p = pi;
-  const img = document.createElement('img'); img.src = pg.img; img.alt = 'Page ' + (pi + 1); img.loading = 'lazy'; img.draggable = false;
+  const img = document.createElement('img'); img.src = imgUrl(pg.img); img.alt = 'Page ' + (pi + 1); img.loading = 'lazy'; img.draggable = false;
   d.appendChild(img);
   const ov = document.createElement('div'); ov.className = 'ov'; d.appendChild(ov);
   const W = pg.w, H = pg.h;
@@ -304,7 +456,7 @@ function renderHelp(qid, tab) {
   }
   if (tab === 'ans') {
     const A = state.unlocked[P.id];
-    if (!A) { c.innerHTML = '<p>The answers are revealed by your teacher.</p>'; const bt = document.createElement('button'); bt.className = 'primary'; bt.textContent = '🔒 Teacher code'; bt.onclick = openLock; c.appendChild(bt); }
+    if (!A) { c.innerHTML = '<p>The answers are revealed by your teacher.</p>'; if (!SITE) { const bt = document.createElement('button'); bt.className = 'primary'; bt.textContent = '🔒 Teacher code'; bt.onclick = openLock; c.appendChild(bt); } }
     else { const a = A[qid]; const arr = Array.isArray(a.a) ? a.a : [a.a];
       c.innerHTML = '<div class="ansbox">' + arr.map((t, i) => `<div class="a">${arr.length > 1 ? (i + 1) + ' ' : ''}${esc(t)}</div>`).join('') + (a.n ? `<div class="n">Examiner note — ${esc(a.n)}</div>` : '') + '</div>'; }
   }
@@ -321,7 +473,8 @@ function hideEvidence() { $$('.ev.on').forEach(e => e.classList.remove('on')); }
 
 /* ---------- answers ---------- */
 function setAnswer(q, o, val, src) {
-  const key = q + '|' + o; state.answers[key] = val; sset('fh-ans-' + state.paper.id, state.answers);
+  if (state.locked) return;
+  const key = q + '|' + o; state.answers[key] = val; sset((SITE ? 'fh-s-' + (SITE.assignment || SITE.test || '') + '-' : 'fh-ans-') + state.paper.id, state.answers); siteTouch();
   $$('input[data-q="' + q + '"]').forEach(e => { if (e.dataset.o === o && e !== src) e.value = val; });
   syncTicks(q); gradeAll();
 }
@@ -352,6 +505,7 @@ function openModal(html) { $('#modalCard').innerHTML = html; $('#modal').hidden 
 function closeModal() { $('#modal').hidden = true; }
 $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 function openLock() {
+  if (SITE) return siteLock();
   const P = state.paper;
   if (state.unlocked[P.id]) {
     openModal(`<h3>🔓 Teacher mode</h3><p>Answers for this paper are unlocked on this device.</p>
@@ -421,9 +575,69 @@ $('#btnSplit').onclick = () => { if (!state.split) { state.split = true; state.r
   layout(false); gotoSection(state.sec, true); };
 $('#btnNotes').onclick = openNotes;
 $('#btnLock').onclick = openLock;
-window.addEventListener('hashchange', route);
+if (!SITE) window.addEventListener('hashchange', route);
 document.addEventListener('DOMContentLoaded', () => {});
 document.addEventListener('scroll', e => { if (e.target && e.target.parentElement && e.target.parentElement.id === 'paneB') onScrollB(); }, true);
 
-renderHome(); route();
+/* ---------- inside the French with Haresh site ---------- */
+let saveTm = null, subAt = null, pollTm = null;
+const toKey = k => k.replace('|', '_'), fromKey = k => { const i = k.indexOf('_'); return i < 0 ? k + '|' : k.slice(0, i) + '|' + k.slice(i + 1); };
+function siteTouch() { if (!SITE || SITE.mode !== 'student' || state.locked) return; clearTimeout(saveTm); saveTm = setTimeout(() => siteSave(false), 2500); }
+function toast(t, ok) { let n = $('#flash'); if (!n) { n = document.createElement('div'); n.id = 'flash'; n.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:99;padding:12px 18px;border-radius:14px;font-weight:700;font-size:15px;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:90vw;text-align:center'; document.body.append(n); }
+  n.style.background = ok ? '#e6f7ec' : '#fdecea'; n.style.color = ok ? '#146c2e' : '#a12a1f'; n.textContent = t; n.hidden = false; clearTimeout(n._t); n._t = setTimeout(() => { n.hidden = true; }, 5000); }
+async function siteSave(final) {
+  if (SITE.mode !== 'student') { if (final) toast('Preview only: nothing is saved.', true); return; }
+  const v = {}; Object.keys(state.answers).forEach(k => { const x = String(state.answers[k] == null ? '' : state.answers[k]).slice(0, 300); if (x) v[toKey(k)] = x; });
+  try {
+    const r = await fetch('/api/student/tests/' + SITE.assignment + '/mine', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: { v }, submit: !!final }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { if (final) toast('⚠️ ' + (j.error || 'Could not hand in. Try again.'), false); return; }
+    if (final) { subAt = j.submitted_at; toast('✅ Handed in! Your teacher will unlock the answers later.', true); siteBtn(); }
+  } catch (e) { if (final) toast('⚠️ No internet. Your answers are saved on this device — press Hand in again when you are online.', false); }
+}
+function siteBtn() { const b = $('#btnLock'); if (SITE.mode === 'student') { b.textContent = state.locked ? '✅' : (subAt ? '📨✓' : '📨'); b.title = 'Hand in'; } else b.textContent = state.unlocked[state.paper.id] ? '🔓' : '🔒'; }
+function setLocked(on) { state.locked = on; document.body.classList.toggle('locked', on); $$('input.fb,.tk').forEach(e => { if (e.tagName === 'INPUT') e.disabled = on; }); }
+function siteLock() {
+  const P = state.paper;
+  if (SITE.mode === 'student') {
+    if (state.locked) { openModal('<h3>✅ Answers unlocked</h3><p>Your teacher has unlocked the answers. Green = correct. The official answer is printed under each line.</p><div class="row"><button class="primary" id="mClose">Close</button></div>'); $('#mClose').onclick = closeModal; return; }
+    openModal(`<h3>📨 Hand in</h3><p>${subAt ? 'You already handed in. You can still change your answers and hand in again.' : 'When you have finished, hand in your answers. Your teacher unlocks the correct answers later.'}</p><div class="row"><button class="ghost" id="mClose">Not yet</button><button class="primary" id="mGo">Hand in</button></div>`);
+    $('#mClose').onclick = closeModal; $('#mGo').onclick = () => { closeModal(); siteSave(true); }; return;
+  }
+  openModal(`<h3>🔓 Teacher view</h3><p>${SITE.mode === 'review' ? esc(SITE.sname || 'Student') + '’s answers with the official answers.' : 'Preview: you can see the official answers.'}</p>
+    <label class="sw"><input type="checkbox" id="swReveal" ${state.reveal ? 'checked' : ''}> <span><b>Show the answers on the paper</b><br><small class="legend">Marks ✓ / ✗ on letters and numbers; prints the official answer under each written line.</small></span></label>
+    <p class="legend"><b>Examiner codes:</b> HA = harmless extra · INV = this extra word cancels the mark · tc = not enough on its own.</p>
+    <div class="row"><button class="primary" id="mClose">Close</button></div>`);
+  $('#swReveal').onchange = e => setReveal(e.target.checked); $('#mClose').onclick = closeModal;
+}
+function applyKey(A) { const P = state.paper; state.unlocked[P.id] = A; applyUnlock(); siteBtn(); }
+async function siteJson(u) { const r = await fetch(u, { credentials: 'same-origin', cache: 'no-store' }); return r.json(); }
+async function siteInit() {
+  const P = state.paper;
+  $('#back').onclick = () => { location.href = SITE.mode === 'student' ? '/#/s/tests' : '/#/t/tests'; };
+  $('#back').title = 'Back to tests';
+  try {
+    if (SITE.mode === 'student') {
+      const m = await siteJson('/api/student/tests/' + SITE.assignment + '/mine');
+      if (m && m.answers && m.answers.v && Object.keys(m.answers.v).length) { state.answers = {}; Object.keys(m.answers.v).forEach(k => { state.answers[fromKey(k)] = m.answers.v[k]; }); restoreAnswers(); }
+      subAt = m && m.submitted_at || null;
+      const checkKey = async () => { const j = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (j && j.released) { clearInterval(pollTm); setLocked(true); applyKey(j.answers); setReveal(true); } };
+      await checkKey(); if (!state.locked) pollTm = setInterval(checkKey, 20000);
+    } else if (SITE.mode === 'review') {
+      const j = await siteJson('/api/tests/assignments/' + SITE.assignment + '/submission/' + SITE.sid);
+      state.answers = {}; const v = (j.answers && j.answers.v) || {}; Object.keys(v).forEach(k => { state.answers[fromKey(k)] = v[k]; });
+      restoreAnswers(); setLocked(true); applyKey(j.key); setReveal(true);
+    } else {
+      const j = await siteJson('/api/tests/answers/' + SITE.test); if (j && j.released) applyKey(j.answers);
+    }
+  } catch (e) { /* offline: the paper still works */ }
+  siteBtn();
+}
+if (SITE) {
+  document.title = SITE.title || document.title; $('#home').hidden = true;
+  const g = document.createElement('script'); g.src = SITE.assetBase + 'gloss.js';
+  g.onload = () => { loadPaper({ id: SITE.paper }); window.addEventListener('fh-open', siteInit, { once: true }); };
+  g.onerror = () => alert('Could not load this paper.'); document.head.appendChild(g);
+} else { renderHome(); route(); }
 })();
+</script></body></html>

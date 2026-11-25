@@ -1081,6 +1081,7 @@ app.post('/api/student/tests/:aid/fix', studentOnly(async (req, res) => {
 // The test pages. Not public files: a student only gets the page for a test assigned to their class.
 async function sendTest(res, t, site) {
   let html = fs.readFileSync(path.join(__dirname, 'testbank', t.file), 'utf8');
+  if (t.paper) site = Object.assign({}, site, { paper: t.paper });
   html = html.replace('/*__SITE__*/null', () => JSON.stringify(site).replace(/</g, '\\u003c'));
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Content-Type': 'text/html; charset=utf-8' });
   res.send(html);
