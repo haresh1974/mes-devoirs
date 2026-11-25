@@ -36,6 +36,7 @@ summary:before{content:"▸";transition:.15s}details[open] summary:before{transf
 <label class="l">Classes</label><div id="mcls"></div>
 <label class="l">Start</label><input type="datetime-local" id="ms"><label class="l">Due (optional)</label><input type="datetime-local" id="md">
 <div class="err" id="merr"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="btn ghost" id="mx">Cancel</button><button class="btn" id="mok">Assign</button></div></div></div>
+<div class="modal" id="mod2"><div class="box"><h2 id="mod2t"></h2><div id="mod2l"></div><div style="text-align:right;margin-top:12px"><button class="btn ghost" onclick="document.getElementById('mod2').classList.remove('on')">Close</button></div></div></div>
 <script>
 const $=(s)=>document.querySelector(s),esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let D=null,skill='All',board='All',sel=new Set();
@@ -59,13 +60,18 @@ function draw(){
     Object.keys(groups).forEach((g)=>{
       const items=groups[g],ids=items.map((r)=>r.id),all=ids.every((i)=>sel.has(i));
       h+='<details'+(rs.length<=24?' open':'')+'><summary>'+(D.role==='teacher'?'<input type="checkbox" data-g="'+esc(ids.join(','))+'" '+(all?'checked':'')+' title="Select all in this group">':'')+esc(g)+'<span class="n">'+items.length+'</span></summary>'+
-      items.map((r)=>'<div class="row">'+(D.role==='teacher'?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(k==='both'?'':'')+'<a class="go" href="'+esc(r.url)+'">Open ↗</a></div>').join('')+'</details>';
+      items.map((r)=>'<div class="row">'+(D.role==='teacher'?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.guided?(D.role==='teacher'?'<button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':''):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>')+'</div>').join('')+'</details>';
     });
   });
   $('#list').innerHTML=h;
   const n=sel.size;$('#bar').classList.toggle('on',n>0&&D.role==='teacher');$('#cnt').textContent=n+' selected';
 }
 document.addEventListener('click',(e)=>{
+  const kb=e.target.closest('[data-k]');
+  if(kb){const l=(D.guided||{})[kb.dataset.k]||[];const r=D.resources.find((x)=>x.id===kb.dataset.k);
+    $('#mod2t').textContent=r?r.group.replace('IGCSE Reading: ','')+' · '+r.title:'';
+    $('#mod2l').innerHTML=l.length?l.map((c)=>'<a class="btn" style="display:block;text-decoration:none;text-align:center;margin:8px 0" href="/#/t/tests/'+esc(c.aid)+'">🔑 '+esc(c.class_name)+': students &amp; answers</a>').join(''):'<p style="color:var(--mute)">Not assigned to any class yet. Tick this paper, press “Assign as homework…”, and it will appear here with a switch in front of each student’s name.</p>';
+    $('#mod2').classList.add('on');return}
   const s=e.target.closest('[data-s]'),b=e.target.closest('[data-b]');
   if(s){skill=s.dataset.s;draw()}if(b){board=b.dataset.b;draw()}
 });
@@ -91,7 +97,7 @@ $('#mok').onclick=async()=>{
   const r=await fetch('/api/resources/assign',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({resource_ids:[...sel],class_ids:cls,start_at:st,due_at:du})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok){$('#merr').textContent=j.error||'Could not assign.';return}
-  $('#mod').classList.remove('on');sel.clear();draw();alert('Assigned: '+j.made+' homework task'+(j.made>1?'s':'')+' across '+j.classes+' class'+(j.classes>1?'es':'')+'. Students will see them on their home page.');
+  $('#mod').classList.remove('on');sel.clear();draw();alert('Assigned: '+j.made+' homework task'+(j.made>1?'s':'')+' across '+j.classes+' class'+(j.classes>1?'es':'')+'. Students will see them on their home page.');location.reload();
 };
 fetch('/api/resources').then((r)=>r.ok?r.json():Promise.reject()).then((d)=>{
   D=d;

@@ -115,6 +115,20 @@ body.reveal .tk.right:not(.on)::after{content:"✓";position:absolute;inset:0;di
 .sw{display:flex;align-items:center;gap:10px;margin:10px 0}
 .nl{border-bottom:1px solid var(--line);padding:6px 0;display:flex;gap:8px;align-items:center}.nl b{color:var(--blue)}.nl span{flex:1}
 
+#ckov{position:fixed;inset:0;z-index:70;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}#ckov[hidden]{display:none}
+.ckw{width:min(94vw,760px);margin:0 auto;padding:12px 0 80px}.ckt{display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2}.ckt h2{margin:0;font-size:1.25rem}
+.cks{display:flex;gap:10px;margin:8px 0}.ckbig{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;font-size:1.1rem}.ckbig b{font-size:2rem;color:var(--blue)}.ckbig small{display:block;color:var(--mut);font-size:.78rem;margin-top:2px}
+.ckdisc{color:var(--mut);font-size:.88rem;margin:6px 0 10px}
+.ckleg,.ckn{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:0 12px}.ckleg summary,.ckn summary{cursor:pointer;padding:10px 0;font-weight:700}.ckbody{padding-bottom:10px;font-size:.92rem}.ckbody table{border-collapse:collapse;width:100%}.ckbody td{padding:5px 6px;border-top:1px solid var(--line);vertical-align:top}
+.ckfilter{display:flex;gap:8px;margin:10px 0}.ckfilter .chip{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700}.ckfilter .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.ckq{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:14px;margin:10px 0;padding:10px 12px}.ckq[hidden]{display:none}.ckq.s-good{border-left-color:var(--green)}.ckq.s-bad{border-left-color:var(--red)}.ckq.s-part{border-left-color:#e69a00}.ckq.s-blank{border-left-color:#98a2b3}
+.ckh{display:flex;align-items:center;gap:10px}.ckh .vd{font-weight:800}.ckh .mk{margin-left:auto;font-weight:800;color:var(--mut)}.ckh .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:2px 8px}
+.ckr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.ckr small{color:var(--mut);font-weight:700}.ckr .you,.ckr .off{padding:6px 8px;border-radius:8px;background:var(--bg);min-height:30px;word-break:break-word}.ckr .off{background:#e8f6ee;font-weight:700}.ckq.s-bad .you,.ckq.s-part .you{background:#fdecea}.ckq.s-good .you{background:#e8f6ee}
+@media(max-width:520px){.ckr{grid-template-columns:1fr}}
+.why{margin:6px 0 4px;padding-left:18px}.why li{margin:4px 0}.nts{list-style:none;margin:0;padding:0 0 8px}.nts li{margin:5px 0;font-size:.9rem}.nts .lab{font-weight:800;margin-right:4px}
+.cd{display:inline-block;font-size:.72rem;font-weight:800;border-radius:6px;padding:0 6px;background:#e4ebff;color:#2e4fc4}.cd.inv{background:#fde8d8;color:#b4570d}.cd.ha{background:#e1f5ea;color:#17804f}.cd.tc{background:#f1e6ff;color:#6b3fc4}
+body.ckopen #btnCheck{outline:2px solid var(--blue)}
+
 body.locked .tk{pointer-events:none}
 </style></head><body>
 <div id="home" class="view">
@@ -600,7 +614,7 @@ function setLocked(on) { state.locked = on; document.body.classList.toggle('lock
 function siteLock() {
   const P = state.paper;
   if (SITE.mode === 'student') {
-    if (state.locked) { openModal('<h3>✅ Answers unlocked</h3><p>Your teacher has unlocked the answers. Green = correct. The official answer is printed under each line.</p><div class="row"><button class="primary" id="mClose">Close</button></div>'); $('#mClose').onclick = closeModal; return; }
+    if (state.locked) { openModal('<h3>✅ Answers unlocked</h3><p>Your teacher has unlocked the answers. Green = correct. The official answer is printed under each line. Press <b>📋 Check my answers</b> to see what you got right, and why any answer lost a mark.</p><div class="row"><button class="ghost" id="mCk">📋 Check my answers</button><button class="primary" id="mClose">Close</button></div>'); $('#mCk').onclick = () => { closeModal(); openCheck(); }; $('#mClose').onclick = closeModal; return; }
     openModal(`<h3>📨 Hand in</h3><p>${subAt ? 'You already handed in. You can still change your answers and hand in again.' : 'When you have finished, hand in your answers. Your teacher unlocks the correct answers later.'}</p><div class="row"><button class="ghost" id="mClose">Not yet</button><button class="primary" id="mGo">Hand in</button></div>`);
     $('#mClose').onclick = closeModal; $('#mGo').onclick = () => { closeModal(); siteSave(true); }; return;
   }
@@ -614,19 +628,19 @@ function applyKey(A) { const P = state.paper; state.unlocked[P.id] = A; applyUnl
 async function siteJson(u) { const r = await fetch(u, { credentials: 'same-origin', cache: 'no-store' }); return r.json(); }
 async function siteInit() {
   const P = state.paper;
-  $('#back').onclick = () => { location.href = SITE.mode === 'student' ? '/#/s/tests' : '/#/t/tests'; };
-  $('#back').title = 'Back to tests';
+  $('#back').onclick = () => { location.href = SITE.mode === 'student' ? '/#/s' : '/resources/'; };
+  $('#back').title = 'Back';
   try {
     if (SITE.mode === 'student') {
       const m = await siteJson('/api/student/tests/' + SITE.assignment + '/mine');
       if (m && m.answers && m.answers.v && Object.keys(m.answers.v).length) { state.answers = {}; Object.keys(m.answers.v).forEach(k => { state.answers[fromKey(k)] = m.answers.v[k]; }); restoreAnswers(); }
       subAt = m && m.submitted_at || null;
-      const checkKey = async () => { const j = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (j && j.released) { clearInterval(pollTm); setLocked(true); applyKey(j.answers); setReveal(true); } };
+      const checkKey = async () => { const j = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (j && j.released) { clearInterval(pollTm); setLocked(true); applyKey(j.answers); setReveal(true); showCheck(true); } };
       await checkKey(); if (!state.locked) pollTm = setInterval(checkKey, 20000);
     } else if (SITE.mode === 'review') {
       const j = await siteJson('/api/tests/assignments/' + SITE.assignment + '/submission/' + SITE.sid);
       state.answers = {}; const v = (j.answers && j.answers.v) || {}; Object.keys(v).forEach(k => { state.answers[fromKey(k)] = v[k]; });
-      restoreAnswers(); setLocked(true); applyKey(j.key); setReveal(true);
+      restoreAnswers(); setLocked(true); applyKey(j.key); setReveal(true); showCheck(false);
     } else {
       const j = await siteJson('/api/tests/answers/' + SITE.test); if (j && j.released) applyKey(j.answers);
     }
@@ -639,5 +653,162 @@ if (SITE) {
   g.onload = () => { loadPaper({ id: SITE.paper }); window.addEventListener('fh-open', siteInit, { once: true }); };
   g.onerror = () => alert('Could not load this paper.'); document.head.appendChild(g);
 } else { renderHome(); route(); }
+
+/* ================= Check my answers: your answer v the official mark scheme ================= */
+const CK_STOP = new Set(['le', 'la', 'les', 'un', 'une', 'des', 'du', 'de', 'd', 'l', 'et', 'en', 'au', 'aux', 'a', 'qu', 'c', 'j', 'n', 's', 'm', 't', 'y', 'ce', 'ca']);
+const ckN = s => String(s == null ? '' : s).toLowerCase().replace(/[’‘`´]/g, "'").replace(/[«»"“”]/g, ' ').replace(/[.,;:!?\[\]…]/g, ' ').replace(/\s+/g, ' ').trim();
+const ckA = s => ckN(s).normalize('NFD').replace(/[̀-ͯ]/g, '');
+const ckT = s => ckA(s).replace(/\(|\)/g, ' ').split(/[\s'’\-]+/).filter(Boolean);
+const ckC = s => ckT(s).filter(t => !CK_STOP.has(t));
+function ckParens(s) { // (optional) words -> with and without
+  const m = /\(([^()]*)\)/.exec(s); if (!m) return [s];
+  const rest = ckParens(s.replace(m[0], '\u0001'));
+  const out = []; rest.forEach(r => { out.push(r.replace('\u0001', '')); out.push(r.replace('\u0001', m[1])); });
+  return out.length > 32 ? [s.replace(/\([^()]*\)/g, ''), s.replace(/[()]/g, '')] : out;
+}
+function ckVariants(a) {
+  const set = new Set(); const add = v => { v = v.replace(/\s+/g, ' ').trim(); if (v) set.add(v); };
+  const segs = String(a).split(/\s+\/\s+/);
+  const words = (p) => { const m = /(\S+)\s*\/\s*(\S+)/.exec(p); if (!m) return [p]; return [].concat(words(p.replace(m[0], m[1])), words(p.replace(m[0], m[2]))); };
+  segs.forEach(sg => { if (segs.length === 1 || ckC(sg.replace(/\([^()]*\)/g, '')).length >= 2 || ckC(sg).length >= 2) words(sg).forEach(w => ckParens(w).forEach(add)); });
+  words(String(a)).forEach(w => ckParens(w).forEach(add));
+  return [...set];
+}
+const ckSame = (x, y) => x === y || (x.length > 3 && y.length > 3 && (x + 's' === y || y + 's' === x || x.replace(/(e|s|es|x)$/, '') === y.replace(/(e|s|es|x)$/, ''))) || (x.length >= 5 && y.length >= 5 && ckLev(x, y) <= 1);
+function ckLev(a, b) { if (Math.abs(a.length - b.length) > 1) return 9; const d = []; for (let i = 0; i <= a.length; i++) { d[i] = [i]; } for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; }
+function ckBest(stu, keyStr) { // best variant of keyStr found in the student's text
+  const st = ckC(stu); let best = null;
+  ckVariants(keyStr).forEach(v => {
+    const need = ckC(v); if (!need.length) return;
+    const miss = []; const fz = []; let hit = 0;
+    need.forEach(n => { const f = st.find(s => s === n); if (f) { hit++; return; } const g = st.find(s => ckSame(s, n)); if (g) { hit++; fz.push([g, n]); } else miss.push(n); });
+    const cov = hit / need.length; const sc = cov + (cov === 1 ? Math.min(need.length, 6) * 0.01 : 0) - Math.abs(st.length - need.length) * 0.001;
+    if (!best || sc > best.sc) best = { v, need, miss, fz, cov, sc };
+  });
+  return best || { v: '', need: [], miss: [], fz: [], cov: 0, sc: 0 };
+}
+const CK_CODES = [
+  ['HA', 'harmless addition', 'You added extra words, and that is fine: together with the correct answer they do not stop you scoring the mark.'],
+  ['INV', 'invalidation', 'The extra material you added makes an otherwise correct answer wrong, so the mark is lost (INV = 0).'],
+  ['tc', 'tout court', 'On its own, that is not enough for the mark.'],
+  ['( … )', 'brackets', 'Words in brackets are not needed for the mark, but they are perfectly fine to include.'],
+  ['Underlined', 'underlined words', 'Words that are underlined in the official scheme MUST be in your answer.'],
+  ['NR', 'no response', 'Nothing written (or only “don’t know”, a dash, a question mark).'],
+  ['0', 'zero marks', 'You tried but earned no credit, e.g. you copied out the question.'],
+  ['Refuse', 'not accepted', 'Examiners must NOT give the mark for this wording.'],
+  ['Accept', 'also accepted', 'This different wording earns the mark too.'],
+  ['Tolerate', 'small slip allowed', 'A small mistake is ignored as long as the meaning is clear.'],
+  ['OR', 'alternative', 'Another way of saying it that also earns the mark.']
+];
+function ckNote(n) {
+  if (!n) return '';
+  const sents = String(n).replace(/\be\.g\./g, 'e§g§').replace(/\bi\.e\./g, 'i§e§').split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý“«(])|\n/).map(x => x.replace(/§/g, '.').trim()).filter(Boolean);
+  const chip = t => t.replace(/\bINV\b/g, '<span class="cd inv">INV</span>').replace(/\bHA\b/g, '<span class="cd ha">HA</span>').replace(/\b(tc|TC|tout court)\b/g, '<span class="cd tc">tc</span>').replace(/\bOR\b/g, '<span class="cd">OR</span>');
+  return '<ul class="nts">' + sents.map(s => {
+    let lab = 'ℹ️', k = 'Note';
+    if (/^Refuse/i.test(s)) { lab = '❌'; k = 'Not accepted'; } else if (/^Accept/i.test(s)) { lab = '✅'; k = 'Also accepted'; } else if (/^Tolerate/i.test(s)) { lab = '👌'; k = 'Small slip allowed'; }
+    else if (/tense|conditional|future|present|past/i.test(s) && /must|required|needed|needs/i.test(s)) { lab = '⏱'; k = 'Verb tense'; } else if (/^(Needs|Must|If a|If conjugated|If verb|Verb|Idea)/i.test(s)) { lab = '🔑'; k = 'Rule'; }
+    else if (/\bINV\b/.test(s)) { lab = '⚠️'; k = 'Careful'; } else if (/\bHA\b/.test(s)) { lab = '➕'; k = 'Extra is fine'; }
+    return `<li><span class="lab">${lab} ${k}</span> ${chip(esc(s))}</li>`;
+  }).join('') + '</ul>';
+}
+function ckFields(qid) { const out = []; state.paper.pages.forEach(pg => pg.fields.forEach(f => { if (f.q === qid) out.push(f); })); return out; }
+function ckEvidence(qid) { // French words under the yellow highlight
+  const P = state.paper; const parts = [];
+  P.pages.forEach(pg => pg.ev.forEach(e => { if (e.q !== qid) return; const ws = pg.words.filter(w => w[5] !== -2 && e.rects.some(r => w[0] >= r[0] - 1.5 && w[2] <= r[2] + 1.5 && w[1] >= r[1] - 2 && w[3] <= r[3] + 2)); if (ws.length) parts.push(ws.map(w => w[4]).join(' ')); }));
+  return parts.join(' … ');
+}
+function ckQuestionIds() { const ids = []; state.paper.sections.forEach(s => s.ids.forEach(i => ids.push(i))); return ids; }
+function ckOne(qid, A) {
+  const P = state.paper, q = P.qs[qid] || {}, key = A[qid]; if (!key) return null;
+  const fs = ckFields(qid), t = fs.length ? fs[0].t : 'line'; const marks = q.marks || 1;
+  const ans = o => String(state.answers[qid + '|' + (o || '')] == null ? '' : state.answers[qid + '|' + (o || '')]).trim();
+  const r = { qid, type: t, marks, got: 0, why: [], notes: key.n || '', evidence: ckEvidence(qid), q };
+  if (t === 'tick' || t === 'box' || t === 'num') {
+    const mine = ans('').toUpperCase(), right = String(key.a).toUpperCase(); r.mine = mine; r.official = right; r.exact = true;
+    if (!mine) { r.status = 'blank'; r.why.push('You did not choose an answer.'); }
+    else if (mine === right) { r.status = 'good'; r.got = 1; }
+    else { r.status = 'bad'; r.why.push(`You chose <b>${esc(mine)}</b>, but the official answer is <b>${esc(right)}</b>.`); }
+    if (r.status !== 'good') {
+      if (r.evidence) r.why.push(`The text says: <i>“${esc(r.evidence)}”</i>`);
+      if (q.swap && q.swap.length) r.why.push('Same idea in other words: ' + q.swap.map(x => `<b>${esc(x[0])}</b> = ${esc(x[1])}`).join(' · '));
+      if (q.ask) r.why.push('Where to look: ' + esc(q.ask));
+      if (q.watch) r.why.push('⚠️ ' + esc(q.watch));
+    }
+    return r;
+  }
+  // written answers: one or two lines
+  const lines = fs.map(f => ans(f.o)).filter(Boolean); r.mine = lines; const keys = Array.isArray(key.a) ? key.a : [key.a]; r.official = keys; r.exact = false;
+  const refuse = []; String(key.n || '').split(/(?<=[.!?])\s+|\n/).forEach(s => { const m = /^Refuse\s+(.+?)(?:\s+tc)?[.]?$/i.exec(s.trim()); if (!m) return; const x = m[1].replace(/[.]+$/, ''); if (/^(answers|use|lack|whole|reference|any|il\/|elle\/|\(elle a fait\))/i.test(x) || x.split(/\s+/).length > 6) return; refuse.push(x); });
+  const used = new Set(); let total = 0;
+  keys.forEach((k, ki) => {
+    let bi = -1, bb = null; lines.forEach((l, li) => { if (used.has(li)) return; const b = ckBest(l, k); if (!bb || b.sc > bb.sc) { bb = b; bi = li; } });
+    const part = keys.length > 1 ? `Part ${ki + 1}: ` : '';
+    if (!bb || !lines.length) { r.why.push(`${part}nothing written for this part.`); return; }
+    const L = lines[bi], b = bb; used.add(bi);
+    let ok = b.cov === 1, partial = !ok && b.cov >= 0.5; const msgs = [];
+    const near = b.cov >= 0.75 && b.miss.length <= 1 && b.need.length >= 4;
+    if (b.miss.length && b.cov < 1) msgs.push(near ? `${part}very close. The official wording also has <b>${b.miss.map(esc).join(', ')}</b>. If your words carry the same idea your teacher may still accept it.` : `${part}your answer is missing the key idea: <b>${b.miss.map(esc).join(', ')}</b>.`);
+    b.fz.forEach(([g, n]) => msgs.push(`${part}“${esc(g)}” looks like <b>${esc(n)}</b> but is spelt differently. Cambridge tolerates small slips only when the meaning is clear and the word is not another French word.`));
+    // accents
+    const ns = ckN(L);
+    const keyAcc = ckN(b.v).split(/[\s'-]+/).filter(w => /[éèêëàâîïôùûüç]/.test(w)); keyAcc.forEach(w => { const plain = w.normalize('NFD').replace(/[̀-ͯ]/g, ''); if (new RegExp('(^|[\\s\'’-])' + plain + '($|[\\s\'’.,!?-])').test(ns) && !new RegExp('(^|[\\s\'’-])' + w + '($|[\\s\'’.,!?-])').test(ns)) msgs.push(`${part}accent: you wrote <b>${esc(plain)}</b>; it is <b>${esc(w)}</b>. A missing or wrong accent can change the word, so check it.`); });
+    // refused wording
+    refuse.forEach(x => { const nx = ckA(x.replace(/\(|\)/g, '')); const hay = ' ' + ckA(L).replace(/'/g, ' ').replace(/\s+/g, ' ') + ' '; if (nx.length > 3 && hay.includes(' ' + nx.replace(/'/g, ' ').replace(/\s+/g, ' ') + ' ')) { ok = false; partial = false; msgs.push(`${part}your answer contains <b>“${esc(x)}”</b>, and the mark scheme says <span class="cd inv">Refuse</span> that wording.`); } });
+    // copied first person
+    const kp = ckT(b.v); const fp = ['je', 'j', 'mon', 'ma', 'mes', 'nous', 'notre', 'nos', 'me', 'moi'];
+    const copied = ckT(L).filter(x => fp.includes(x) && !kp.includes(x) && !['j', 'me'].includes(x) || (x === 'j' && !kp.includes('j')));
+    if (copied.length && /^(4|6)/.test(qid)) { const cv = (q.convert || []).map(x => `<b>${esc(x[0])}</b> → <b>${esc(x[1])}</b>`).join(', '); msgs.push(`${part}you copied first-person words (<b>${[...new Set(copied)].map(esc).join(', ')}</b>). In Questions 4 and 6 the subject must be clear: change the person.${cv ? ' Change: ' + cv + '.' : ''}`); if (ok) { ok = false; partial = true; } }
+    // too long
+    const sw = ckT(L).length, kw = Math.max(1, ckT(b.v).length); if (sw > kw * 3 + 6 && /^6/.test(qid)) { msgs.push(`${part}you wrote ${sw} words; the answer is only about ${kw}. In Question 6 a <b>precise lift</b> is needed. Extra material can spoil a correct answer (<span class="cd inv">INV</span>).`); if (ok) { ok = false; partial = true; } }
+    else if (sw > kw * 3 + 6) msgs.push(`${part}your answer is much longer than needed. A few extra words are a <span class="cd ha">HA</span> (harmless), but a long copy can contain a second, wrong answer.`);
+    if (ok) { total += 1; if (!msgs.length) msgs.push(`${part}✔ matches the mark scheme.`); else msgs.unshift(`${part}the key words are right, but check the points below.`); }
+    else if (partial) { r.partial = (r.partial || 0) + 1; msgs.unshift(near ? `${part}almost there.` : `${part}close, but not enough for the mark yet.`); }
+    else if (!msgs.length) msgs.push(`${part}this does not match the official answer.`);
+    r.why.push(...[...new Set(msgs)].filter(m => !r.why.includes(m)));
+  });
+  { const tn = String(key.n || ''), tl = []; if (/past tense/i.test(tn)) tl.push('the <b>past</b> (passé composé or imparfait)'); if (/present tense/i.test(tn)) tl.push('the <b>present</b>'); if (/future or (possibly )?conditional/i.test(tn)) tl.push('the <b>future</b> or conditional'); if (/only accept conditional|conditional only/i.test(tn)) tl.push('the conditional'); if (tl.length) r.why.push('⏱ The mark scheme says that if you use a verb, it must be in ' + tl.join(' / ') + '. Check your verb.'); }
+  r.got = Math.min(marks, total);
+  r.status = !lines.length ? 'blank' : r.got >= marks ? 'good' : r.got > 0 || r.partial ? 'part' : 'bad';
+  if (r.status !== 'good') { if (r.evidence) r.why.push(`Where it is in the text: <i>“${esc(r.evidence)}”</i>`); if (q.start) r.why.push('How to start: <b>' + esc(q.start) + '</b>'); if (q.watch) r.why.push('⚠️ ' + esc(q.watch)); }
+  return r;
+}
+function ckCard(r) {
+  const lab = { good: '✅ Correct', part: '🟡 Not quite', bad: '❌ Not correct', blank: '⬜ Not answered' }[r.status];
+  const mine = r.exact ? (r.mine || '—') : (r.mine.length ? r.mine.map(x => esc(x)).join('<br>') : '—');
+  const off = r.exact ? esc(r.official) : r.official.map((x, i) => (r.official.length > 1 ? (i + 1) + ' ' : '') + esc(x)).join('<br>');
+  return `<div class="ckq s-${r.status}"><div class="ckh"><b>${qLabel(r.qid)}</b><span class="vd">${lab}</span><span class="mk">${r.got}/${r.marks}</span><button class="mini" data-q="${r.qid}" title="Open the help for this question">💡</button></div>
+    <div class="ckr"><div><small>You wrote</small><div class="you">${r.exact ? esc(mine) : mine}</div></div><div><small>Official answer</small><div class="off">${off}</div></div></div>
+    ${r.status === 'good' && !r.why.length ? '' : '<ul class="why">' + r.why.map(w => '<li>' + w + '</li>').join('') + '</ul>'}
+    ${r.notes && r.status !== 'good' ? '<details class="ckn"' + (r.exact ? '' : ' open') + '><summary>What the examiners wrote about this question</summary>' + ckNote(r.notes) + '</details>' : (r.notes ? '<details class="ckn"><summary>Examiner notes</summary>' + ckNote(r.notes) + '</details>' : '')}</div>`;
+}
+function openCheck() {
+  const P = state.paper, A = state.unlocked[P.id]; if (!A) return;
+  const rs = ckQuestionIds().map(id => ckOne(id, A)).filter(Boolean);
+  const ex = rs.filter(r => r.exact), wr = rs.filter(r => !r.exact);
+  const sum = a => a.reduce((n, r) => n + r.got, 0), tot = a => a.reduce((n, r) => n + r.marks, 0);
+  let ov = $('#ckov'); if (!ov) { ov = document.createElement('div'); ov.id = 'ckov'; document.body.appendChild(ov); }
+  const wrong = rs.filter(r => r.status !== 'good');
+  ov.innerHTML = `<div class="ckw"><div class="ckt"><button class="ib" id="ckx" aria-label="Close">✕</button><h2>📋 Check my answers</h2></div>
+    <div class="cks"><div class="ckbig"><b>${sum(ex)}</b>/${tot(ex)}<small>letters, ticks and numbers<br>(exact)</small></div><div class="ckbig"><b>${sum(wr)}</b>/${tot(wr)}<small>written answers<br>(computer’s first check)</small></div></div>
+    <p class="ckdisc">Letters, ticks and numbers are marked exactly. For <b>written answers</b> the app compares your words with the official answer and the examiners’ notes. It is a careful first check, not the final word: your teacher confirms the mark.</p>
+    <details class="ckleg"><summary>📖 What do HA, INV, tc and the other examiner codes mean?</summary><div class="ckbody">
+      <p>These come from the official Cambridge mark scheme, which uses them to say <i>why</i> an answer gets or loses a mark.</p>
+      <table>${CK_CODES.map(c => `<tr><td><b>${esc(c[0])}</b></td><td><i>${esc(c[1])}</i></td><td>${esc(c[2])}</td></tr>`).join('')}</table>
+      <p><b>Rules for the written questions (4 and 6):</b></p><ul><li>Tolerate spelling slips if the message is clear, but not if the word you wrote means something else in French.</li><li>The subject must be unambiguous: if the text says <i>je / ma / mon</i>, change it to <i>il / elle / sa / son</i>.</li><li>Any change you make to the language (tense, pronoun, agreement) must be correct, even in extra words.</li><li>Question 6 needs a <b>precise lift</b> from the text, not just the place where the answer is.</li><li>A few extra words may be a HA, but extra material that gives a second, different answer, or contradicts the right one, is INV.</li><li>Two-part questions: the two answers can be written in either order. Both correct on one line and the other line blank = 2 marks; one right and one wrong = 1 mark.</li><li>Two ticks or two letters for one question = no mark.</li></ul></div></details>
+    <div class="ckfilter"><button class="chip on" data-f="all">All (${rs.length})</button><button class="chip" data-f="wrong">To fix (${wrong.length})</button></div>
+    <div id="cklist">${rs.map(ckCard).join('')}</div></div>`;
+  ov.hidden = false; document.body.classList.add('ckopen'); ov.scrollTop = 0;
+  $('#ckx').onclick = closeCheck;
+  ov.querySelectorAll('.ckfilter .chip').forEach(b => b.onclick = () => { ov.querySelectorAll('.ckfilter .chip').forEach(x => x.classList.toggle('on', x === b)); ov.querySelectorAll('.ckq').forEach(c => { c.hidden = b.dataset.f === 'wrong' && c.classList.contains('s-good'); }); });
+  ov.querySelectorAll('.ckh .mini').forEach(b => b.onclick = () => { closeCheck(); renderHelp(b.dataset.q, 'ans'); setSheet('help', { q: b.dataset.q }); });
+}
+function closeCheck() { const ov = $('#ckov'); if (ov) ov.hidden = true; document.body.classList.remove('ckopen'); }
+function showCheck(auto) {
+  let b = $('#btnCheck'); if (!b) { b = document.createElement('button'); b.id = 'btnCheck'; b.className = 'ib'; b.textContent = '📋'; b.title = 'Check my answers'; $('#btnLock').before(b); b.onclick = openCheck; }
+  b.hidden = false;
+  if (auto && SITE && SITE.mode === 'student') { const k = 'fh-ck-' + SITE.assignment; let seen = null; try { seen = localStorage.getItem(k); } catch (e) { /* none */ } if (!seen) { try { localStorage.setItem(k, '1'); } catch (e) { /* none */ } setTimeout(openCheck, 600); } }
+}
+if (location.hostname === 'localhost') window.__t = (K, a) => { state.unlocked[state.paper.id] = K; state.answers = a; setReveal(true); openCheck(); };
 })();
 </script></body></html>

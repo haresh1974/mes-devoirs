@@ -266,7 +266,12 @@ app.get('/api/resources', wrap(async (req, res) => {
   const t = await auth(req, 'teacher');
   if (t) {
     const classes = await db.all('SELECT id,name,board FROM classes WHERE teacher_id = ? ORDER BY created', [t.id]);
-    return res.json({ role: 'teacher', classes, resources: RESOURCES });
+    const guided = {};
+    for (const c of classes) {
+      const asg = await db.all('SELECT id,test_id FROM test_assignments WHERE class_id = ?', [c.id]);
+      for (const a of asg) { const r = RESOURCES.find((x) => x.guided === a.test_id); if (r) (guided[r.id] = guided[r.id] || []).push({ aid: a.id, class_id: c.id, class_name: c.name }); }
+    }
+    return res.json({ role: 'teacher', classes, resources: RESOURCES, guided });
   }
   const st = await auth(req, 'student');
   if (!st) return res.status(401).json({ error: 'Please sign in.' });
@@ -290,11 +295,17 @@ app.post('/api/resources/assign', teacherOnly(async (req, res) => {
     const students = await db.all('SELECT id FROM students WHERE class_id = ?', [c.id]);
     if (!students.length) continue;
     for (const r of picks) {
+      let rurl = r.url;
+      if (r.guided) {
+        let ta = await db.get('SELECT id FROM test_assignments WHERE test_id = ? AND class_id = ?', [r.guided, c.id]);
+        if (!ta) { ta = { id: uid() }; await db.run('INSERT INTO test_assignments (id,test_id,class_id,start_at,due_at,lock_on,max_leaves,created) VALUES (?,?,?,?,?,?,?,?)', [ta.id, r.guided, c.id, start, due, 0, 3, now()]); }
+        rurl = '/tests/run/' + ta.id;
+      }
       let hw = await db.get('SELECT id FROM homework WHERE class_id = ? AND extra LIKE ?', [c.id, '%"rid":"' + r.id + '"%']);
       if (!hw) {
         const id = uid();
         await db.run('INSERT INTO homework (id,class_id,title,topic,folder,tier,due_at,free_order,exercises,items,extra,created) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
-          [id, c.id, r.title, r.group, 'Resources / ' + r.skill, 'Higher', null, 1, JSON.stringify(['RES']), '[]', JSON.stringify({ verbs: [], grammar: [], mixed: false, resource: { rid: r.id, url: r.url, title: r.title, desc: r.desc, skill: r.skill } }), now()]);
+          [id, c.id, r.title, r.group, 'Resources / ' + r.skill, 'Higher', null, 1, JSON.stringify(['RES']), '[]', JSON.stringify({ verbs: [], grammar: [], mixed: false, resource: { rid: r.id, url: rurl, title: r.title, desc: r.desc, skill: r.skill } }), now()]);
         hw = { id };
       }
       await db.run('INSERT INTO assignments (id,homework_id,class_id,start_at,due_at,audience,student_ids,created) VALUES (?,?,?,?,?,?,?,?)', [uid(), hw.id, c.id, start, due, 'all', null, now()]);
@@ -845,14 +856,14 @@ app.get('/api/tests', teacherOnly(async (req, res) => {
     if (!asg.length) continue;
     const n = (await db.get('SELECT COUNT(*) AS n FROM students WHERE class_id = ?', [c.id])).n;
     for (const a of asg) {
-      const t = testById(a.test_id); if (!t) continue;
+      const t = testById(a.test_id); if (!t || t.hidden) continue;
       const rs = await db.all('SELECT status, score FROM test_results WHERE assignment_id = ?', [a.id]);
       const done = rs.filter((r) => r.status === 'done');
       out.push({ id: a.id, test_id: a.test_id, title: t.title, marks: t.marks, folder: t.folder || '', sub: t.sub || '', kind: t.kind || 'test', released: (await db.get('SELECT COUNT(*) AS n FROM test_releases WHERE assignment_id = ?', [a.id])).n, class_id: c.id, class_name: c.name, start_at: a.start_at, due_at: a.due_at, lock_on: !!a.lock_on, max_leaves: a.max_leaves,
         students: n, started: rs.length, done: done.length, avg: done.length ? Math.round(done.reduce((x, r) => x + r.score, 0) / done.length * 10) / 10 : null });
     }
   }
-  res.json({ tests: TESTBANK.map(pubTest), classes, assignments: out });
+  res.json({ tests: TESTBANK.filter((t) => !t.hidden).map(pubTest), classes, assignments: out });
 }));
 app.post('/api/tests/assign', teacherOnly(async (req, res) => {
   const b = req.body || {};
@@ -1014,7 +1025,7 @@ app.get('/api/student/tests', studentOnly(async (req, res) => {
   const asg = await db.all('SELECT * FROM test_assignments WHERE class_id = ? AND start_at <= ? ORDER BY start_at DESC', [req.student.class_id, now()]);
   const out = [];
   for (const a of asg) {
-    const t = testById(a.test_id); if (!t) continue;
+    const t = testById(a.test_id); if (!t || t.hidden) continue;
     const r = await db.get('SELECT status,score,out_of,percent FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
     const closed = !!(a.due_at && a.due_at < now());
     if (isGuided(t)) {

@@ -54,7 +54,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "m21-22"
+  "paper": "m21-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s21-21",
@@ -67,7 +68,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "s21-21"
+  "paper": "s21-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s21-22",
@@ -80,7 +82,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "s21-22"
+  "paper": "s21-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s21-23",
@@ -93,7 +96,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "s21-23"
+  "paper": "s21-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w21-21",
@@ -106,7 +110,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "w21-21"
+  "paper": "w21-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w21-22",
@@ -119,7 +124,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "w21-22"
+  "paper": "w21-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w21-23",
@@ -132,7 +138,8 @@
   "folder": "IGCSE Reading",
   "sub": "2021",
   "assets": "igcse-reading",
-  "paper": "w21-23"
+  "paper": "w21-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-m22-22",
@@ -145,7 +152,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "m22-22"
+  "paper": "m22-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s22-21",
@@ -158,7 +166,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "s22-21"
+  "paper": "s22-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s22-22",
@@ -171,7 +180,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "s22-22"
+  "paper": "s22-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s22-23",
@@ -184,7 +194,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "s22-23"
+  "paper": "s22-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w22-21",
@@ -197,7 +208,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "w22-21"
+  "paper": "w22-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w22-22",
@@ -210,7 +222,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "w22-22"
+  "paper": "w22-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w22-23",
@@ -223,7 +236,8 @@
   "folder": "IGCSE Reading",
   "sub": "2022",
   "assets": "igcse-reading",
-  "paper": "w22-23"
+  "paper": "w22-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-m23-22",
@@ -236,7 +250,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "m23-22"
+  "paper": "m23-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s23-21",
@@ -249,7 +264,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "s23-21"
+  "paper": "s23-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s23-22",
@@ -262,7 +278,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "s23-22"
+  "paper": "s23-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s23-23",
@@ -275,7 +292,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "s23-23"
+  "paper": "s23-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w23-21",
@@ -288,7 +306,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "w23-21"
+  "paper": "w23-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w23-22",
@@ -301,7 +320,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "w23-22"
+  "paper": "w23-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w23-23",
@@ -314,7 +334,8 @@
   "folder": "IGCSE Reading",
   "sub": "2023",
   "assets": "igcse-reading",
-  "paper": "w23-23"
+  "paper": "w23-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-m24-22",
@@ -327,7 +348,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "m24-22"
+  "paper": "m24-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s24-21",
@@ -340,7 +362,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "s24-21"
+  "paper": "s24-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s24-22",
@@ -353,7 +376,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "s24-22"
+  "paper": "s24-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s24-23",
@@ -366,7 +390,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "s24-23"
+  "paper": "s24-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w24-21",
@@ -379,7 +404,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "w24-21"
+  "paper": "w24-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w24-22",
@@ -392,7 +418,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "w24-22"
+  "paper": "w24-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w24-23",
@@ -405,7 +432,8 @@
   "folder": "IGCSE Reading",
   "sub": "2024",
   "assets": "igcse-reading",
-  "paper": "w24-23"
+  "paper": "w24-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-m25-22",
@@ -418,7 +446,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "m25-22"
+  "paper": "m25-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s25-21",
@@ -431,7 +460,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "s25-21"
+  "paper": "s25-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s25-22",
@@ -444,7 +474,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "s25-22"
+  "paper": "s25-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s25-23",
@@ -457,7 +488,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "s25-23"
+  "paper": "s25-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w25-21",
@@ -470,7 +502,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "w25-21"
+  "paper": "w25-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w25-22",
@@ -483,7 +516,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "w25-22"
+  "paper": "w25-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-w25-23",
@@ -496,7 +530,8 @@
   "folder": "IGCSE Reading",
   "sub": "2025",
   "assets": "igcse-reading",
-  "paper": "w25-23"
+  "paper": "w25-23",
+  "hidden": true
  },
  {
   "id": "igcse-reading-m26-22",
@@ -509,7 +544,8 @@
   "folder": "IGCSE Reading",
   "sub": "2026",
   "assets": "igcse-reading",
-  "paper": "m26-22"
+  "paper": "m26-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s26-21",
@@ -522,7 +558,8 @@
   "folder": "IGCSE Reading",
   "sub": "2026",
   "assets": "igcse-reading",
-  "paper": "s26-21"
+  "paper": "s26-21",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s26-22",
@@ -535,7 +572,8 @@
   "folder": "IGCSE Reading",
   "sub": "2026",
   "assets": "igcse-reading",
-  "paper": "s26-22"
+  "paper": "s26-22",
+  "hidden": true
  },
  {
   "id": "igcse-reading-s26-23",
@@ -548,6 +586,7 @@
   "folder": "IGCSE Reading",
   "sub": "2026",
   "assets": "igcse-reading",
-  "paper": "s26-23"
+  "paper": "s26-23",
+  "hidden": true
  }
 ]
