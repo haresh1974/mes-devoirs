@@ -497,5 +497,57 @@
   "sub": "2025",
   "assets": "igcse-reading",
   "paper": "w25-23"
+ },
+ {
+  "id": "igcse-reading-m26-22",
+  "title": "IGCSE Reading · Feb/March 2026 · Paper 22",
+  "marks": 45,
+  "skill": "Reading",
+  "desc": "Cambridge IGCSE French 0520 Paper 2 (Reading), Feb/March 2026 · Paper 22. Tap any word for its meaning, tap 💡 for help, write your answers on the paper. Official answers unlock student by student.",
+  "file": "igcse-reading.html",
+  "kind": "guided",
+  "folder": "IGCSE Reading",
+  "sub": "2026",
+  "assets": "igcse-reading",
+  "paper": "m26-22"
+ },
+ {
+  "id": "igcse-reading-s26-21",
+  "title": "IGCSE Reading · May/June 2026 · Paper 21",
+  "marks": 45,
+  "skill": "Reading",
+  "desc": "Cambridge IGCSE French 0520 Paper 2 (Reading), May/June 2026 · Paper 21. Tap any word for its meaning, tap 💡 for help, write your answers on the paper. Official answers unlock student by student.",
+  "file": "igcse-reading.html",
+  "kind": "guided",
+  "folder": "IGCSE Reading",
+  "sub": "2026",
+  "assets": "igcse-reading",
+  "paper": "s26-21"
+ },
+ {
+  "id": "igcse-reading-s26-22",
+  "title": "IGCSE Reading · May/June 2026 · Paper 22",
+  "marks": 45,
+  "skill": "Reading",
+  "desc": "Cambridge IGCSE French 0520 Paper 2 (Reading), May/June 2026 · Paper 22. Tap any word for its meaning, tap 💡 for help, write your answers on the paper. Official answers unlock student by student.",
+  "file": "igcse-reading.html",
+  "kind": "guided",
+  "folder": "IGCSE Reading",
+  "sub": "2026",
+  "assets": "igcse-reading",
+  "paper": "s26-22"
+ },
+ {
+  "id": "igcse-reading-s26-23",
+  "title": "IGCSE Reading · May/June 2026 · Paper 23",
+  "marks": 45,
+  "skill": "Reading",
+  "desc": "Cambridge IGCSE French 0520 Paper 2 (Reading), May/June 2026 · Paper 23. Tap any word for its meaning, tap 💡 for help, write your answers on the paper. Official answers unlock student by student.",
+  "file": "igcse-reading.html",
+  "kind": "guided",
+  "folder": "IGCSE Reading",
+  "sub": "2026",
+  "assets": "igcse-reading",
+  "paper": "s26-23"
  }
 ]
