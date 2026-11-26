@@ -48,6 +48,7 @@ button{font:inherit;cursor:pointer}
 body.aids .w{cursor:pointer}
 body.aids .w:hover{background:rgba(36,87,214,.14)}
 body:not(.aids) .w,body:not(.aids) .pin,body:not(.aids) .pic,body:not(.aids) .ph,body:not(.aids) .ev{display:none}
+.phb{cursor:pointer;z-index:3}body:not(.aids) .phb{display:none}
 .ph{border-bottom:2.5px dotted #d9650d;background:rgba(217,101,13,.10);mix-blend-mode:multiply;border-radius:3px;pointer-events:none}
 .sel{background:rgba(36,87,214,.22);border-radius:3px;outline:1.5px solid rgba(36,87,214,.7);pointer-events:none}
 .ev{background:rgba(255,213,74,.62);mix-blend-mode:multiply;border-radius:3px;pointer-events:none;display:none!important;outline:2px solid rgba(240,170,0,.9)}
@@ -256,7 +257,7 @@ function buildPage(P, pg, pi, k, sc) {
     el.style.width = ((r[2] - r[0] + 2 * pad) / W * 100) + '%'; el.style.height = ((r[3] - r[1] + 2 * pad) / H * 100) + '%';
   };
   // phrase underlines
-  P.occs.forEach((o, oi) => o.rects.forEach(r => { if (o.page !== pi) return; const e = document.createElement('u'); e.className = 'ph'; place(e, [r[0], r[1] + 1, r[2], r[3] + 2]); ov.appendChild(e); }));
+  P.occs.forEach((o, oi) => o.rects.forEach(r => { if (o.page !== pi) return; const e = document.createElement('u'); e.className = 'ph'; place(e, [r[0], r[1] + 1, r[2], r[3] + 2]); ov.appendChild(e); const t = document.createElement('u'); t.className = 'phb'; t.dataset.o = oi; place(t, [r[0], r[3] - 4, r[2], r[3] + 5]); ov.appendChild(t); }));
   // evidence
   pg.ev.forEach(ev => ev.rects.forEach(r => { const e = document.createElement('b'); e.className = 'ev'; e.dataset.q = ev.q; place(e, r, 1.5); ov.appendChild(e); }));
   // word hot-spots
@@ -403,9 +404,17 @@ function setSheet(mode, data) {
       x.onclick = () => insertChar(ch); k.appendChild(x); });
     b.appendChild(k); return;
   }
+  if (mode === 'chunk') {
+    const ph = state.paper.phrases[data.p]; const wrap = document.createElement('div'); const row = document.createElement('div'); row.className = 'wd';
+    const t = document.createElement('div'); t.className = 't'; t.innerHTML = `<div class="pbox">🔗 <b>${esc(ph[0])}</b></div><div class="part"><span class="en">${esc(ph[1])}</span></div><div class="nt">Read these words together, as one chunk.</div>`; row.appendChild(t);
+    const sp = document.createElement('button'); sp.className = 'mini'; sp.textContent = '🔊'; sp.title = 'Listen'; sp.onclick = () => speak(ph[0]); row.appendChild(sp);
+    const st = document.createElement('button'); st.className = 'mini' + (state.saved[ph[0]] ? ' on' : ''); st.textContent = '⭐'; st.title = 'Save to my words';
+    st.onclick = () => { if (state.saved[ph[0]]) delete state.saved[ph[0]]; else state.saved[ph[0]] = ph[1]; sset('fh-saved', state.saved); st.classList.toggle('on', !!state.saved[ph[0]]); }; row.appendChild(st);
+    wrap.appendChild(row); b.appendChild(wrap); return;
+  }
   if (mode === 'word') {
     const { word, parts, occ } = data; const wrap = document.createElement('div');
-    if (occ) { const ph = state.paper.phrases[occ.p]; const pb = document.createElement('div'); pb.className = 'pbox'; pb.innerHTML = `🔗 <b>${esc(ph[0])}</b> = ${esc(ph[1])}`; wrap.appendChild(pb); }
+    if (false) { const ph = state.paper.phrases[occ.p]; const pb = document.createElement('div'); pb.className = 'pbox'; pb.innerHTML = `🔗 <b>${esc(ph[0])}</b> = ${esc(ph[1])}`; wrap.appendChild(pb); }
     const row = document.createElement('div'); row.className = 'wd';
     const t = document.createElement('div'); t.className = 't';
     const seen = parts.filter(k => G[k]);
@@ -413,9 +422,9 @@ function setSheet(mode, data) {
     seen.forEach((k, idx) => { const g = G[k]; const p = document.createElement('div'); p.className = 'part';
       p.innerHTML = `<span class="fr">${esc(k)}</span> <span class="en">— ${esc(g[0])}</span>` + (g[1] ? `<div class="nt">${esc(g[1])}</div>` : ''); t.appendChild(p); });
     row.appendChild(t);
-    const sp = document.createElement('button'); sp.className = 'mini'; sp.textContent = '🔊'; sp.title = 'Listen'; sp.onclick = () => speak(occ ? state.paper.phrases[occ.p][0] : word); row.appendChild(sp);
+    const sp = document.createElement('button'); sp.className = 'mini'; sp.textContent = '🔊'; sp.title = 'Listen'; sp.onclick = () => speak(word); row.appendChild(sp);
     const main = seen.length ? (seen.length > 1 ? seen[seen.length - 1] : seen[0]) : null;
-    if (main) { const key = occ ? state.paper.phrases[occ.p][0] : main; const mean = occ ? state.paper.phrases[occ.p][1] : G[main][0];
+    if (main) { const key = main; const mean = G[main][0];
       const st = document.createElement('button'); st.className = 'mini' + (state.saved[key] ? ' on' : ''); st.textContent = '⭐'; st.title = 'Save to my words';
       st.onclick = () => { if (state.saved[key]) delete state.saved[key]; else state.saved[key] = mean; sset('fh-saved', state.saved); st.classList.toggle('on', !!state.saved[key]); };
       row.appendChild(st); }
@@ -577,6 +586,7 @@ function openNotes() {
 /* ---------- events ---------- */
 document.addEventListener('click', e => {
   const t = e.target;
+  const cb = t.closest && t.closest('.phb'); if (cb && state.aids) { const o = state.paper.occs[+cb.dataset.o]; clearSel(); addSel(o); setSheet('chunk', { p: o.p }); return; }
   const w = t.closest && t.closest('.w'); if (w && state.aids) { const pg = w.closest('.page'); onWord(+pg.dataset.p, +w.dataset.i); return; }
   const pin = t.closest && t.closest('.pin'); if (pin) { renderHelp(pin.dataset.q); setSheet('help', { q: pin.dataset.q }); return; }
   const pic = t.closest && t.closest('.pic'); if (pic) { const pg = state.paper.pages[+pic.closest('.page').dataset.p]; const c = pg.pics.find(x => x.q === pic.dataset.q && x.id === pic.dataset.id); $$('.pic.on').forEach(x => x.classList.remove('on')); pic.classList.add('on'); clearSel(); setSheet('pic', c); return; }
