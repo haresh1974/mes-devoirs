@@ -466,8 +466,14 @@ function renderHelp(qid, tab) {
   b.appendChild(tb);
   const c = document.createElement('div'); c.className = 'hint'; b.appendChild(c);
   if (tab === 'where') {
-    c.innerHTML = `<p>${esc(q.ask)}</p>` + (evs ? '<p class="idle">The yellow highlight on the text shows where to look.</p>' : '');
-    showEvidence(qid);
+    hideEvidence();
+    c.innerHTML = `<p>${esc(q.ask)}</p>`;
+    if (evs) {
+      const sb = document.createElement('button'); sb.className = 'primary'; sb.textContent = '👁 Show me where in the text';
+      let on = false;
+      sb.onclick = () => { on = !on; if (on) { showEvidence(qid); sb.textContent = '🙈 Hide the highlight'; } else { hideEvidence(); sb.textContent = '👁 Show me where in the text'; } };
+      c.appendChild(sb);
+    }
   } else { hideEvidence(); }
   if (tab === 'start') {
     if (q.start) c.innerHTML += `<div class="starter">${esc(q.start)}</div>`;
