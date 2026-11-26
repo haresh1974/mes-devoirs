@@ -468,8 +468,7 @@ function renderHelp(qid, tab) {
   if (tab === 'where') {
     hideEvidence();
     c.innerHTML = `<p>${esc(q.ask)}</p>`;
-    if (evs && !state.unlocked[P.id]) c.innerHTML += '<p class="idle">🔒 “Show me where in the text” opens when your teacher releases the answers.</p>';
-    else if (evs) {
+    if (evs) {
       const sb = document.createElement('button'); sb.className = 'primary'; sb.textContent = '👁 Show me where in the text';
       let on = false;
       sb.onclick = () => { on = !on; if (on) { showEvidence(qid); sb.textContent = '🙈 Hide the highlight'; } else { hideEvidence(); sb.textContent = '👁 Show me where in the text'; } };

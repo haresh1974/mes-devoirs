@@ -945,8 +945,14 @@ app.post('/api/tests/assignments/:id/release', teacherOnly(async (req, res) => {
   if (!isGuided(testById(o.a.test_id))) return res.status(400).json({ error: 'This test has no answer release.' });
   const b = req.body || {}, on = b.on !== false;
   const mine = (await db.all('SELECT id FROM students WHERE class_id = ?', [o.c.id])).map((x) => x.id);
-  const ids = b.all ? mine : [String(b.student_id || '')].filter((x) => mine.includes(x));
+  let ids = b.all ? mine : [String(b.student_id || '')].filter((x) => mine.includes(x));
   if (!ids.length) return res.status(400).json({ error: 'Choose a student.' });
+  if (on) { // answers can only be released to students who have handed in
+    const handed = new Set((await db.all('SELECT student_id FROM guided_subs WHERE assignment_id = ? AND submitted_at IS NOT NULL', [o.a.id])).map((x) => x.student_id));
+    const ok = ids.filter((x) => handed.has(x));
+    if (!ok.length) return res.status(400).json({ error: ids.length === 1 ? 'This student has not handed in yet, so the answers cannot be released.' : 'No one has handed in yet, so there is nothing to release.' });
+    ids = ok;
+  }
   for (const sid of ids) {
     await db.run('DELETE FROM test_releases WHERE assignment_id = ? AND student_id = ?', [o.a.id, sid]);
     if (on) await db.run('INSERT INTO test_releases (assignment_id,student_id,released_at) VALUES (?,?,?)', [o.a.id, sid, now()]);
@@ -960,7 +966,8 @@ app.get('/api/student/tests/:aid/answers', studentOnly(async (req, res) => {
   if (!isGuided(t)) return res.status(404).json({ error: 'Not found.' });
   const rel = await db.get('SELECT 1 AS x FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
   res.set('Cache-Control', 'no-store');
-  if (!rel) return res.json({ released: false });
+  const sub = await db.get('SELECT submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  if (!rel || !(sub && sub.submitted_at)) return res.json({ released: false }); // answers open only after the student hands in AND the teacher releases
   res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
 }));
 const cleanAnswers = (b) => {
