@@ -624,7 +624,7 @@ async function siteSave(final) {
     if (!r.ok) { if (final) toast('⚠️ ' + (j.error || 'Could not hand in. Try again.'), false); return; }
     if (final) {
       subAt = j.submitted_at; siteBtn();
-      if (j.released) { const a = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (a && a.released) { clearInterval(pollTm); setLocked(true); applyKey(a.answers); setReveal(true); showCheck(true); toast('✅ Handed in! Here are your marks.', true); return; } }
+      if (j.released) { const a = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (a && a.released) { clearInterval(pollTm); setLocked(true); applyKey(a.answers); setReveal(true); showCheck(true); try { const rs = ckQuestionIds().map(id => ckOne(id, a.answers)).filter(Boolean), ex = rs.filter(r => r.exact), wr = rs.filter(r => !r.exact), sm = (l, k) => l.reduce((n, r) => n + r[k], 0); fetch('/api/student/tests/' + SITE.assignment + '/marks', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ex: [sm(ex, 'got'), sm(ex, 'marks')], wr: [sm(wr, 'got'), sm(wr, 'marks')] }) }); } catch (e) { /* the marks are only for the teacher's list */ } toast('✅ Handed in! Here are your marks.', true); return; } }
       toast('✅ Handed in! Your teacher will unlock the answers later.', true);
     }
   } catch (e) { if (final) toast('⚠️ No internet. Your answers are saved on this device — press Hand in again when you are online.', false); }

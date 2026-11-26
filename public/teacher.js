@@ -20,6 +20,7 @@ function shell(active, content) {
       <button class="nav" data-act="tPractice">🎮 Practice games</button>
       <button class="nav ${active === 'tests' ? 'on' : ''}" data-act="tTests">📝 Class tests</button>
       <button class="nav" data-act="tRes">📎 Resources</button>
+      <button class="nav ${active === 'selfstudy' ? 'on' : ''}" data-act="tSelfNav">🎒 Self-study work</button>
       <button class="nav ${active === 'pres' ? 'on' : ''}" data-act="tPres">📈 Practice results</button>
       <button class="nav ${active === 'tl' ? 'on' : ''}" data-act="tTl">🗓 Timeline</button>
       <button class="nav ${active === 'help' ? 'on' : ''}" data-act="tHelp">❓ Help</button>
@@ -34,6 +35,7 @@ ACT.tHome = () => go('#/t');
 ACT.tPractice = () => { if (typeof PH !== 'undefined' && PH) PH.keep = null; go('#/s/practice'); };
 ACT.tRes = () => { location.href = '/resources/'; };
 ACT.tTests = () => go('#/t/tests');
+ACT.tSelfNav = () => go('#/t/selfstudy');
 ACT.tPres = () => go('#/t/practice');
 ACT.tLib = () => go('#/t/library');
 ACT.tTl = () => go('#/t/timeline');

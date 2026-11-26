@@ -1012,6 +1012,39 @@ app.post('/api/student/tests/:aid/mine', studentOnly(async (req, res) => {
   }
   res.json({ ok: true, submitted_at: subAt, released });
 }));
+// the marks the reader worked out when a student handed in a paper they opened on their own
+app.post('/api/student/tests/:aid/marks', studentOnly(async (req, res) => {
+  const a = await studentTestAsg(req.student, req.params.aid);
+  if (!isGuided(a && testById(a.test_id)) || !(await isSelfStudy(a))) return res.status(404).json({ error: 'Not found.' });
+  const sub = await db.get('SELECT submitted_at, marks FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  if (!sub || !sub.submitted_at || sub.marks) return res.json({ ok: true });
+  const n = (x, max) => Math.max(0, Math.min(max, Math.round(Number(x) || 0)));
+  const b = req.body || {};
+  const m = { ex: [n(b.ex && b.ex[0], 200), n(b.ex && b.ex[1], 200)], wr: [n(b.wr && b.wr[0], 200), n(b.wr && b.wr[1], 200)] };
+  await db.run('UPDATE guided_subs SET marks = ? WHERE assignment_id = ? AND student_id = ?', [JSON.stringify(m), a.id, req.student.id]);
+  res.json({ ok: true });
+}));
+// teacher: every paper a student did on their own, with the marks
+app.get('/api/tests/selfstudy', teacherOnly(async (req, res) => {
+  const classes = await db.all('SELECT id,name FROM classes WHERE teacher_id = ? ORDER BY name', [req.teacher.id]);
+  const out = [];
+  for (const c of classes) {
+    const asg = await db.all('SELECT * FROM test_assignments WHERE class_id = ?', [c.id]);
+    const students = await db.all('SELECT id,name FROM students WHERE class_id = ?', [c.id]);
+    const nm = {}; students.forEach((s) => { nm[s.id] = s.name; });
+    for (const a of asg) {
+      const t = testById(a.test_id); if (!isGuided(t) || !(await isSelfStudy(a))) continue;
+      const subs = await db.all('SELECT student_id, submitted_at, updated_at, marks FROM guided_subs WHERE assignment_id = ?', [a.id]);
+      for (const g of subs) {
+        if (!nm[g.student_id]) continue;
+        let marks = null; try { marks = g.marks ? JSON.parse(g.marks) : null; } catch (e) { /* none */ }
+        out.push({ aid: a.id, sid: g.student_id, student: nm[g.student_id], class_id: c.id, cls: c.name, paper: t.title, submitted_at: g.submitted_at ? Number(g.submitted_at) : null, updated_at: Number(g.updated_at), marks });
+      }
+    }
+  }
+  out.sort((x, y) => (y.submitted_at || y.updated_at) - (x.submitted_at || x.updated_at));
+  res.json({ items: out });
+}));
 app.get('/api/tests/assignments/:id/submission/:sid', teacherOnly(async (req, res) => {
   const o = await ownTestAsg(req, req.params.id);
   const t = o && testById(o.a.test_id);

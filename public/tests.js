@@ -140,3 +140,21 @@ ACT.sTestGo = (t) => modal(`<h2>Ready for your test?</h2>
   <ul style="margin:8px 0 0;padding-left:20px"><li>You can take it <b>only once</b>.</li><li>Stay on this page. If you switch tabs or apps, it is recorded and the test can be submitted automatically.</li><li>Find a quiet place and keep going until you submit.</li></ul>
   <div class="foot"><button class="btn ghost" data-act="close">Not yet</button><button class="btn green" data-act="sTestGo2" data-id="${esc(t.dataset.id)}">I'm ready ▶</button></div>`);
 ACT.sTestGo2 = (t) => { location.href = '/tests/run/' + t.dataset.id; };
+
+/* ---------- teacher: papers the students did on their own ---------- */
+ROUTES.push([/^\/t\/selfstudy(?:\?.*)?$/, async () => {
+  await loadClasses();
+  const d = await api('/tests/selfstudy');
+  const q = (new URLSearchParams(location.hash.split('?')[1] || '')).get('c') || '';
+  const classes = [...new Map(d.items.map((x) => [x.class_id, x.cls])).entries()];
+  const items = d.items.filter((x) => !q || x.class_id === q);
+  const mk = (m) => m ? `<b>${m.ex[0]} / ${m.ex[1]}</b> <span class="mute small">letters, ticks, numbers</span>${m.wr[1] ? `<br><span class="small">${m.wr[0]} / ${m.wr[1]} written <span class="mute">(first check)</span></span>` : ''}` : '<span class="mute">–</span>';
+  const rows = items.map((x) => `<tr><td><a href="#/t/student/${esc(x.sid)}" style="text-decoration:none;color:inherit"><b>${esc(x.student)}</b> <span class="mute small">▸</span></a><div class="mute small">${esc(x.cls)}</div></td><td>${esc(x.paper)}</td>
+    <td>${x.submitted_at ? '<span class="badge g">Handed in</span><div class="mute small">' + esc(fmtDate(x.submitted_at)) + '</div>' : '<span class="chip">Started</span><div class="mute small">' + esc(fmtDate(x.updated_at)) + '</div>'}</td>
+    <td>${x.submitted_at ? mk(x.marks) : ''}</td><td style="white-space:nowrap"><a class="btn ghost sm" target="_blank" rel="noopener" href="/tests/review/${esc(x.aid)}/${esc(x.sid)}">👁 Open marked paper</a></td></tr>`).join('');
+  shell('selfstudy', `<h1 style="margin:6px 0 2px">🎒 Self-study work</h1><p class="mute" style="margin:0 0 14px">IGCSE papers your students opened from Resources on their own (you did not assign them). They are marked the moment the student hands in.</p>
+    <div class="row" style="margin-bottom:12px"><button class="chip ${q ? '' : 'on'}" data-act="tSelf" data-c="">All classes</button>${classes.map(([id, n]) => `<button class="chip ${q === id ? 'on' : ''}" data-act="tSelf" data-c="${esc(id)}">${esc(n)}</button>`).join('')}</div>
+    <div class="card" style="overflow:auto;padding:6px 10px"><table><thead><tr><th>Student</th><th>Paper</th><th>Status</th><th>Marks</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="5" class="mute">Nothing yet. When a student opens a paper from Resources without you assigning it and works on it, it appears here.</td></tr>'}</tbody></table></div>
+    <p class="mute small">The marks are the ones the student saw. Letters, ticks and numbers are exact; written answers are the app's first check, so open the marked paper to confirm them.</p>`);
+}]);
+ACT.tSelf = (t) => go('#/t/selfstudy' + (t.dataset.c ? '?c=' + t.dataset.c : ''));
