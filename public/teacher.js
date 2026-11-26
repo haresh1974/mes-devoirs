@@ -76,11 +76,11 @@ ROUTES.push([/^\/t$/, async () => {
   shell('home', `<section class="th-hello"><div><h1>${hi}${first ? ', ' + esc(first) : ''} !</h1><p>${sum}</p></div>
       <div class="th-acts"><button class="btn" data-act="tLib">＋ Set homework</button><button class="btn ghost" data-act="newClass">＋ New class</button></div></section>
     ${!hasClass ? setup : ''}
-    <div class="th-cols"><section class="th-sec"><h2>Homework open now</h2><div class="th-panel">${openHtml}</div></section>
-      <section class="th-sec"><h2>My classes</h2>${ov.map(clsCard).join('') || '<div class="th-empty"><b>No classes yet</b><p>A class gives your students a code to sign in with.</p><button class="btn sm" data-act="newClass">Create class</button></div>'}</section></div>
-    <section class="th-sec"><h2>Tools</h2><div class="th-tools">
+    <div class="th-cols th-cols-tl"><aside class="th-side"><section class="th-sec"><h2>Tools</h2><div class="th-tools">
       ${tool('tLib', '📚', 'Library', 'Create and assign homework', '#2563eb')}${tool('tTl', '🗓', 'Timeline', 'Open and scheduled homework', '#d97706')}${tool('tTests', '📝', 'Class tests', 'Set tests and see marks', '#0f766e')}${tool('tRes', '📎', 'Resources', 'ICSE and IGCSE material', '#9333ea')}${tool('tPractice', '🎮', 'Practice games', 'Try what students play', '#dc2626')}${tool('tPres', '📈', 'Practice results', 'What students practised', '#16a34a')}${tool('instr', '✉️', 'Student instructions', 'Link, sign-in steps, printable page', '#475569')}${tool('tHelp', '❓', 'Help', 'How everything works', '#0891b2')}
-    </div></section>
+    </div></section></aside>
+      <div class="th-main"><section class="th-sec"><h2>My classes</h2>${ov.map(clsCard).join('') || '<div class="th-empty"><b>No classes yet</b><p>A class gives your students a code to sign in with.</p><button class="btn sm" data-act="newClass">Create class</button></div>'}</section>
+      <section class="th-sec"><h2>Homework open now</h2><div class="th-panel">${openHtml}</div></section></div></div>
     ${hasClass ? setup : ''}`);
   const chk = $('#sharedChk');
   if (chk) chk.addEventListener('change', () => { try { localStorage.setItem('md_shared', chk.checked ? '1' : '0'); } catch (e) {} route(); });

@@ -310,14 +310,18 @@ body{background:linear-gradient(180deg,#eaf6ff 0,#f6f9ff 260px)}
 .th-code .icon-btn{width:34px;height:34px;background:#fff}
 .th-cls-b{display:flex;gap:8px;flex-wrap:wrap}
 .th-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:12px}
+.th-cols-tl{grid-template-columns:minmax(250px,300px) minmax(0,1fr)}
+.th-cols-tl .th-tools{grid-template-columns:minmax(0,1fr);gap:10px}
+.th-cols-tl .th-side{position:sticky;top:12px;min-width:0}
+.th-cols-tl .th-main{min-width:0}
 .th-tool{display:flex;align-items:center;gap:12px;text-align:left;font:inherit;color:var(--ink);background:#fff;border:0;border-radius:16px;padding:12px 14px;cursor:pointer;box-shadow:0 2px 0 var(--line);transition:transform .08s}
 .th-tool:hover{transform:translateY(-2px)}
 .th-tool .ic{flex:none;width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;background:color-mix(in srgb,var(--c) 14%,#fff)}
 .th-tool b{display:block;font-size:16px}.th-tool small{display:block;color:var(--mute);font-weight:600;font-size:12.5px;line-height:1.3}
 .thome :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-@media(max-width:860px){.th-cols{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:860px){.th-cols,.th-cols-tl{grid-template-columns:minmax(0,1fr)}.th-cols-tl .th-side{position:static}.th-cols-tl .th-tools{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
 @media(max-width:560px){.thome{padding:12px 12px 60px}.th-hello{margin:18px 2px 16px}.th-hello h1{font-size:27px}.th-acts{width:100%}.th-acts .btn{flex:1}
-  .th-hw{grid-template-columns:minmax(0,1fr) auto;row-gap:8px}.th-prog{grid-column:1/-1}.th-go{display:none}.th-tools{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.th-tool{flex-direction:column;align-items:flex-start;gap:8px;padding:12px}}
+  .th-hw{grid-template-columns:minmax(0,1fr) auto;row-gap:8px}.th-prog{grid-column:1/-1}.th-go{display:none}.th-tools,.th-cols-tl .th-tools{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.th-tool{flex-direction:column;align-items:flex-start;gap:8px;padding:12px}}
 @media(prefers-reduced-motion:reduce){.th-tool{transition:none}}
 .myc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
 .myc button{font:inherit;font-weight:800;font-size:14px;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
