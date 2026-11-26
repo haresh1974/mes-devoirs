@@ -46,6 +46,8 @@ const SCHEMA = [
     assignment_id TEXT NOT NULL, student_id TEXT NOT NULL, released_at BIGINT NOT NULL, PRIMARY KEY (assignment_id, student_id))`,
   `CREATE TABLE IF NOT EXISTS guided_subs (
     assignment_id TEXT NOT NULL, student_id TEXT NOT NULL, answers TEXT NOT NULL, submitted_at BIGINT, updated_at BIGINT NOT NULL, PRIMARY KEY (assignment_id, student_id))`,
+  `CREATE TABLE IF NOT EXISTS resource_visits (
+    student_id TEXT NOT NULL, resource TEXT NOT NULL, opens INTEGER NOT NULL, first_at BIGINT NOT NULL, last_at BIGINT NOT NULL, PRIMARY KEY (student_id, resource))`,
   `CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)`,
   `CREATE TABLE IF NOT EXISTS notices (id TEXT PRIMARY KEY, class_id TEXT, message TEXT, created BIGINT)`,
   `CREATE INDEX IF NOT EXISTS i_notice_class ON notices(class_id)`,

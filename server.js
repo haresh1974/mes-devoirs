@@ -1143,8 +1143,52 @@ app.get('/tests/asset-preview/:tid/:file', wrap(async (req, res) => {
 }));
 
 /* ---------- static ---------- */
+/* ---------- everything one student has done (teacher only) ---------- */
+app.get('/api/students/:id/profile', teacherOnly(async (req, res) => {
+  const st = await db.get('SELECT * FROM students WHERE id = ?', [req.params.id]);
+  const c = st && await ownClass(req, st.class_id);
+  if (!c) return res.status(404).json({ error: 'Not found.' });
+  const id = st.id;
+  const days = await db.all('SELECT day, SUM(secs) AS secs FROM activity WHERE student_id = ? GROUP BY day ORDER BY day DESC LIMIT 14', [id]);
+  const total = (await db.get('SELECT SUM(secs) AS s FROM activity WHERE student_id = ?', [id])).s || 0;
+  const hw = await db.all('SELECT a.homework_id, h.title, h.topic, COUNT(*) AS n, SUM(a.score) AS score, SUM(a.total) AS total, SUM(a.secs) AS secs, MAX(a.ts) AS last FROM attempts a JOIN homework h ON h.id = a.homework_id WHERE a.student_id = ? GROUP BY a.homework_id, h.title, h.topic ORDER BY last DESC LIMIT 30', [id]);
+  const pr = await db.all('SELECT * FROM practice_results WHERE student_id = ? ORDER BY ts DESC LIMIT 40', [id]);
+  const lids = new Set(); pr.forEach((r) => { try { JSON.parse(r.lesson_ids).forEach((i) => lids.add(i)); } catch (e) { /* ignore */ } });
+  const L = lids.size ? await db.all('SELECT id,title FROM lessons WHERE id IN (' + inList([...lids]) + ')', [...lids]) : [];
+  const titles = {}; L.forEach((l) => { titles[l.id] = l.title; });
+  const gs = await db.all('SELECT g.assignment_id, g.answers, g.submitted_at, g.updated_at, a.test_id FROM guided_subs g JOIN test_assignments a ON a.id = g.assignment_id WHERE g.student_id = ? ORDER BY g.updated_at DESC', [id]);
+  const rel = new Set((await db.all('SELECT assignment_id FROM test_releases WHERE student_id = ?', [id])).map((x) => x.assignment_id));
+  const papers = gs.map((g) => { let n = 0; try { const a = JSON.parse(g.answers); n = Object.keys(a.g || {}).length + Object.keys(a.c || {}).length + Object.keys(a.v || {}).length; } catch (e) { /* none */ }
+    const t = testById(g.test_id); return { aid: g.assignment_id, title: t ? t.title : g.test_id, sub: t ? (t.sub || '') : '', answered: n, submitted_at: g.submitted_at ? Number(g.submitted_at) : null, updated_at: Number(g.updated_at), released: rel.has(g.assignment_id) }; });
+  const trs = await db.all('SELECT r.status, r.score, r.out_of, r.percent, r.finished_at, r.started_at, r.leaves, a.test_id FROM test_results r JOIN test_assignments a ON a.id = r.assignment_id WHERE r.student_id = ? ORDER BY r.started_at DESC', [id]);
+  const tests = trs.map((r) => { const t = testById(r.test_id); return { title: t ? t.title : r.test_id, status: r.status, score: r.score, out_of: r.out_of, percent: r.percent, finished_at: r.finished_at, started_at: r.started_at, leaves: r.leaves }; });
+  const names = {}; RESOURCES.forEach((r) => { const m = /^\/resources\/([\w-]+)\//.exec(r.url || ''); if (m && !names[m[1]]) names[m[1]] = r.group || r.title; });
+  const rv = (await db.all('SELECT * FROM resource_visits WHERE student_id = ? ORDER BY last_at DESC', [id])).map((r) => ({ name: names[r.resource] || r.resource, opens: r.opens, first_at: Number(r.first_at), last_at: Number(r.last_at) }));
+  res.set('Cache-Control', 'no-store');
+  res.json({ student: { id, name: st.name, class_id: c.id, class_name: c.name, last_active: st.last_active ? Number(st.last_active) : null, secs_total: total },
+    days, homework: hw, papers, tests, resources: rv,
+    practice: pr.map((x) => { let ids = []; try { ids = JSON.parse(x.lesson_ids); } catch (e) { /* ignore */ } return { game: x.game, level: x.level, lessons: ids.map((i) => titles[i] || i), score: x.score, total: x.total, secs: x.secs, ts: Number(x.ts) }; }) });
+}));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
 // Private resources: a signed-in teacher, or a student whose class has been assigned that resource.
+/* ---------- which resource pages each student opens (so the teacher can see Speaking / Reading / Listening use) ---------- */
+app.use('/resources', async (req, res, next) => {
+  try {
+    if (req.method === 'GET' && (/\/$/.test(req.path) || /\.html$/.test(req.path))) {
+      const slug = req.path.split('/')[1];
+      if (slug && slug !== 'teacher' && /^[\w-]+$/.test(slug)) {
+        const st = await auth(req, 'student');
+        if (st) {
+          const t = now(), row = await db.get('SELECT opens,last_at FROM resource_visits WHERE student_id = ? AND resource = ?', [st.id, slug]);
+          if (!row) await db.run('INSERT INTO resource_visits (student_id,resource,opens,first_at,last_at) VALUES (?,?,?,?,?)', [st.id, slug, 1, t, t]);
+          else await db.run('UPDATE resource_visits SET opens = ?, last_at = ? WHERE student_id = ? AND resource = ?', [t - row.last_at > 300000 ? row.opens + 1 : row.opens, t, st.id, slug]);
+          await db.run('UPDATE students SET last_active = ? WHERE id = ?', [t, st.id]);
+        }
+      }
+    }
+  } catch (e) { console.error('resource visit', e.message); }
+  next();
+});
 app.use('/resources/teacher', (req, res, next) => {
   (async () => {
     if (await auth(req, 'teacher')) return true;

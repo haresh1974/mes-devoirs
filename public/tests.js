@@ -78,7 +78,7 @@ ROUTES.push([/^\/t\/tests\/(\w+)$/, async (id) => {
   const d = TS.res = await api('/tests/assignments/' + id + '/results');
   if (d.test.kind === 'guided') {
     const n = d.students.filter((s) => s.released).length;
-    const rows = d.students.map((s) => `<tr><td><b>${esc(s.name)}</b></td><td>${s.submitted_at ? '<span class="badge g">Submitted</span> <span class="mute small">' + esc(fmtDate(s.submitted_at)) + '</span>' : s.has_draft ? '<span class="chip">Draft saved</span>' : '<span class="mute">Not started</span>'}</td><td>${s.released ? '<span class="badge g">Answers shown</span>' : '<span class="mute">Hidden</span>'}</td>
+    const rows = d.students.map((s) => `<tr><td><a href="#/t/student/${esc(s.id)}" style="text-decoration:none;color:inherit"><b>${esc(s.name)}</b> <span class="mute small">▸</span></a></td><td>${s.submitted_at ? '<span class="badge g">Submitted</span> <span class="mute small">' + esc(fmtDate(s.submitted_at)) + '</span>' : s.has_draft ? '<span class="chip">Draft saved</span>' : '<span class="mute">Not started</span>'}</td><td>${s.released ? '<span class="badge g">Answers shown</span>' : '<span class="mute">Hidden</span>'}</td>
       <td style="white-space:nowrap">${s.has_draft ? `<a class="btn ghost sm" target="_blank" rel="noopener" href="/tests/review/${esc(d.assignment.id)}/${esc(s.id)}">👁 View answers</a> ` : ''}<button class="btn ${s.released ? 'ghost' : 'green'} sm" data-act="tRel" data-id="${esc(d.assignment.id)}" data-s="${esc(s.id)}" data-on="${s.released ? 0 : 1}">${s.released ? '🔒 Hide answers' : '🔑 Show answers'}</button></td></tr>`).join('');
     shell('tests', `<button class="linkbtn" data-act="tBackTests">← Class tests</button>
       <h1 style="margin:6px 0 2px">${esc(d.test.title)}</h1><p class="mute" style="margin:0 0 14px">${esc(d.cls.name)} · ${d.test.folder ? esc(d.test.folder) + ' › ' : ''}${esc(d.test.sub || '')}</p>
@@ -95,7 +95,7 @@ ROUTES.push([/^\/t\/tests\/(\w+)$/, async (id) => {
     const status = s.status === 'done' ? '<span class="badge g">Finished</span>' : s.status === 'started' ? '<span class="chip">In progress</span>' : '<span class="mute">Not started</span>';
     const fix = s.status === 'done' ? (s.fix_total ? `${s.fix_done}/${s.fix_total}` : '–') : '';
     const lv = s.leaves ? `<span style="color:#c62f3a;font-weight:800">${s.leaves}×${s.auto ? ' · auto-submitted' : ''}</span>` : (s.status === 'none' ? '' : '0');
-    return `<tr><td><b>${esc(s.name)}</b></td><td>${status}</td><td><b>${s.status === 'done' ? fmtMark(s.score) + ' / ' + s.out_of : ''}</b></td><td>${s.status === 'done' ? s.percent + '%' : ''}</td><td>${s.status === 'done' ? esc(fmtDur(s.secs)) : ''}</td><td>${lv}</td><td>${fix}</td>
+    return `<tr><td><a href="#/t/student/${esc(s.id)}" style="text-decoration:none;color:inherit"><b>${esc(s.name)}</b> <span class="mute small">▸</span></a></td><td>${status}</td><td><b>${s.status === 'done' ? fmtMark(s.score) + ' / ' + s.out_of : ''}</b></td><td>${s.status === 'done' ? s.percent + '%' : ''}</td><td>${s.status === 'done' ? esc(fmtDur(s.secs)) : ''}</td><td>${lv}</td><td>${fix}</td>
       <td style="white-space:nowrap">${s.status === 'done' ? `<button class="btn ghost sm" data-act="tView" data-id="${esc(s.result_id)}">Answers</button> ` : ''}${s.result_id ? `<button class="btn ghost sm" data-act="tReset" data-id="${esc(s.result_id)}" data-n="${esc(s.name)}">Reset</button>` : ''}</td></tr>`;
   }).join('');
   shell('tests', `<button class="linkbtn" data-act="tBackTests">← Class tests</button>
