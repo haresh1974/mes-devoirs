@@ -24,11 +24,18 @@ summary:before{content:"▸";transition:.15s}details[open] summary:before{transf
 .box label.l{display:block;font-weight:800;margin:14px 0 6px}.box input[type=datetime-local]{width:100%;padding:10px;border-radius:10px;border:2px solid var(--line);font:inherit;background:var(--bg);color:var(--ink)}
 .cls{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.cls input{width:20px;height:20px;accent-color:var(--blue)}
 .err{color:#c42f3f;font-weight:700;min-height:20px;margin-top:8px}.empty{color:var(--mute);padding:30px 0;text-align:center}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tile{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--card);border:2px solid var(--line);border-left:6px solid var(--blue);border-radius:16px;padding:14px 16px;font:inherit;color:var(--ink);cursor:pointer}
+.tile:hover{border-color:var(--blue)}.tile.t-ICSE{border-left-color:#2e4fc4}.tile.t-IGCSE{border-left-color:#d9772b}.tile.t-both{border-left-color:#17804f}
+.tile .ic{font-size:1.6rem;line-height:1}.tile b{font-size:1.05rem}.tile span.d{color:var(--mute);font-size:.88rem}.tile .ct{margin-top:auto;font-weight:800;color:var(--blue);font-size:.9rem}
+.srch{width:100%;padding:11px 14px;border-radius:12px;border:2px solid var(--line);font:inherit;background:var(--card);color:var(--ink);margin:6px 0 4px}
+.crumb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 4px}.crumb h2{margin:0;font-size:1.3rem}.crumb .sel{margin-left:auto}
+.cname{margin:22px 0 4px;font-size:1.1rem;display:flex;align-items:center;gap:8px}
 </style></head><body><main>
 <a class="back" id="back" href="/">← French with Haresh</a>
 <h1>📎 Resources</h1>
 <p class="lead" id="lead">Loading…</p>
-<div class="chips" id="skills"></div><div class="chips" id="boards" style="display:none"></div>
+<input class="srch" id="q" type="search" placeholder="Search all resources (for example: shopping, 2023, passage 12)">
 <div id="list"></div>
 </main>
 <div class="bar" id="bar"><b id="cnt"></b><button class="btn ghost" id="clr">Clear</button><button class="btn" id="asg">Assign as homework…</button></div>
@@ -39,32 +46,60 @@ summary:before{content:"▸";transition:.15s}details[open] summary:before{transf
 <div class="modal" id="mod2"><div class="box"><h2 id="mod2t"></h2><div id="mod2l"></div><div style="text-align:right;margin-top:12px"><button class="btn ghost" onclick="document.getElementById('mod2').classList.remove('on')">Close</button></div></div></div>
 <script>
 const $=(s)=>document.querySelector(s),esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let D=null,skill='All',board='All',sel=new Set();
-const SKILLS=['Translation','Speaking','Grammar','Reading'];
+let D=null,cur=null,q='',sel=new Set();
 const kind=(r)=>r.boards.length>1?'both':r.boards[0];
-const pill=(r)=>{const k=kind(r);return '<span class="pill p-'+(k==='both'?'both':k)+'">'+(k==='both'?'ICSE + IGCSE':k)+'</span>'+(r.access==='assigned'?' <span class="pill p-priv">given by teacher</span>':'')};
-function chips(){
-  $('#skills').innerHTML=['All'].concat(SKILLS).map((s)=>'<button class="chip '+(skill===s?'on':'')+'" data-s="'+s+'">'+s+'</button>').join('');
-  if(D.role==='teacher'){$('#boards').style.display='flex';$('#boards').innerHTML=[['All','All boards'],['both','Shared'],['ICSE','ICSE only'],['IGCSE','IGCSE only']].map(([v,l])=>'<button class="chip '+(board===v?'on':'')+'" data-b="'+v+'">'+l+'</button>').join('')}
+const pill=(k)=>'<span class="pill p-'+k+'">'+(k==='both'?'ICSE + IGCSE':k)+'</span>';
+const yr=(r)=>{const m=r.title.match(/(\d{4})/);return m?m[1]:'Other'};
+const rcSub=(r)=>{const d=r.desc||'';if(/\(\d{4}( \(official\))?\)\./.test(d))return 'Board papers 1995 to 2026';if(/\(Set \d+\)/.test(d))return 'Practice sets';return 'School and preliminary papers'};
+const SPM={'sp-box':'Start here','sp-2':'Start here','sp-1':'Travel and transport','sp-3':'Travel and transport','sp-4':'Travel and transport','sp-5':'Communication and technology','sp-6':'Communication and technology','sp-7':'Communication and technology','sp-8':'Communication and technology','sp-10':'Education'};
+const spSub=(r)=>SPM[r.id]||'Nature and environment';
+const strip=(r)=>r.group.replace(/^[^:]+: /,'');
+const COLLS=[
+ {k:'dial',ic:'💬',t:'Speaking dialogues',d:'Role-play dialogues sorted by topic.',test:(r)=>r.group.indexOf('ICSE dialogues')===0,sub:strip},
+ {k:'rc',ic:'📖',t:'Reading comprehension',d:'Passages with questions, from board and school papers.',test:(r)=>r.group==='Reading comprehension (ICSE)',sub:rcSub,order:['Board papers 1995 to 2026','Practice sets','School and preliminary papers']},
+ {k:'gr',ic:'✏️',t:'Grammar tests',d:'Slip tests, practice sheets and full 40-mark tests.',test:(r)=>r.group.indexOf('Grammar tests')===0,sub:strip,order:['Slip tests','Practice sheets','Full grammar tests (40 marks)']},
+ {k:'isp',ic:'🎤',t:'Speaking practice',d:'Role plays, themes and timed speaking tests.',test:(r)=>r.group==='IGCSE speaking',sub:spSub,order:['Start here','Travel and transport','Communication and technology','Nature and environment','Education']},
+ {k:'irr',ic:'📄',t:'Reading past papers',d:'Cambridge 0520 Paper 2, newest first.',test:(r)=>r.group==='IGCSE Reading',sub:yr,desc:true},
+ {k:'tr',ic:'🔁',t:'Translation',d:'French to English and English to French passages.',test:(r)=>r.group.indexOf('Translation')===0,sub:strip,order:['French to English','English to French']}
+];
+function collHtml(x,all,open0){
+  const c=x.c,subs={};x.items.forEach((r)=>{const n=c.sub(r);(subs[n]=subs[n]||[]).push(r)});
+  let names=Object.keys(subs);
+  if(c.order)names.sort((a,b)=>c.order.indexOf(a)-c.order.indexOf(b));
+  if(c.desc)names.sort().reverse();
+  const T=D.role==='teacher',ids=x.items.map((r)=>r.id);
+  let h='';
+  if(all)h+='<div class="cname">'+c.ic+' '+esc(c.t)+' '+pill(x.kind)+'<span class="mute" style="color:var(--mute);font-weight:600;font-size:.9rem">'+x.items.length+'</span></div>';
+  names.forEach((g,i)=>{
+    const items=subs[g],gi=items.map((r)=>r.id),allc=gi.every((i2)=>sel.has(i2));
+    h+='<details'+((all||i===0)?' open':'')+'><summary>'+(T?'<input type="checkbox" data-g="'+esc(gi.join(','))+'" '+(allc?'checked':'')+' title="Select all in this group">':'')+esc(g)+'<span class="n">'+items.length+'</span></summary>'+
+    items.map((r)=>'<div class="row">'+(T?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.access==='assigned'&&!T?'':(r.guided?(T?'<button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'))+(r.access==='assigned'?'<span class="pill p-priv">given by teacher</span>':'')+'</div>').join('')+'</details>';
+  });
+  return h;
 }
 function draw(){
-  chips();
-  let rs=D.resources.filter((r)=>(skill==='All'||r.skill===skill)&&(board==='All'||kind(r)===board));
-  if(!rs.length){$('#list').innerHTML='<div class="empty">Nothing here yet.</div>';return}
-  const secs=[['both','Shared: ICSE and IGCSE','Use with every class'],['ICSE','ICSE only','Grade 10 ICSE classes'],['IGCSE','IGCSE only','IGCSE classes']];
+  const T=D.role==='teacher',ql=q.trim().toLowerCase();
+  const rs=D.resources.filter((r)=>!ql||(r.title+' '+(r.desc||'')+' '+r.group).toLowerCase().indexOf(ql)>-1);
+  const cols=COLLS.map((c)=>{const items=rs.filter(c.test);return {c,items,kind:items.length?kind(items[0]):'both'}}).filter((x)=>x.items.length);
+  const left=rs.filter((r)=>!COLLS.some((c)=>c.test(r)));
+  if(left.length)cols.push({c:{k:'oth',ic:'📎',t:'Other',d:'',sub:(r)=>r.group},items:left,kind:kind(left[0])});
   let h='';
-  secs.forEach(([k,t,sub])=>{
-    const rr=rs.filter((r)=>kind(r)===k); if(!rr.length)return;
-    const groups={};rr.forEach((r)=>{(groups[r.group]=groups[r.group]||[]).push(r)});
-    h+='<div class="sec"><h2>'+t+'</h2><small>'+sub+'</small></div>';
-    Object.keys(groups).forEach((g)=>{
-      const items=groups[g],ids=items.map((r)=>r.id),all=ids.every((i)=>sel.has(i));
-      h+='<details'+(rs.length<=24?' open':'')+'><summary>'+(D.role==='teacher'?'<input type="checkbox" data-g="'+esc(ids.join(','))+'" '+(all?'checked':'')+' title="Select all in this group">':'')+esc(g)+'<span class="n">'+items.length+'</span></summary>'+
-      items.map((r)=>'<div class="row">'+(D.role==='teacher'?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.guided?(D.role==='teacher'?'<button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>')+'</div>').join('')+'</details>';
+  if(!cols.length){h='<div class="empty">'+(ql?'Nothing matches that search.':'Nothing here yet.')+'</div>'}
+  else if(ql){h=cols.map((x)=>collHtml(x,true)).join('')}
+  else if(cur&&cols.some((x)=>x.c.k===cur)){
+    const x=cols.find((y)=>y.c.k===cur);
+    h='<div class="crumb"><button class="btn ghost" data-back="1">← All resources</button><h2>'+x.c.ic+' '+esc(x.c.t)+'</h2>'+pill(x.kind)+(T?'<label class="sel"><input type="checkbox" data-g="'+esc(x.items.map((r)=>r.id).join(','))+'" '+(x.items.every((r)=>sel.has(r.id))?'checked':'')+'> Select all '+x.items.length+'</label>':'')+'</div>'+collHtml(x,false,false);
+  }else{
+    cur=null;
+    [['ICSE','ICSE','Grade 10 ICSE classes'],['IGCSE','IGCSE','Cambridge IGCSE classes'],['both','Shared','Use with every class']].forEach(([k,t,sub])=>{
+      const xs=cols.filter((x)=>x.kind===k);if(!xs.length)return;
+      h+='<div class="sec"><h2>'+t+'</h2><small>'+sub+'</small></div><div class="tiles">'+xs.map((x)=>'<button class="tile t-'+k+'" data-c="'+x.c.k+'"><span class="ic">'+x.c.ic+'</span><b>'+esc(x.c.t)+'</b><span class="d">'+esc(x.c.d)+'</span><span class="ct">'+x.items.length+' '+(x.items.length>1?'items':'item')+' ›</span></button>').join('')+'</div>';
     });
-  });
+  }
+  const keep=[...document.querySelectorAll('details')].map((d)=>d.open);
   $('#list').innerHTML=h;
-  const n=sel.size;$('#bar').classList.toggle('on',n>0&&D.role==='teacher');$('#cnt').textContent=n+' selected';
+  if(keep.length===document.querySelectorAll('details').length)[...document.querySelectorAll('details')].forEach((d,i)=>{d.open=keep[i]});
+  const n=sel.size;$('#bar').classList.toggle('on',n>0&&T);$('#cnt').textContent=n+' selected';
 }
 document.addEventListener('click',(e)=>{
   const kb=e.target.closest('[data-k]');
@@ -72,14 +107,15 @@ document.addEventListener('click',(e)=>{
     $('#mod2t').textContent=r?r.title:'';
     $('#mod2l').innerHTML=l.length?l.map((c)=>'<a class="btn" style="display:block;text-decoration:none;text-align:center;margin:8px 0" href="/#/t/tests/'+esc(c.aid)+'">🔑 '+esc(c.class_name)+': students &amp; answers</a>').join(''):'<p style="color:var(--mute)">Not assigned to any class yet. Tick this paper, press “Assign as homework…”, and it will appear here with a switch in front of each student’s name.</p>';
     $('#mod2').classList.add('on');return}
-  const s=e.target.closest('[data-s]'),b=e.target.closest('[data-b]');
-  if(s){skill=s.dataset.s;draw()}if(b){board=b.dataset.b;draw()}
+  const tl=e.target.closest('[data-c]');if(tl){cur=tl.dataset.c;draw();scrollTo(0,0);return}
+  if(e.target.closest('[data-back]')){cur=null;draw();return}
 });
 document.addEventListener('change',(e)=>{
   const g=e.target.dataset&&e.target.dataset.g,r=e.target.dataset&&e.target.dataset.r;
-  if(g){g.split(',').forEach((i)=>e.target.checked?sel.add(i):sel.delete(i));const keep=[...document.querySelectorAll('details')].map((d)=>d.open);draw();[...document.querySelectorAll('details')].forEach((d,i)=>{d.open=keep[i]})}
+  if(g){g.split(',').forEach((i)=>e.target.checked?sel.add(i):sel.delete(i));draw()}
   if(r){e.target.checked?sel.add(r):sel.delete(r);$('#bar').classList.toggle('on',sel.size>0);$('#cnt').textContent=sel.size+' selected'}
 });
+$('#q').oninput=(e)=>{q=e.target.value;draw()};
 $('#clr').onclick=()=>{sel.clear();draw()};
 const loc=(ms)=>{const d=new Date(ms-new Date(ms).getTimezoneOffset()*60000);return d.toISOString().slice(0,16)};
 $('#asg').onclick=()=>{
@@ -101,8 +137,8 @@ $('#mok').onclick=async()=>{
 };
 fetch('/api/resources').then((r)=>r.ok?r.json():Promise.reject()).then((d)=>{
   D=d;
-  if(d.role==='teacher'){$('#back').href='/#/t';$('#lead').textContent='All your extra material, organised by board. Tick items (or a whole group) and assign them as homework to any class.'}
+  if(d.role==='teacher'){$('#back').href='/#/t';$('#lead').textContent='Your extra material, sorted by board and type. Open a collection, tick items (or a whole group) and assign them as homework to any class.'}
   else{$('#back').href='/#/s';$('#lead').textContent=(d.board&&d.board!=='Both'?d.board+' class. ':'')+'Extra practice from Haresh Sir. Open in Chrome or Safari; speaking pages need the microphone.'}
   draw();
-}).catch(()=>{$('#lead').innerHTML='Please <a href="/">sign in</a> to see the resources.';$('#skills').innerHTML=''});
+}).catch(()=>{$('#lead').innerHTML='Please <a href="/">sign in</a> to see the resources.'});
 </script></body></html>
