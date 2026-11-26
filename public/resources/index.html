@@ -73,7 +73,7 @@ function collHtml(x,all,open0){
   names.forEach((g,i)=>{
     const items=subs[g],gi=items.map((r)=>r.id),allc=gi.every((i2)=>sel.has(i2));
     h+='<details'+((all||i===0)?' open':'')+'><summary>'+(T?'<input type="checkbox" data-g="'+esc(gi.join(','))+'" '+(allc?'checked':'')+' title="Select all in this group">':'')+esc(g)+'<span class="n">'+items.length+'</span></summary>'+
-    items.map((r)=>'<div class="row">'+(T?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.access==='assigned'&&!T?'':(r.guided?(T?'<button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'))+(r.access==='assigned'?'<span class="pill p-priv">given by teacher</span>':'')+'</div>').join('')+'</details>';
+    items.map((r)=>'<div class="row">'+(T?'<input type="checkbox" data-r="'+esc(r.id)+'" '+(sel.has(r.id)?'checked':'')+'>':'')+'<div class="t"><b>'+esc(r.title)+'</b><span>'+esc(r.desc||'')+'</span></div>'+(r.access==='assigned'&&!T?'':(r.guided?(T?'<button class="btn" style="padding:6px 12px" data-a="'+esc(r.id)+'">➕ Assign</button><button class="btn ghost" style="padding:6px 10px" data-k="'+esc(r.id)+'">🔑 Students &amp; answers</button><a class="go" target="_blank" href="/tests/preview/'+esc(r.guided)+'">Preview ↗</a>':'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'):'<a class="go" href="'+esc(r.url)+'">Open ↗</a>'))+(r.access==='assigned'?'<span class="pill p-priv">given by teacher</span>':'')+'</div>').join('')+'</details>';
   });
   return h;
 }
@@ -102,10 +102,12 @@ function draw(){
   const n=sel.size;$('#bar').classList.toggle('on',n>0&&T);$('#cnt').textContent=n+' selected';
 }
 document.addEventListener('click',(e)=>{
+  const ab=e.target.closest('[data-a]');
+  if(ab){sel.clear();sel.add(ab.dataset.a);draw();$('#asg').click();return}
   const kb=e.target.closest('[data-k]');
   if(kb){const l=(D.guided||{})[kb.dataset.k]||[];const r=D.resources.find((x)=>x.id===kb.dataset.k);
     $('#mod2t').textContent=r?r.title:'';
-    $('#mod2l').innerHTML=l.length?l.map((c)=>'<a class="btn" style="display:block;text-decoration:none;text-align:center;margin:8px 0" href="/#/t/tests/'+esc(c.aid)+'">🔑 '+esc(c.class_name)+': students &amp; answers</a>').join(''):'<p style="color:var(--mute)">Not assigned to any class yet. Tick this paper, press “Assign as homework…”, and it will appear here with a switch in front of each student’s name.</p>';
+    $('#mod2l').innerHTML=l.length?l.map((c)=>'<a class="btn" style="display:block;text-decoration:none;text-align:center;margin:8px 0" href="/#/t/tests/'+esc(c.aid)+'">🔑 '+esc(c.class_name)+': students &amp; answers</a>').join(''):'<p style="color:var(--mute)">Not assigned to any class yet. Press “➕ Assign” beside this paper, and it will appear here with a switch in front of each student’s name.</p>';
     $('#mod2').classList.add('on');return}
   const tl=e.target.closest('[data-c]');if(tl){cur=tl.dataset.c;draw();scrollTo(0,0);return}
   if(e.target.closest('[data-back]')){cur=null;draw();return}

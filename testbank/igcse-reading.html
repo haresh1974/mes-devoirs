@@ -166,7 +166,7 @@ body.locked .tk{pointer-events:none}
 'use strict';
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
-const G = window.GLOSS || {};
+const G = new Proxy({}, { get: (_, k) => (window.GLOSS || {})[k], has: (_, k) => k in (window.GLOSS || {}) }); // gloss.js can load after this line on the school site
 const SITE = window.__SITE || null;          // set when served inside the French with Haresh site (student / review / preview)
 const INDEX = SITE ? [{ id: SITE.paper, ready: true }] : (window.PAPER_INDEX || []);
 const imgUrl = s => SITE ? SITE.assetBase + s.replace(/^img\//, '').replace('/', '_') : s;
