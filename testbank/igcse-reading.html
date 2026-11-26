@@ -123,6 +123,7 @@ body.reveal .tk.right:not(.on)::after{content:"✓";position:absolute;inset:0;di
 .ckleg,.ckn{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:0 12px}.ckleg summary,.ckn summary{cursor:pointer;padding:10px 0;font-weight:700}.ckbody{padding-bottom:10px;font-size:.92rem}.ckbody table{border-collapse:collapse;width:100%}.ckbody td{padding:5px 6px;border-top:1px solid var(--line);vertical-align:top}
 .ckfilter{display:flex;gap:8px;margin:10px 0}.ckfilter .chip{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700}.ckfilter .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .ckq{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:14px;margin:10px 0;padding:10px 12px}.ckq[hidden]{display:none}.ckq.s-good{border-left-color:var(--green)}.ckq.s-bad{border-left-color:var(--red)}.ckq.s-part{border-left-color:#e69a00}.ckq.s-blank{border-left-color:#98a2b3}
+.tmk{margin:8px 0 2px;padding:8px 10px;border-radius:10px;background:#eef3ff;border:1px dashed #9db4ee;font-size:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.tmk.ok{background:#e9f8ee;border-color:#8fd3a3}.tmk select{font:inherit;padding:3px 6px;border-radius:8px}.tmk .mini.tmsave{width:auto;height:auto;padding:5px 14px;border-radius:999px;background:#2a52d4;color:#fff;border:0;font-weight:800;cursor:pointer}.tmk .tms{color:var(--mut);font-size:13px}.ckdone{background:#fff8e1;border:1px solid #f1d78a;border-radius:12px;padding:8px 12px;margin:8px 0;font-weight:700}
 .ckh{display:flex;align-items:center;gap:10px}.ckh .vd{font-weight:800}.ckh .mk{margin-left:auto;font-weight:800;color:var(--mut)}.ckh .mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:2px 8px}
 .ckr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}.ckr small{color:var(--mut);font-weight:700}.ckr .you,.ckr .off{padding:6px 8px;border-radius:8px;background:var(--bg);min-height:30px;word-break:break-word}.ckr .off{background:#e8f6ee;font-weight:700}.ckq.s-bad .you,.ckq.s-part .you{background:#fdecea}.ckq.s-good .you{background:#e8f6ee}
 @media(max-width:520px){.ckr{grid-template-columns:1fr}}
@@ -656,12 +657,12 @@ async function siteInit() {
       const m = await siteJson('/api/student/tests/' + SITE.assignment + '/mine');
       if (m && m.answers && m.answers.v && Object.keys(m.answers.v).length) { state.answers = {}; Object.keys(m.answers.v).forEach(k => { state.answers[fromKey(k)] = m.answers.v[k]; }); restoreAnswers(); }
       subAt = m && m.submitted_at || null;
-      const checkKey = async () => { const j = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (j && j.released) { clearInterval(pollTm); setLocked(true); applyKey(j.answers); setReveal(true); showCheck(true); } };
-      await checkKey(); if (!state.locked) pollTm = setInterval(checkKey, 20000);
+      const checkKey = async () => { const j = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (j && j.released) { clearInterval(pollTm); state.tmarks = j.tmarks || {}; setLocked(true); applyKey(j.answers); setReveal(true); showCheck(true); } };
+      await checkKey(); if (!state.locked) pollTm = setInterval(checkKey, 20000); else if (/[?&]results=1/.test(location.search)) setTimeout(openCheck, 400);
     } else if (SITE.mode === 'review') {
       const j = await siteJson('/api/tests/assignments/' + SITE.assignment + '/submission/' + SITE.sid);
       state.answers = {}; const v = (j.answers && j.answers.v) || {}; Object.keys(v).forEach(k => { state.answers[fromKey(k)] = v[k]; });
-      restoreAnswers(); setLocked(true); applyKey(j.key); setReveal(true); showCheck(false);
+      state.tmarks = j.tmarks || {}; restoreAnswers(); setLocked(true); applyKey(j.key); setReveal(true); showCheck(false);
     } else {
       const j = await siteJson('/api/tests/answers/' + SITE.test); if (j && j.released) applyKey(j.answers);
     }
@@ -740,7 +741,14 @@ function ckEvidence(qid) { // French words under the yellow highlight
   return parts.join(' … ');
 }
 function ckQuestionIds() { const ids = []; state.paper.sections.forEach(s => s.ids.forEach(i => ids.push(i))); return ids; }
-function ckOne(qid, A) {
+state.tmarks = {};
+function ckOne(qid, A) { // the app's first check, replaced by the teacher's own mark when there is one
+  const r = ckOne0(qid, A); const tm = state.tmarks && state.tmarks[qid];
+  if (r && !r.exact && tm != null && r.status !== 'blank') { r.auto = r.got; r.got = Math.min(r.marks, Math.max(0, +tm)); r.confirmed = true; r.status = r.got >= r.marks ? 'good' : (r.got > 0 ? 'part' : 'bad'); }
+  else if (r && !r.exact && tm != null) { r.auto = r.got; r.got = Math.min(r.marks, Math.max(0, +tm)); r.confirmed = true; }
+  return r;
+}
+function ckOne0(qid, A) {
   const P = state.paper, q = P.qs[qid] || {}, key = A[qid]; if (!key) return null;
   const fs = ckFields(qid), t = fs.length ? fs[0].t : 'line'; const marks = q.marks || 1;
   const ans = o => String(state.answers[qid + '|' + (o || '')] == null ? '' : state.answers[qid + '|' + (o || '')]).trim();
@@ -794,12 +802,17 @@ function ckOne(qid, A) {
   if (r.status !== 'good') { if (r.evidence) r.why.push(`Where it is in the text: <i>“${esc(r.evidence)}”</i>`); if (q.start) r.why.push('How to start: <b>' + esc(q.start) + '</b>'); if (q.watch) r.why.push('⚠️ ' + esc(q.watch)); }
   return r;
 }
+function ckTeach(r) {
+  const cur = r.confirmed ? r.got : (r.auto != null ? r.auto : r.got), opts = []; for (let i = 0; i <= r.marks; i++) opts.push(`<option value="${i}" ${i === cur ? 'selected' : ''}>${i}</option>`);
+  return `<div class="tmk"><b>👩‍🏫 Your mark</b> <select data-tq="${r.qid}">${opts.join('')}</select> / ${r.marks} <button class="mini tmsave" data-tq="${r.qid}">${r.confirmed ? 'Update' : 'Confirm'}</button> <span class="tms">${r.confirmed ? 'Saved · the student sees this mark' : 'The app suggests ' + (r.auto != null ? r.auto : r.got) + '. Not confirmed yet.'}</span></div>`;
+}
 function ckCard(r) {
   const lab = { good: '✅ Correct', part: '🟡 Not quite', bad: '❌ Not correct', blank: '⬜ Not answered' }[r.status];
   const mine = r.exact ? (r.mine || '—') : (r.mine.length ? r.mine.map(x => esc(x)).join('<br>') : '—');
   const off = r.exact ? esc(r.official) : r.official.map((x, i) => (r.official.length > 1 ? (i + 1) + ' ' : '') + esc(x)).join('<br>');
-  return `<div class="ckq s-${r.status}"><div class="ckh"><b>${qLabel(r.qid)}</b><span class="vd">${lab}</span><span class="mk">${r.got}/${r.marks}</span><button class="mini" data-q="${r.qid}" title="Open the help for this question">💡</button></div>
+  return `<div class="ckq s-${r.status}"><div class="ckh"><b>${qLabel(r.qid)}</b><span class="vd">${lab}</span><span class="mk">${r.confirmed ? '👩‍🏫 ' : ''}${r.got}/${r.marks}</span><button class="mini" data-q="${r.qid}" title="Open the help for this question">💡</button></div>
     <div class="ckr"><div><small>You wrote</small><div class="you">${r.exact ? esc(mine) : mine}</div></div><div><small>Official answer</small><div class="off">${off}</div></div></div>
+    ${!r.exact && SITE && SITE.mode === 'review' ? ckTeach(r) : (r.confirmed ? '<div class="tmk ok">👩‍🏫 Your teacher checked this answer and gave <b>' + r.got + '/' + r.marks + '</b>.</div>' : '')}
     ${r.status === 'good' && !r.why.length ? '' : '<ul class="why">' + r.why.map(w => '<li>' + w + '</li>').join('') + '</ul>'}
     ${r.notes && r.status !== 'good' ? '<details class="ckn"' + (r.exact ? '' : ' open') + '><summary>What the examiners wrote about this question</summary>' + ckNote(r.notes) + '</details>' : (r.notes ? '<details class="ckn"><summary>Examiner notes</summary>' + ckNote(r.notes) + '</details>' : '')}</div>`;
 }
@@ -810,8 +823,9 @@ function openCheck() {
   const sum = a => a.reduce((n, r) => n + r.got, 0), tot = a => a.reduce((n, r) => n + r.marks, 0);
   let ov = $('#ckov'); if (!ov) { ov = document.createElement('div'); ov.id = 'ckov'; document.body.appendChild(ov); }
   const wrong = rs.filter(r => r.status !== 'good');
-  ov.innerHTML = `<div class="ckw"><div class="ckt"><button class="ib" id="ckx" aria-label="Close">✕</button><h2>📋 Check my answers</h2></div>
-    <div class="cks"><div class="ckbig"><b>${sum(ex)}</b>/${tot(ex)}<small>letters, ticks and numbers<br>(exact)</small></div><div class="ckbig"><b>${sum(wr)}</b>/${tot(wr)}<small>written answers<br>(computer’s first check)</small></div></div>
+  ov.innerHTML = `<div class="ckw"><div class="ckt"><button class="ib" id="ckx" aria-label="Close">✕</button><h2>${SITE && SITE.mode === 'review' ? '📋 Marking: ' + esc(SITE.sname || 'student') : '📋 Check my answers'}</h2></div>
+    ${SITE && SITE.mode === 'review' ? `<div class="ckdone">✍️ Written answers confirmed by you: <b>${wr.filter(r => r.confirmed).length} of ${wr.length}</b>. Read each written answer, set the mark and press Confirm. The student then sees your mark instead of the app’s first check.</div>` : ''}
+    <div class="cks"><div class="ckbig"><b>${sum(ex)}</b>/${tot(ex)}<small>letters, ticks and numbers<br>(exact)</small></div><div class="ckbig"><b>${sum(wr)}</b>/${tot(wr)}<small>written answers<br>${wr.some(r => r.confirmed) ? '(teacher-checked where marked)' : '(computer’s first check)'}</small></div></div>
     <p class="ckdisc">Letters, ticks and numbers are marked exactly. For <b>written answers</b> the app compares your words with the official answer and the examiners’ notes. It is a careful first check, not the final word: your teacher confirms the mark.</p>
     <details class="ckleg"><summary>📖 What do HA, INV, tc and the other examiner codes mean?</summary><div class="ckbody">
       <p>These come from the official Cambridge mark scheme, which uses them to say <i>why</i> an answer gets or loses a mark.</p>
@@ -821,14 +835,19 @@ function openCheck() {
     <div id="cklist">${rs.map(ckCard).join('')}</div></div>`;
   ov.hidden = false; document.body.classList.add('ckopen'); ov.scrollTop = 0;
   $('#ckx').onclick = closeCheck;
+  ov.querySelectorAll('.tmsave').forEach(b => b.onclick = async () => {
+    const q = b.dataset.tq, mark = +ov.querySelector('select[data-tq="' + q + '"]').value; b.disabled = true;
+    try { const r = await fetch('/api/tests/assignments/' + SITE.assignment + '/submission/' + SITE.sid + '/tmarks', { method: 'PUT', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q, mark }) }); const j = await r.json(); if (!r.ok) throw new Error(j.error); state.tmarks = j.tmarks || {}; const y = ov.scrollTop; openCheck(); ov.scrollTop = y; toast('Saved ✓', true); }
+    catch (e) { b.disabled = false; toast('Could not save: ' + e.message, false); }
+  });
   ov.querySelectorAll('.ckfilter .chip').forEach(b => b.onclick = () => { ov.querySelectorAll('.ckfilter .chip').forEach(x => x.classList.toggle('on', x === b)); ov.querySelectorAll('.ckq').forEach(c => { c.hidden = b.dataset.f === 'wrong' && c.classList.contains('s-good'); }); });
   ov.querySelectorAll('.ckh .mini').forEach(b => b.onclick = () => { closeCheck(); renderHelp(b.dataset.q, 'ans'); setSheet('help', { q: b.dataset.q }); });
 }
 function closeCheck() { const ov = $('#ckov'); if (ov) ov.hidden = true; document.body.classList.remove('ckopen'); }
 function showCheck(auto) {
-  let b = $('#btnCheck'); if (!b) { b = document.createElement('button'); b.id = 'btnCheck'; b.className = 'ib'; b.textContent = '📋'; b.title = 'Check my answers'; $('#btnLock').before(b); b.onclick = openCheck; }
+  let b = $('#btnCheck'); if (!b) { b = document.createElement('button'); b.id = 'btnCheck'; b.className = 'ib'; b.textContent = SITE && SITE.mode === 'student' ? '📋 My results' : '📋'; b.title = SITE && SITE.mode === 'review' ? 'Mark this student’s paper' : 'My results'; $('#btnLock').before(b); b.onclick = openCheck; }
   b.hidden = false;
-  if (auto && SITE && SITE.mode === 'student') { const k = 'fh-ck-' + SITE.assignment; let seen = null; try { seen = localStorage.getItem(k); } catch (e) { /* none */ } if (!seen) { try { localStorage.setItem(k, '1'); } catch (e) { /* none */ } setTimeout(openCheck, 600); } }
+  if (auto && SITE && SITE.mode === 'student') { const k = 'fh-ck-' + SITE.assignment; let seen = null; try { seen = localStorage.getItem(k); } catch (e) { /* none */ } if (!seen) { try { localStorage.setItem(k, '1'); } catch (e) { /* none */ } setTimeout(() => { if (SITE.self) { openCheck(); return; } openModal('<h3>🔓 Your answers have been released!</h3><p>Your teacher has unlocked the answers. Press <b>See my results</b> to see your marks, which answers were right and why any lost a mark.</p><div class="row"><button class="ghost" id="rlLater">Later</button><button class="primary" id="rlGo">📋 See my results</button></div>'); $('#rlLater').onclick = closeModal; $('#rlGo').onclick = () => { closeModal(); openCheck(); }; }, 600); } }
 }
 if (location.hostname === 'localhost') window.__t = (K, a) => { state.unlocked[state.paper.id] = K; state.answers = a; setReveal(true); openCheck(); };
 })();

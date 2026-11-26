@@ -33,6 +33,9 @@ const langOf = (name) => (LANG[name] || LANG.French).tts;
 ROUTES.push([/^\/s$/, async () => {
   startHeartbeat(); ST.hw = null;
   const d = await api('/student/home');
+  { const fresh = (d.ready || []).filter((r) => { try { return !localStorage.getItem('fh-rel-' + r.aid); } catch (e) { return false; } });
+    if (fresh.length) setTimeout(() => { fresh.forEach((r) => { try { localStorage.setItem('fh-rel-' + r.aid, '1'); } catch (e) { /* none */ } });
+      modal(`<h2>🔓 Your answers are released!</h2><p>Your teacher has released the answers for <b>${esc(fresh[0].title)}</b>${fresh.length > 1 ? ' and ' + (fresh.length - 1) + ' more' : ''}. See your marks and what to fix.</p><div class="foot"><button class="btn ghost" data-act="close">Later</button><a class="btn green" style="text-decoration:none" href="/tests/run/${esc(fresh[0].aid)}?results=1">📋 See my results</a></div>`); }, 700); }
   VOICE.cloud = !!d.tts; ST.lang = langOf(d.cls.language);
   const pctOf = (h) => (h.total ? Math.round(h.done / h.total * 100) : 0), isDone = (h) => h.status === 'complete';
   const hws = d.homework.slice().sort((x, y) => (isDone(x) - isDone(y)) || ((x.due_at || 9e15) - (y.due_at || 9e15)));
@@ -49,7 +52,7 @@ ROUTES.push([/^\/s$/, async () => {
   $('#app').innerHTML = `<div class="sbody shome">${sTop(d.student.coins, false)}
     <header class="hello"><h1>Bonjour, ${esc(first)} !</h1><p>${line}</p>
       <div class="myc">${(d.classes || []).map((c) => `<button class="${c.current ? 'on' : ''}" data-act="sSwitch" data-id="${esc(c.id)}" ${c.current ? 'aria-current="true"' : ''}>${many && c.current ? '✓ ' : ''}${esc(c.name)}</button>`).join('')}<button class="add" data-act="sJoin">＋ Join a class</button></div></header>
-    ${notes}${hero}
+    ${notes}${(d.ready || []).map((r) => `<div class="notice" style="background:#e9f8ee;border-color:#8fd3a3"><span>🔓</span><div style="flex:1"><b>Your answers are released</b><div>${esc(r.title)}</div></div><a class="btn green sm" style="text-decoration:none" href="/tests/run/${esc(r.aid)}?results=1">📋 See my results</a></div>`).join('')}${hero}
     <div class="qtiles ${d.tests && d.tests.total ? 'three' : ''}">${tile('sPractice', '🎮', 'Games', 'Play and practise', 'bleu')}${d.tests && d.tests.total ? tile('sTests', '📝', 'Tests', 'From your teacher', 'menthe', d.tests.todo ? d.tests.todo + ' to do' : '') : ''}${tile('sRes', '📚', 'Resources', 'Read, speak, translate', 'soleil')}</div>
     ${rest.length ? `<h2 class="sec">${next ? 'More homework' : 'My homework'}</h2>${rest.map(card).join('')}` : ''}
     ${!hws.length ? '<div class="empty"><span aria-hidden="true">🗒️</span><b>Your homework will appear here</b><p>When your teacher sets homework, you will see it on this page.</p></div>' : ''}</div>`;

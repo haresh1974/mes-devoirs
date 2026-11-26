@@ -124,7 +124,7 @@ ROUTES.push([/^\/s\/tests$/, async () => {
   const d = await api('/student/tests');
   const card = (t) => {
     let right = '';
-    if (t.kind === 'guided') return `<div class="card"><div class="spread" style="gap:12px"><div style="flex:1;min-width:0"><b style="font-size:18px">${esc(t.title)}</b><div class="mute small">${esc(t.desc || '')}</div><div class="small" style="margin-top:6px">${t.released ? '<span class="badge g">✔ Answers unlocked</span>' : '<span class="chip">🔒 Answers are locked until your teacher unlocks them</span>'}</div></div><a class="btn green" href="/tests/run/${esc(t.id)}" style="text-decoration:none">Open ▶</a></div></div>`;
+    if (t.kind === 'guided') return `<div class="card"><div class="spread" style="gap:12px"><div style="flex:1;min-width:0"><b style="font-size:18px">${esc(t.title)}</b><div class="mute small">${esc(t.desc || '')}</div><div class="small" style="margin-top:6px">${t.released ? '<span class="badge g">✔ Answers unlocked</span> <a class="btn green sm" style="text-decoration:none" href="/tests/run/${esc(t.id)}?results=1">📋 See my results</a>' : '<span class="chip">🔒 Answers are locked until your teacher unlocks them</span>'}</div></div><a class="btn green" href="/tests/run/${esc(t.id)}" style="text-decoration:none">Open ▶</a></div></div>`;
     if (t.status === 'done') right = `<div style="text-align:right"><div style="font-size:26px;font-weight:900">${fmtMark(t.score)} / ${t.out_of}</div><div class="mute small">${t.percent}%</div></div>`;
     else if (t.status === 'todo') right = `<button class="btn green" data-act="sTestGo" data-id="${esc(t.id)}">Start ▶</button>`;
     else if (t.status === 'started') right = '<span class="chip">Started earlier</span>';

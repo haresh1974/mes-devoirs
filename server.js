@@ -634,11 +634,19 @@ app.get('/api/student/home', studentOnly(async (req, res) => {
     out.push({ id: h.id, title: h.title, topic: h.topic, tier: h.tier, due_at: dueOf(mine.filter((a) => a.homework_id === id)), done: st.done.length, total: st.total, status: st.status, rank: b.findIndex((x) => x.id === s.id) + 1, of: b.length });
   }
   const notices = await db.all('SELECT id, message, created FROM notices WHERE class_id = ? AND created > ? ORDER BY created DESC LIMIT 3', [c.id, Date.now() - 14 * 86400000]);
-  const tAsg = await db.all('SELECT id,due_at FROM test_assignments WHERE class_id = ? AND start_at <= ?', [c.id, now()]);
+  const tAsg = await db.all('SELECT id,due_at,test_id FROM test_assignments WHERE class_id = ? AND start_at <= ?', [c.id, now()]);
   let tTodo = 0;
   for (const a of tAsg) { const r = await db.get('SELECT status FROM test_results WHERE assignment_id = ? AND student_id = ?', [a.id, s.id]); if (!r && !(a.due_at && a.due_at < now())) tTodo++; }
+  const ready = [];
+  for (const a of tAsg) {
+    const t = testById(a.test_id); if (!isGuided(t)) continue;
+    const rel = await db.get('SELECT released_at FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, s.id]);
+    const sub = await db.get('SELECT submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, s.id]);
+    if (rel && sub && sub.submitted_at) ready.push({ aid: a.id, title: t.title, at: Number(rel.released_at) });
+  }
+  ready.sort((x, y) => y.at - x.at);
   const linked = await linkedStudents(s);
-  res.json({ classes: linked.map((r) => ({ id: r.id, name: r.cname, current: r.id === s.id })), student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn(), tests: { total: tAsg.length, todo: tTodo } });
+  res.json({ ready: ready.slice(0, 5), classes: linked.map((r) => ({ id: r.id, name: r.cname, current: r.id === s.id })), student: { name: s.name, coins }, cls: { name: c.name, language: c.language }, homework: out, notices, tts: ttsOn(), tests: { total: tAsg.length, todo: tTodo } });
 }));
 app.get('/api/student/homework/:id', studentOnly(async (req, res) => {
   const hw = await studentHw(req, req.params.id);
@@ -842,6 +850,7 @@ const ownTestAsg = async (req, id) => {
   return c ? { a, c } : null;
 };
 // a student can only reach an assignment given to their own class, once it has started
+const parseJ = (x) => { try { return x ? JSON.parse(x) : {}; } catch (e) { return {}; } };
 // a paper the student opened on their own from Resources (the teacher has not assigned it to the class): it is marked as soon as they hand in
 async function isSelfStudy(a) {
   const r = RESOURCES.find((x) => x.guided === a.test_id);
@@ -863,7 +872,8 @@ app.get('/api/tests', teacherOnly(async (req, res) => {
     if (!asg.length) continue;
     const n = (await db.get('SELECT COUNT(*) AS n FROM students WHERE class_id = ?', [c.id])).n;
     for (const a of asg) {
-      const t = testById(a.test_id); if (!t || t.hidden) continue;
+      const t = testById(a.test_id); if (!t || (t.hidden && !isGuided(t))) continue;
+      if (isGuided(t) && t.hidden && await isSelfStudy(a)) continue; // papers a student opened alone are on the Self-study page
       const rs = await db.all('SELECT status, score FROM test_results WHERE assignment_id = ?', [a.id]);
       const done = rs.filter((r) => r.status === 'done');
       out.push({ id: a.id, test_id: a.test_id, title: t.title, marks: t.marks, folder: t.folder || '', sub: t.sub || '', kind: t.kind || 'test', released: (await db.get('SELECT COUNT(*) AS n FROM test_releases WHERE assignment_id = ?', [a.id])).n, class_id: c.id, class_name: c.name, start_at: a.start_at, due_at: a.due_at, lock_on: !!a.lock_on, max_leaves: a.max_leaves,
@@ -973,9 +983,9 @@ app.get('/api/student/tests/:aid/answers', studentOnly(async (req, res) => {
   if (!isGuided(t)) return res.status(404).json({ error: 'Not found.' });
   const rel = await db.get('SELECT 1 AS x FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
   res.set('Cache-Control', 'no-store');
-  const sub = await db.get('SELECT submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+  const sub = await db.get('SELECT submitted_at, tmarks FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
   if (!rel || !(sub && sub.submitted_at)) return res.json({ released: false }); // answers open only after the student hands in AND the teacher releases
-  res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+  res.json({ released: true, answers: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')), tmarks: parseJ(sub.tmarks) });
 }));
 const cleanAnswers = (b) => {
   const g = {}, c = {}, v = {};
@@ -1051,10 +1061,21 @@ app.get('/api/tests/assignments/:id/submission/:sid', teacherOnly(async (req, re
   if (!isGuided(t)) return res.status(404).json({ error: 'Not found.' });
   const st = await db.get('SELECT id,name FROM students WHERE id = ? AND class_id = ?', [req.params.sid, o.c.id]);
   if (!st) return res.status(404).json({ error: 'Not found.' });
-  const r = await db.get('SELECT answers, submitted_at FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [o.a.id, st.id]);
+  const r = await db.get('SELECT answers, submitted_at, tmarks FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [o.a.id, st.id]);
   let answers = null; try { answers = r ? JSON.parse(r.answers) : null; } catch (e) { /* none */ }
   res.set('Cache-Control', 'no-store');
-  res.json({ student: st.name, answers, submitted_at: r && r.submitted_at ? Number(r.submitted_at) : null, key: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+  res.json({ student: st.name, answers, tmarks: parseJ(r && r.tmarks), submitted_at: r && r.submitted_at ? Number(r.submitted_at) : null, key: JSON.parse(fs.readFileSync(answersFile(t), 'utf8')) });
+}));
+app.put('/api/tests/assignments/:id/submission/:sid/tmarks', teacherOnly(async (req, res) => {
+  const o = await ownTestAsg(req, req.params.id);
+  if (!o || !isGuided(testById(o.a.test_id))) return res.status(404).json({ error: 'Not found.' });
+  const g = await db.get('SELECT tmarks FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [o.a.id, req.params.sid]);
+  if (!g) return res.status(404).json({ error: 'This student has no work on this paper.' });
+  const q = clean((req.body || {}).q, 20); if (!q) return res.status(400).json({ error: 'Which question?' });
+  const m = parseJ(g.tmarks), mk = (req.body || {}).mark;
+  if (mk === null || mk === undefined || mk === '') delete m[q]; else m[q] = Math.max(0, Math.min(20, Math.round(Number(mk) * 2) / 2 || 0));
+  await db.run('UPDATE guided_subs SET tmarks = ? WHERE assignment_id = ? AND student_id = ?', [JSON.stringify(m), o.a.id, req.params.sid]);
+  res.json({ ok: true, tmarks: m });
 }));
 app.get('/tests/review/:aid/:sid', wrap(async (req, res) => {
   const tc = await auth(req, 'teacher');
