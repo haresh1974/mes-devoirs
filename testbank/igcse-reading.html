@@ -400,8 +400,8 @@ function setSheet(mode, data) {
   }
   if (mode === 'type') {
     const k = document.createElement('div'); k.className = 'keys';
-    'é è ê ë à â ç î ï ô û ù ü œ É'.split(' ').forEach(ch => { const x = document.createElement('button'); x.type = 'button'; x.textContent = ch; x.onmousedown = x.ontouchstart = ev => ev.preventDefault();
-      x.onclick = () => insertChar(ch); k.appendChild(x); });
+    'é è ê ë à â ç î ï ô û ù ü œ É'.split(' ').forEach(ch => { const x = document.createElement('button'); x.type = 'button'; x.textContent = ch; x.onpointerdown = ev => { ev.preventDefault(); insertChar(ch); }; /* works on phones and tablets: a prevented touchstart would swallow the click */
+      x.onclick = ev => { if (ev.detail === 0) insertChar(ch); }; k.appendChild(x); });
     b.appendChild(k); return;
   }
   if (mode === 'chunk') {
@@ -644,6 +644,7 @@ function applyKey(A) { const P = state.paper; state.unlocked[P.id] = A; applyUnl
 async function siteJson(u) { const r = await fetch(u, { credentials: 'same-origin', cache: 'no-store' }); return r.json(); }
 async function siteInit() {
   const P = state.paper;
+  if (SITE.mode === 'student') { state.aids = false; document.body.classList.remove('aids'); $('#btnAids').classList.remove('on'); clearSel(); closeHelp(); } // helpers are off until the student presses Aides
   $('#back').onclick = () => { location.href = SITE.mode === 'student' ? '/#/s' : '/resources/'; };
   $('#back').title = 'Back';
   try {
