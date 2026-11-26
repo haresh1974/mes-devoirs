@@ -622,7 +622,11 @@ async function siteSave(final) {
     const r = await fetch('/api/student/tests/' + SITE.assignment + '/mine', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers: { v }, submit: !!final }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { if (final) toast('⚠️ ' + (j.error || 'Could not hand in. Try again.'), false); return; }
-    if (final) { subAt = j.submitted_at; toast('✅ Handed in! Your teacher will unlock the answers later.', true); siteBtn(); }
+    if (final) {
+      subAt = j.submitted_at; siteBtn();
+      if (j.released) { const a = await siteJson('/api/student/tests/' + SITE.assignment + '/answers'); if (a && a.released) { clearInterval(pollTm); setLocked(true); applyKey(a.answers); setReveal(true); showCheck(true); toast('✅ Handed in! Here are your marks.', true); return; } }
+      toast('✅ Handed in! Your teacher will unlock the answers later.', true);
+    }
   } catch (e) { if (final) toast('⚠️ No internet. Your answers are saved on this device — press Hand in again when you are online.', false); }
 }
 function siteBtn() { const b = $('#btnLock'); if (SITE.mode === 'student') { b.textContent = state.locked ? '✅' : (subAt ? '📨✓' : '📨'); b.title = 'Hand in'; } else b.textContent = state.unlocked[state.paper.id] ? '🔓' : '🔒'; }
@@ -631,7 +635,7 @@ function siteLock() {
   const P = state.paper;
   if (SITE.mode === 'student') {
     if (state.locked) { openModal('<h3>✅ Answers unlocked</h3><p>Your teacher has unlocked the answers. Green = correct. The official answer is printed under each line. Press <b>📋 Check my answers</b> to see what you got right, and why any answer lost a mark.</p><div class="row"><button class="ghost" id="mCk">📋 Check my answers</button><button class="primary" id="mClose">Close</button></div>'); $('#mCk').onclick = () => { closeModal(); openCheck(); }; $('#mClose').onclick = closeModal; return; }
-    openModal(`<h3>📨 Hand in</h3><p>${subAt ? 'You already handed in. You can still change your answers and hand in again.' : 'When you have finished, hand in your answers. Your teacher unlocks the correct answers later.'}</p><div class="row"><button class="ghost" id="mClose">Not yet</button><button class="primary" id="mGo">Hand in</button></div>`);
+    openModal(`<h3>📨 Hand in</h3><p>${subAt ? 'You already handed in. You can still change your answers and hand in again.' : (SITE.self ? 'When you have finished, hand in your answers. They are marked straight away and you see your mistakes and your marks. After that you cannot change them.' : 'When you have finished, hand in your answers. Your teacher unlocks the correct answers later.')}</p><div class="row"><button class="ghost" id="mClose">Not yet</button><button class="primary" id="mGo">Hand in</button></div>`);
     $('#mClose').onclick = closeModal; $('#mGo').onclick = () => { closeModal(); siteSave(true); }; return;
   }
   openModal(`<h3>🔓 Teacher view</h3><p>${SITE.mode === 'review' ? esc(SITE.sname || 'Student') + '’s answers with the official answers.' : 'Preview: you can see the official answers.'}</p>

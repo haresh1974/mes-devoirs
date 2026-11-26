@@ -842,6 +842,13 @@ const ownTestAsg = async (req, id) => {
   return c ? { a, c } : null;
 };
 // a student can only reach an assignment given to their own class, once it has started
+// a paper the student opened on their own from Resources (the teacher has not assigned it to the class): it is marked as soon as they hand in
+async function isSelfStudy(a) {
+  const r = RESOURCES.find((x) => x.guided === a.test_id);
+  if (!r) return false;
+  const hw = await db.get('SELECT id FROM homework WHERE class_id = ? AND extra LIKE ?', [a.class_id, '%"rid":"' + r.id + '"%']);
+  return !hw;
+}
 async function studentTestAsg(student, id) {
   const a = await db.get('SELECT * FROM test_assignments WHERE id = ? AND class_id = ?', [id, student.class_id]);
   return a && a.start_at <= now() && testById(a.test_id) ? a : null;
@@ -997,7 +1004,13 @@ app.post('/api/student/tests/:aid/mine', studentOnly(async (req, res) => {
   const subAt = final ? now() : (old && old.submitted_at ? Number(old.submitted_at) : null);
   await db.run('DELETE FROM guided_subs WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
   await db.run('INSERT INTO guided_subs (assignment_id,student_id,answers,submitted_at,updated_at) VALUES (?,?,?,?,?)', [a.id, req.student.id, ans, subAt, now()]);
-  res.json({ ok: true, submitted_at: subAt });
+  let released = false;
+  if (final && await isSelfStudy(a)) { // self-study: mark straight away
+    await db.run('DELETE FROM test_releases WHERE assignment_id = ? AND student_id = ?', [a.id, req.student.id]);
+    await db.run('INSERT INTO test_releases (assignment_id,student_id,released_at) VALUES (?,?,?)', [a.id, req.student.id, now()]);
+    released = true;
+  }
+  res.json({ ok: true, submitted_at: subAt, released });
 }));
 app.get('/api/tests/assignments/:id/submission/:sid', teacherOnly(async (req, res) => {
   const o = await ownTestAsg(req, req.params.id);
@@ -1120,7 +1133,7 @@ app.get('/tests/run/:aid', wrap(async (req, res) => {
   if (!a) return res.redirect('/#/s');
   const c = await db.get('SELECT name FROM classes WHERE id = ?', [st.class_id]);
   const tt = testById(a.test_id);
-  await sendTest(res, tt, { mode: 'student', assignment: a.id, title: tt.title, kind: tt.kind || 'test', assetBase: '/tests/asset/' + a.id + '/', student: { name: st.name, cls: c ? c.name : '' }, lock: { on: !!a.lock_on, max: a.max_leaves } });
+  await sendTest(res, tt, { mode: 'student', assignment: a.id, title: tt.title, kind: tt.kind || 'test', assetBase: '/tests/asset/' + a.id + '/', self: await isSelfStudy(a), student: { name: st.name, cls: c ? c.name : '' }, lock: { on: !!a.lock_on, max: a.max_leaves } });
 }));
 app.get('/tests/preview/:tid', wrap(async (req, res) => {
   const t = await auth(req, 'teacher');
