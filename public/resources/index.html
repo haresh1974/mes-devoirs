@@ -60,6 +60,7 @@ const COLLS=[
  {k:'gr',ic:'✏️',t:'Grammar tests',d:'Slip tests, practice sheets and full 40-mark tests.',test:(r)=>r.group.indexOf('Grammar tests')===0,sub:strip,order:['Slip tests','Practice sheets','Full grammar tests (40 marks)']},
  {k:'isp',ic:'🎤',t:'Speaking practice',d:'Role plays, themes and timed speaking tests.',test:(r)=>r.group==='IGCSE speaking',sub:spSub,order:['Start here','Travel and transport','Communication and technology','Nature and environment','Education']},
  {k:'irr',ic:'📄',t:'Reading past papers',d:'Cambridge 0520 Paper 2, newest first.',test:(r)=>r.group==='IGCSE Reading',sub:yr,desc:true},
+ {k:'iwr',ic:'✍️',t:'Writing past papers',d:'Cambridge 0520 Paper 4 (Q1 form, Q2 12 marks, Q3 28 marks), newest first.',test:(r)=>r.group==='IGCSE Writing',sub:yr,desc:true},
  {k:'tr',ic:'🔁',t:'Translation',d:'French to English and English to French passages.',test:(r)=>r.group.indexOf('Translation')===0,sub:strip,order:['French to English','English to French']}
 ];
 function collHtml(x,all,open0){
