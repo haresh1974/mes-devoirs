@@ -1530,18 +1530,6 @@
   "access": "open"
  },
  {
-  "id": "igw-practice",
-  "title": "✍️ IGCSE Writing practice (Paper 4) · 2021–2026",
-  "desc": "All 39 Cambridge IGCSE French 0520 Writing papers: Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Textbook page hints, A* toolkit, dictionary with word meanings, and a writing checker. Nothing you type leaves your device.",
-  "group": "IGCSE Reading",
-  "skill": "Writing",
-  "boards": [
-   "IGCSE"
-  ],
-  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/",
-  "access": "open"
- },
- {
   "id": "igr-m21-22",
   "title": "March 2021 · Paper 22",
   "desc": "Cambridge IGCSE French 0520 Paper 2 Reading. Tap words for meanings, 💡 for help, write your answers on the paper, then hand in. Answers unlock when your teacher releases them.",
@@ -2047,6 +2035,474 @@
   "url": "/resources/go/igr-s26-23",
   "access": "open",
   "guided": "igcse-reading-s26-23"
+ },
+ {
+  "id": "igw-m21-42",
+  "title": "✍️ Writing · March 2021 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/m21-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s21-41",
+  "title": "✍️ Writing · May/June 2021 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s21-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s21-42",
+  "title": "✍️ Writing · May/June 2021 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s21-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s21-43",
+  "title": "✍️ Writing · May/June 2021 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s21-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w21-41",
+  "title": "✍️ Writing · October/November 2021 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w21-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w21-42",
+  "title": "✍️ Writing · October/November 2021 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w21-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w21-43",
+  "title": "✍️ Writing · October/November 2021 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w21-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-m22-42",
+  "title": "✍️ Writing · March 2022 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/m22-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s22-41",
+  "title": "✍️ Writing · May/June 2022 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s22-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s22-42",
+  "title": "✍️ Writing · May/June 2022 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s22-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s22-43",
+  "title": "✍️ Writing · May/June 2022 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s22-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w22-41",
+  "title": "✍️ Writing · October/November 2022 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w22-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w22-42",
+  "title": "✍️ Writing · October/November 2022 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w22-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w22-43",
+  "title": "✍️ Writing · October/November 2022 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w22-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-m23-42",
+  "title": "✍️ Writing · March 2023 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/m23-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s23-41",
+  "title": "✍️ Writing · May/June 2023 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s23-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s23-42",
+  "title": "✍️ Writing · May/June 2023 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s23-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s23-43",
+  "title": "✍️ Writing · May/June 2023 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s23-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w23-41",
+  "title": "✍️ Writing · October/November 2023 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w23-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w23-42",
+  "title": "✍️ Writing · October/November 2023 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w23-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w23-43",
+  "title": "✍️ Writing · October/November 2023 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w23-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-m24-42",
+  "title": "✍️ Writing · March 2024 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/m24-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s24-41",
+  "title": "✍️ Writing · May/June 2024 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s24-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s24-42",
+  "title": "✍️ Writing · May/June 2024 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s24-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s24-43",
+  "title": "✍️ Writing · May/June 2024 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s24-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w24-41",
+  "title": "✍️ Writing · October/November 2024 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w24-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w24-42",
+  "title": "✍️ Writing · October/November 2024 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w24-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w24-43",
+  "title": "✍️ Writing · October/November 2024 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w24-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-m25-42",
+  "title": "✍️ Writing · March 2025 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/m25-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s25-41",
+  "title": "✍️ Writing · May/June 2025 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s25-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s25-42",
+  "title": "✍️ Writing · May/June 2025 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s25-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s25-43",
+  "title": "✍️ Writing · May/June 2025 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s25-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w25-41",
+  "title": "✍️ Writing · October/November 2025 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w25-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w25-42",
+  "title": "✍️ Writing · October/November 2025 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w25-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-w25-43",
+  "title": "✍️ Writing · October/November 2025 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/w25-43/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-m26-42",
+  "title": "✍️ Writing · March 2026 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/m26-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s26-41",
+  "title": "✍️ Writing · May/June 2026 · Paper 41",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s26-41/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s26-42",
+  "title": "✍️ Writing · May/June 2026 · Paper 42",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s26-42/q1",
+  "access": "open"
+ },
+ {
+  "id": "igw-s26-43",
+  "title": "✍️ Writing · May/June 2026 · Paper 43",
+  "desc": "Cambridge IGCSE French 0520 Paper 4 Writing. Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Tap words for meanings, textbook page hints, A* toolkit, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/#/p/s26-43/q1",
+  "access": "open"
  },
  {
   "id": "gr-a",
