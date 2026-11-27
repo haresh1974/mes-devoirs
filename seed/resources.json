@@ -1530,6 +1530,18 @@
   "access": "open"
  },
  {
+  "id": "igw-practice",
+  "title": "✍️ IGCSE Writing practice (Paper 4) · 2021–2026",
+  "desc": "All 39 Cambridge IGCSE French 0520 Writing papers: Q1 form, Q2 (12 marks), Q3 (a) and (b) (28 marks). Textbook page hints, A* toolkit, dictionary with word meanings, and a writing checker. Nothing you type leaves your device.",
+  "group": "IGCSE Reading",
+  "skill": "Writing",
+  "boards": [
+   "IGCSE"
+  ],
+  "url": "https://haresh1974.github.io/10IGCSE_Writing_practice/",
+  "access": "open"
+ },
+ {
   "id": "igr-m21-22",
   "title": "March 2021 · Paper 22",
   "desc": "Cambridge IGCSE French 0520 Paper 2 Reading. Tap words for meanings, 💡 for help, write your answers on the paper, then hand in. Answers unlock when your teacher releases them.",
